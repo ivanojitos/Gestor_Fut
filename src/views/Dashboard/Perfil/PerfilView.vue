@@ -40,7 +40,9 @@
       <!-- EQUIPO -->
       <div class="section highlight">
         <h2>🛡️ Equipo actual</h2>
-        <p class="big">{{ player.team }}</p>
+        <button class="team-btn" @click="goToTeam">
+          Ver {{ player.team }}
+        </button>
       </div>
 
       <!-- LIGAS -->
@@ -105,7 +107,8 @@ const player = reactive({
   team: "Xpert fut 7",
   teamLogo:
     "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTbQb1BGG3k6gGMCN8jtwxkNffbz1mJRuLxfQ&s",
-  photo: "https://assets.realmadrid.com/is/image/realmadrid/1330603286208?$Mobile$&fit=wrap&wid=312",
+  photo:
+    "https://assets.realmadrid.com/is/image/realmadrid/1330603286208?$Mobile$&fit=wrap&wid=312",
   age: 24,
   number: 10,
   position: "Delantero",
@@ -124,32 +127,89 @@ const stats = [
   { label: "DEF", value: 60, icon: "🛡️" },
   { label: "FIS", value: 60, icon: "💪" },
 ];
+
+import { useRouter } from "vue-router";
+
+const router = useRouter();
+
+const goToTeam = () => {
+  router.push(`/dashboard/equipo/${player.team}`);
+};
 </script>
 
+<!-- estilos -->
+
 <style scoped>
-.layout {
-  display: flex;
-  justify-content: center;
-  align-items: stretch;
-  gap: 50px;
+.team-btn {
+  width: 100%;
   padding: 10px;
-  max-width: 1100px;
-  height: 592px; /* 🔥 clave: altura base */
+  border-radius: 10px;
+  border: none;
+
+  background: linear-gradient(135deg, #22c55e, #4ade80);
+  color: #022c22;
+
+  font-weight: bold;
+  font-size: 14px;
+  cursor: pointer;
+
+  transition: all 0.25s ease;
 }
 
-/* PANEL */
+/* 🔥 HOVER PRO */
+.team-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(34, 197, 94, 0.3);
+}
+
+/* 🔥 CLICK */
+.team-btn:active {
+  transform: scale(0.97);
+}
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: auto;
+}
+body {
+  margin: 0;
+  background: #f1f5f9;
+  justify-content: center;
+}
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+/* 🔥 LAYOUT */
+.layout {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-start;
+
+  gap: 30px;
+
+  max-width: 1100px;
+  margin: 0 auto; /* centra */
+
+  padding: 0; /* 🔥 quita espacio extra */
+}
+
+/* 🔥 PANEL DERECHO */
 .info-panel {
-  flex: 1; /* 🔥 ocupa el espacio restante */
+  flex: 1 1 350px;
   max-width: 420px;
 
   display: flex;
   flex-direction: column;
   gap: 12px;
-
-  height: 100%; /* 🔥 misma altura que card */
+  height: auto; /* 🔥 importante */
 }
 
-/* SECCIONES */
+/* 🔥 SECCIONES */
 .section {
   background: #ffffff;
   padding: 15px;
@@ -168,14 +228,7 @@ const stats = [
   color: #334155;
 }
 
-.section h2 {
-  font-size: 14px;
-  margin-bottom: 8px;
-  color: #1e293b;
-}
-
-
-/* DESTACADO */
+/* 🔥 DESTACADO */
 .highlight {
   background: #ecfdf5;
   border: 1px solid #22c55e;
@@ -187,7 +240,7 @@ const stats = [
   color: #16a34a;
 }
 
-/* TAGS */
+/* 🔥 TAGS */
 .tags {
   display: flex;
   flex-wrap: wrap;
@@ -206,17 +259,16 @@ const stats = [
   color: #1d4ed8;
 }
 
-/* MINI STATS */
+/* 🔥 MINI STATS */
 .mini-stats {
   display: flex;
   gap: 10px;
   margin-top: 10px;
-  flex-wrap: wrap; /* 🔥 clave */
+  flex-wrap: wrap;
 }
 
-/* CARD */
 .stat-box {
-  flex: 1;
+  flex: 1 1 90px;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -225,21 +277,17 @@ const stats = [
   background: #f8fafc;
   border: 1px solid #e5e7eb;
   transition: 0.3s;
-  flex: 1 1 90px; /* 🔥 se acomodan solos */
 }
 
-/* HOVER */
 .stat-box:hover {
   transform: translateY(-3px);
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
 }
 
-/* ICONO */
 .icon {
   font-size: 22px;
 }
 
-/* TEXTO */
 .value {
   font-size: 18px;
   font-weight: bold;
@@ -251,7 +299,7 @@ const stats = [
   color: #000000;
 }
 
-/* COLORES POR TIPO */
+/* 🔥 COLORES */
 .goals {
   background: #ecfdf5;
   border-color: #22c55e;
@@ -267,74 +315,117 @@ const stats = [
   border-color: #f59e0b;
 }
 
-/* CARD (tuya mejorada poquito) */
+/* 🔥 CARD */
 .card {
-  width: 300px;
-  flex-shrink: 0; /* 🔥 evita que se encoja */
+  flex: 1 1 280px;
+  max-width: 320px;
+
+  display: flex;
+  flex-direction: column;
+
   border-radius: 25px;
   overflow: hidden;
+
   background: linear-gradient(135deg, #085325, #5cc96e);
+
+  height: auto; /* 🔥 evita estiramiento */
 }
 
+/* 🔥 TOP CARD */
 .card-top {
-  padding: 20px;
+  padding: 15px;
   text-align: center;
   position: relative;
   color: #d38d68;
 }
 
 .rating {
-  font-size: 50px;
+  font-size: 45px;
   font-weight: bold;
 }
 
-.logo {
-  width: 50px;
-  position: absolute;
-  top: 20px;
-  right: 20px;
+.position {
+  font-size: 14px;
+  margin-bottom: 5px;
 }
 
+.logo {
+  width: 40px;
+  position: absolute;
+  top: 15px;
+  right: 15px;
+}
+
+/* 🔥 FOTO */
 .photo-container {
   background: #6b705c;
-  border-radius: 20px;
-  padding: 10px;
+  border-radius: 15px;
+  padding: 8px;
   margin: 10px auto;
-  width: 180px;
+  width: 140px;
 }
 
 .photo {
   width: 100%;
-  border-radius: 15px;
+  max-height: 140px;
+  object-fit: cover;
+  border-radius: 10px;
 }
 
+/* 🔥 NOMBRE */
+.name {
+  font-size: 16px;
+  margin-top: 8px;
+}
+
+.team {
+  font-size: 13px;
+}
+
+/* 🔥 STATS CARD */
 .stats {
   background: #51885a;
-  padding: 20px;
+  padding: 15px;
+
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 15px;
+  grid-template-columns: repeat(2, 1fr); /* 🔥 compacta */
+  gap: 10px;
 }
+
+/* 🔥 BARRAS */
+.stat {
+  font-size: 12px;
+  color: white;
+}
+
+.bar {
+  background: rgba(255, 255, 255, 0.2);
+  height: 6px;
+  border-radius: 10px;
+  margin: 4px 0;
+}
+
+.fill {
+  background: #fff;
+  height: 100%;
+  border-radius: 10px;
+}
+
 /* 📱 MÓVIL */
 @media (max-width: 768px) {
   .layout {
     flex-direction: column;
     align-items: center;
-    padding: 20px;
   }
 
-  .card {
-    width: 100%;
-    max-width: 350px;
-  }
-
+  .card,
   .info-panel {
     width: 100%;
-    max-width: 350px;
+    max-width: 400px;
   }
 
-  .mini-stats {
-    flex-direction: column;
+  .stats {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
@@ -342,14 +433,6 @@ const stats = [
 @media (max-width: 1024px) {
   .layout {
     gap: 20px;
-  }
-
-  .card {
-    width: 280px;
-  }
-
-  .info-panel {
-    width: 260px;
   }
 }
 </style>

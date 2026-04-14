@@ -9,7 +9,11 @@
 
         <!-- <router-link to="/dashboard/torneos"> <Trophy /> Torneos </router-link> -->
 
-        <router-link to="/dashboard/equipos"> <Users /> Equipos </router-link>
+        <router-link to="/dashboard/posiciones">
+          <Users /> Posiciones
+        </router-link>
+
+        <router-link to="/dashboard/roles"> <Users /> Rol juego </router-link>
 
         <router-link to="/dashboard/ligas"> <Users /> Ligas </router-link>
       </nav>
@@ -45,6 +49,7 @@ const logout = () => {
 /* LAYOUT GENERAL */
 .layout {
   display: flex;
+  min-height: 100vh; /* 🔥 mejor que height */
   height: 100vh;
   background: linear-gradient(135deg, #ffffff, #ffffff);
   color: #f1f5f9;
@@ -60,6 +65,7 @@ const logout = () => {
   flex-direction: column;
   justify-content: space-between;
   box-shadow: 5px 0 20px rgba(0, 0, 0, 0.3);
+  transition: 0.3s;
 }
 
 /* LOGO */
@@ -165,5 +171,49 @@ nav a:hover {
 .content::-webkit-scrollbar-thumb {
   background: #fafffc;
   border-radius: 10px;
+}
+@media (max-width: 768px) {
+  .layout {
+    flex-direction: column; /* 🔥 cambia estructura */
+  }
+
+  .sidebar {
+    width: 100%;
+    height: auto;
+
+    flex-direction: row; /* 🔥 horizontal */
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 15px;
+  }
+
+  .logo {
+    margin: 0;
+    font-size: 18px;
+  }
+
+  nav {
+    flex-direction: row; /* 🔥 menú horizontal */
+    gap: 10px;
+  }
+
+  nav a {
+    padding: 10px;
+    font-size: 14px;
+  }
+
+  .logout {
+    padding: 10px;
+    font-size: 13px;
+  }
+
+  .main {
+    width: 100%;
+  }
+
+  .content {
+    padding: 15px;
+  }
 }
 </style>

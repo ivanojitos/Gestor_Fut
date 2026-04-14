@@ -2,45 +2,39 @@
   <div class="container">
     <!-- 🔹 FILTROS -->
     <div class="filters-pro">
-      <!-- IZQUIERDA: LIGA -->
-      <div class="filter-group">
+      <!-- 🔹 LIGAS -->
+      <div class="selector">
         <p class="filter-title">Liga</p>
-        <div class="chips">
-          <button
+
+        <div class="selector-tabs">
+          <div
             v-for="liga in ligas"
             :key="liga"
             @click="
               selectedLiga = liga;
               selectedCategoria = '';
             "
-            :class="['chip', selectedLiga === liga && 'active']"
+            :class="['tab', selectedLiga === liga && 'active']"
           >
             {{ liga }}
-          </button>
+          </div>
         </div>
       </div>
 
-      <!-- CENTRO: CATEGORÍA -->
-      <div class="filter-group">
+      <!-- 🔹 CATEGORÍAS -->
+      <div class="selector" v-if="selectedLiga">
         <p class="filter-title">Categoría</p>
-        <div class="chips">
-          <button
+
+        <div class="selector-cards">
+          <div
             v-for="cat in categorias"
             :key="cat"
             @click="selectedCategoria = cat"
-            :class="['chip secondary', selectedCategoria === cat && 'active']"
+            :class="['category-card', selectedCategoria === cat && 'active']"
           >
-            {{ cat }}
-          </button>
-        </div>
-      </div>
-
-      <!-- DERECHA: CAMPEÓN -->
-      <div class="champion-side" v-if="currentData?.champion">
-        <div class="champion-card">
-          <h3>🏆 Campeón</h3>
-          <img :src="currentData.champion.logo" />
-          <p>{{ currentData.champion.name }}</p>
+            <span>🏆</span>
+            <p>{{ cat }}</p>
+          </div>
         </div>
       </div>
     </div>
@@ -226,342 +220,364 @@ const currentData = computed(() => {
 </script>
 
 <style scoped>
-.layout {
-  display: flex;
-  gap: 20px;
-  align-items: flex-start;
-}
-
-.left {
-  flex: 1;
-}
-
-.right {
-  width: 260px;
-  position: sticky;
-  top: 20px;
-}
-.champion-card {
-  background: linear-gradient(135deg, #facc15, #fde68a);
-  border: 1px solid #facc15;
+/* 🔥 CONTENEDOR */
+.container {
   padding: 20px;
-  border-radius: 18px;
-  text-align: center;
-  box-shadow: 0 10px 25px rgba(250, 204, 21, 0.25);
-}
-
-.champion-card img {
-  width: 90px;
-  height: 90px;
-  border-radius: 50%;
-  margin: 10px 0;
-}
-
-.champion-card h3 {
-  margin-bottom: 10px;
-}
-
-.champion-card p {
-  font-weight: bold;
-}
-.champion-banner {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  padding: 15px;
-  border-radius: 16px;
-  margin-bottom: 20px;
-
-  background: linear-gradient(135deg, #facc15, #fde68a);
-  border: 1px solid #facc15;
-
-  box-shadow: 0 10px 25px rgba(250, 204, 21, 0.3);
-}
-
-.champion-banner img {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-}
-
-.champion-banner p {
-  font-size: 12px;
-  font-weight: 600;
-  color: #78350f;
-}
-
-.champion-banner h3 {
-  margin: 0;
-  color: #451a03;
-}
-.empty-state {
-  text-align: center;
-  margin-top: 30px;
-  padding: 20px;
-  border-radius: 12px;
   background: #f1f5f9;
-  color: #64748b;
-  border: 1px dashed #cbd5e1;
-  font-size: 14px;
 }
-/* CONTENEDOR */
-/* 🔥 CONTENEDOR PRINCIPAL */
+
+/* 🔥 FILTROS PRO */
 .filters-pro {
-  background: #ffffff;
-  padding: 18px;
+  background: white;
+  padding: 20px;
   border-radius: 20px;
   border: 1px solid #e5e7eb;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
   margin-bottom: 25px;
 
   display: flex;
-  justify-content: space-between; /* 🔥 clave */
-  align-items: flex-start;
   gap: 20px;
+  flex-wrap: wrap; /* 🔥 responsive automático */
+  align-items: flex-start;
 }
 
-/* cada bloque ocupa espacio similar */
+/* 🔹 GRUPOS */
 .filter-group {
-  flex: 1;
+  flex: 1 1 200px;
+}
+
+/* 🔹 TITULOS */
+.filter-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #000000;
+  margin-bottom: 6px;
+}
+
+/* 🔹 CHIPS */
+.chips {
+  color: #0f172a; /* 🔥 antes podía perderse */
   display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;
+  color: #0f172a;
   gap: 8px;
 }
 
-/* campeón a la derecha */
-.champion-side {
-  flex: 0 0 260px;
-  display: flex;
-  justify-content: flex-end;
+.chip {
+  padding: 7px 12px;
+  border-radius: 999px;
+  color: #0f172a; /* 🔥 texto visible */
+  border: 1px solid #e5e7eb;
+  background: #f8fafc;
+  font-size: 12px;
+  cursor: pointer;
+  transition: 0.2s;
 }
 
-/* TITULO */
-.filter-title {
-  font-size: 13px;
-  font-weight: 600;
+.chip:hover {
+  transform: translateY(-2px);
+}
+
+/* 🔥 ACTIVOS */
+.chip.active {
+  background: linear-gradient(135deg, #22c55e, #4ade80);
+  color: rgb(255, 255, 255);
+}
+
+.chip.secondary.active {
+  background: linear-gradient(135deg, #3b82f6, #60a5fa);
+  color: white;
+}
+
+/* 🔥 CAMPEÓN */
+.champion-side {
+  flex: 1 1 220px;
+}
+
+.champion-card {
+  background: linear-gradient(135deg, #facc15, #fde68a);
+  border-radius: 18px;
+  padding: 15px;
+  color: #78350f;
+  text-align: center;
+  animation: pop 0.4s ease;
+}
+.champion-card h3 {
+  color: #451a03;
+}
+
+.champion-card p {
+  color: #78350f;
+}
+
+.champion-card img {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+}
+
+@keyframes pop {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* 🔥 EMPTY */
+.empty-state {
+  text-align: center;
+  padding: 20px;
+  border-radius: 12px;
+  background: #fff;
+  border: 1px dashed #cbd5e1;
+  font-size: 14px;
   color: #64748b;
 }
 
-/* CHIPS */
-.chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-/* BOTONES */
-.chip {
-  padding: 8px 14px;
-  border-radius: 999px;
-  border: 1px solid #e5e7eb;
-  background: #f8fafc;
-  color: #1e293b;
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: 0.25s;
-}
-
-/* HOVER */
-.chip:hover {
-  background: #e2e8f0;
-  transform: scale(1.05);
-}
-
-/* ACTIVO */
-.chip.active {
-  background: linear-gradient(135deg, #22c55e, #4ade80);
-  color: white;
-  border-color: transparent;
-  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
-}
-
-/* SEGUNDO NIVEL */
-.chip.secondary.active {
-  background: linear-gradient(135deg, #3b82f6, #60a5fa);
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-}
-
-.awards,
-.table-container {
-  animation: fadeIn 0.4s ease;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* CONTENEDOR PREMIOS */
-
+/* 🔥 PREMIOS (NUEVO LOOK) */
 .awards {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   gap: 15px;
   margin-bottom: 25px;
 }
 
-/* CARD */
+/* 🔹 CARD */
 .award-card {
-  background: white;
-  border-radius: 16px;
+  border-radius: 18px;
   padding: 15px;
   text-align: center;
-  border: 1px solid #e5e7eb;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  background: white;
   transition: 0.3s;
+  border: 1px solid #e5e7eb;
+  position: relative;
+  overflow: hidden;
+  color: #0f172a; /* 🔥 texto principal visible */
 }
 
-.award-card:hover {
-  transform: translateY(-5px);
+/* 🔥 EFECTO HOVER PRO */
+.award-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    120deg,
+    transparent,
+    rgba(255, 255, 255, 0.4),
+    transparent
+  );
+  opacity: 0;
+  transition: 0.4s;
 }
 
-/* IMAGEN */
-.award-card img {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  margin-bottom: 10px;
+.award-card:hover::before {
+  opacity: 1;
+}
+.award-card span {
+  color: #64748b;
 }
 
-/* TITULO */
+.award-card p {
+  color: #0f172a;
+}
+
 .award-card h3 {
-  font-size: 14px;
-  margin-bottom: 5px;
   color: #1e293b;
 }
-
-/* NOMBRE */
-.award-card p {
-  font-weight: bold;
-  color: #0f172a;
+.award-card:hover {
+  transform: translateY(-6px);
 }
 
-/* EXTRA */
-.award-card span {
-  font-size: 12px;
-  color: #64748b;
+/* 🔹 IMG */
+.award-card img {
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
 }
 
-/* COLORES POR TIPO */
+/* 🔹 COLORES */
 .mvp {
   background: #fef9c3;
-  border-color: #facc15;
 }
-
 .scorer {
   background: #ecfdf5;
-  border-color: #22c55e;
 }
-
 .defense {
   background: #eff6ff;
-  border-color: #3b82f6;
 }
-
 .keeper {
   background: #f5f3ff;
-  border-color: #8b5cf6;
-}
-.container {
-  padding: 30px;
-  background: #f8fafc;
-  min-height: 100vh;
 }
 
-/* TITULOS */
-.title {
-  font-size: 24px;
-  font-weight: bold;
-  color: #0f172a;
-}
-
-.subtitle {
-  color: #64748b;
-  margin-bottom: 20px;
-}
-
-/* TABLA */
+/* 🔥 TABLA PRO */
 .table-container {
   background: white;
-  border-radius: 16px;
-  overflow: hidden;
+  border-radius: 18px;
+  overflow-x: auto; /* 🔥 scroll en móvil */
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
 }
 
+/* 🔹 TABLA */
 .table {
   width: 100%;
+  min-width: 600px; /* 🔥 evita romper en móvil */
   border-collapse: collapse;
 }
 
-/* HEADER */
+/* 🔹 HEADER */
 thead {
-  background: #f1f5f9;
+  background: #0f172a;
 }
 
 th {
-  padding: 14px;
-  font-size: 13px;
-  text-align: center;
-  color: #475569;
+  padding: 12px;
+   color: white; /* 🔥 antes negro sobre fondo oscuro */
+  font-size: 12px;
 }
 
-/* FILAS */
+/* 🔹 FILAS */
 td {
-  padding: 14px;
+  padding: 12px;
   text-align: center;
-  color: #1e293b;
-  font-weight: 500;
+  color: #1e293b; /* 🔥 mejor contraste */
 }
 
 tbody tr {
   border-bottom: 1px solid #e5e7eb;
-  transition: 0.2s;
 }
 
 tbody tr:hover {
   background: #f8fafc;
 }
 
-/* EQUIPO */
+/* 🔹 EQUIPO */
 .team {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
+  color: #0f172a;
   justify-content: flex-start;
-  font-weight: 600;
 }
 
 .team img {
-  width: 28px;
-  height: 28px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
 }
 
-/* COLORES */
+/* 🔹 COLORES */
 .win {
   color: #16a34a;
-  font-weight: bold;
 }
-
 .lose {
   color: #dc2626;
-  font-weight: bold;
 }
-
 .points {
   font-weight: bold;
-  color: #0f172a;
+   color: #0f172a;
 }
 
-/* POSICION */
-.pos {
+/* 📱 RESPONSIVE */
+@media (max-width: 768px) {
+  .container {
+    padding: 15px;
+  }
+
+  .filters-pro {
+    flex-direction: column;
+  }
+
+  .champion-side {
+    width: 100%;
+  }
+
+  .awards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .table {
+    font-size: 12px;
+  }
+}
+/* 🔥 SELECTOR BASE */
+.selector {
+  width: 100%;
+}
+
+/* 🔥 TABS (LIGAS) */
+.selector-tabs {
+  display: flex;
+  gap: 10px;
+  background: #f1f5f9;
+  padding: 6px;
+  border-radius: 12px;
+}
+
+.tab {
+  flex: 1;
+  text-align: center;
+  padding: 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 14px;
+    color: #475569; /* 🔥 gris visible */
+  transition: 0.3s;
+}
+
+/* 🔥 ACTIVE TAB */
+.tab.active {
+  background: white;
+  color: #0f172a;
   font-weight: bold;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+}
+
+/* 🔥 CATEGORÍAS */
+.selector-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 10px;
+}
+
+/* 🔥 CARD */
+.category-card {
+  color: #0f172a;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 12px;
+  text-align: center;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.category-card p {
+  color: #1e293b;
+}
+
+/* ICON */
+.category-card span {
+  font-size: 20px;
+}
+
+/* TEXTO */
+.category-card p {
+  margin-top: 5px;
+  font-size: 13px;
+}
+
+/* HOVER */
+.category-card:hover {
+  transform: translateY(-3px);
+}
+
+/* ACTIVE */
+.category-card.active {
+  background: linear-gradient(135deg, #3b82f6, #60a5fa);
+  color: white;
+  border: none;
+  box-shadow: 0 8px 20px rgba(59,130,246,0.3);
 }
 </style>
