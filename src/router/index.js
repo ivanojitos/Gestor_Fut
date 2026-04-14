@@ -8,6 +8,7 @@ import PosicionesView from "../views/Dashboard/Equipos/EquiposView.vue";
 import PerfilView from "../views/Dashboard/Perfil/PerfilView.vue";
 import LoginSecundario from "../views/Session/loginsecundarioview.vue";
 import RolJuegoView from "../views/Dashboard/RolesJuego/rolJuegoView.vue";
+import DashArbitro from "../views/DashArbitro/dashboardView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -64,6 +65,10 @@ const router = createRouter({
           path: "roles",
           component: RolJuegoView,
         },
+        {
+          path: "dashArbitro",
+          component: DashArbitro,
+        },
       ],
     },
   ],
@@ -71,12 +76,19 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   const isAuth = localStorage.getItem("auth");
+  const role = localStorage.getItem("role");
 
-  if (to.path === "/dashboard" && !isAuth) {
-    next("/");
-  } else {
-    next();
+  // 🔒 si no está autenticado
+  if (to.path.startsWith("/dashboard") && !isAuth) {
+    return next("/");
   }
+
+  // 🧤 si intenta entrar al dashboard de árbitro sin ser árbitro
+  if (to.path.includes("dashArbitro") && role !== "arbitro") {
+    return next("/dashboard");
+  }
+
+  next();
 });
 
 export default router;

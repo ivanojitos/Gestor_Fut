@@ -61,7 +61,14 @@ const error = ref("");
 const login = () => {
   if (form.email === "admin@test.com" && form.password === "1234") {
     localStorage.setItem("auth", "true");
+    localStorage.setItem("role", "admin"); // 🔥 guardas rol
     router.push("/login-real");
+
+  } else if (form.email === "arbitro@test.com" && form.password === "1234") {
+    localStorage.setItem("auth", "true");
+    localStorage.setItem("role", "arbitro"); // 🔥 guardas rol
+    router.push("/dashboard/dashArbitro");
+
   } else {
     error.value = "Credenciales incorrectas";
   }

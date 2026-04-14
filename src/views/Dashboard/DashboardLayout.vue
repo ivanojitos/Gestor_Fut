@@ -1,42 +1,53 @@
 <template>
   <div class="layout">
-    <!-- Sidebar -->
+
+    <!-- SIDEBAR -->
     <aside class="sidebar">
       <h2 class="logo">⚽ FutManager</h2>
 
       <nav>
-        <router-link to="/dashboard/perfil"> <Home /> Perfil </router-link>
-
-        <!-- <router-link to="/dashboard/torneos"> <Trophy /> Torneos </router-link> -->
-
-        <router-link to="/dashboard/posiciones">
-          <Users /> Posiciones
+        <router-link to="/dashboard/perfil">
+          <Home /> <span>Perfil</span>
         </router-link>
 
-        <router-link to="/dashboard/roles"> <Users /> Rol juego </router-link>
+        <router-link to="/dashboard/posiciones">
+          <Users /> <span>Posiciones</span>
+        </router-link>
 
-        <router-link to="/dashboard/ligas"> <Users /> Ligas </router-link>
+        <router-link to="/dashboard/roles">
+          <Users /> <span>Rol juego</span>
+        </router-link>
+
+        <router-link to="/dashboard/ligas">
+          <Users /> <span>Ligas</span>
+        </router-link>
       </nav>
-
-      <button class="logout" @click="logout">Cerrar sesión</button>
     </aside>
 
-    <!-- Contenido -->
+    <!-- MAIN -->
     <div class="main">
+
+      <!-- HEADER -->
       <header class="header">
-        <h1>Datos Personales</h1>
+
+        <button class="logout" @click="logout">
+          🚪 Cerrar sesión
+        </button>
       </header>
 
+      <!-- CONTENT -->
       <section class="content">
         <router-view />
       </section>
+
     </div>
   </div>
 </template>
 
 <script setup>
 import { useRouter } from "vue-router";
-import { Home, Trophy, Users } from "lucide-vue-next";
+import { Home, Users } from "lucide-vue-next";
+
 const router = useRouter();
 
 const logout = () => {
@@ -46,94 +57,61 @@ const logout = () => {
 </script>
 
 <style scoped>
-/* LAYOUT GENERAL */
+
+/* BASE */
 .layout {
   display: flex;
-  min-height: 100vh; /* 🔥 mejor que height */
-  height: 100vh;
-  background: linear-gradient(135deg, #ffffff, #ffffff);
-  color: #f1f5f9;
+  min-height: 100vh;
+  background: #f3f4f6;
   font-family: "Segoe UI", sans-serif;
 }
 
 /* SIDEBAR */
 .sidebar {
-  width: 260px;
-  background: linear-gradient(180deg, #83a3ec, #1e293b);
-  padding: 30px 20px;
+  width: 240px;
+  background: #1e293b;
+  color: white;
+  padding: 20px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  box-shadow: 5px 0 20px rgba(0, 0, 0, 0.3);
-  transition: 0.3s;
+  gap: 30px;
 }
 
 /* LOGO */
 .logo {
-  font-size: 24px;
+  font-size: 22px;
   font-weight: bold;
   text-align: center;
-  margin-bottom: 40px;
-  color: #2a2c2b;
-  letter-spacing: 2px;
 }
 
 /* NAV */
 nav {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 10px;
 }
 
 nav a {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 14px;
-  border-radius: 12px;
+  gap: 10px;
+  padding: 12px;
+  border-radius: 10px;
   text-decoration: none;
-  color: #e2e8f0;
-  font-size: 16px;
-  font-weight: 500;
-  transition: all 0.3s ease;
+  color: #cbd5f5;
+  transition: 0.2s;
 }
 
-/* ICONOS MÁS GRANDES */
-nav svg {
-  width: 22px;
-  height: 22px;
-}
-
-/* HOVER */
 nav a:hover {
-  background: rgba(136, 107, 184, 0.2);
-  color: #ffffff;
-  transform: translateX(6px);
+  background: #334155;
+  color: white;
 }
 
 /* ACTIVE */
 .router-link-exact-active {
-  background: linear-gradient(90deg, #22c55e, #4ade80);
+  background: #22c55e;
   color: #022c22;
   font-weight: bold;
-  box-shadow: 0 0 15px rgba(34, 197, 94, 0.6);
-}
-
-/* BOTÓN LOGOUT */
-.logout {
-  background: linear-gradient(135deg, #ef4444, #dc2626);
-  border: none;
-  padding: 14px;
-  border-radius: 12px;
-  color: white;
-  font-size: 15px;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-.logout:hover {
-  transform: scale(1.07);
-  box-shadow: 0 0 12px rgba(239, 68, 68, 0.7);
 }
 
 /* MAIN */
@@ -145,71 +123,98 @@ nav a:hover {
 
 /* HEADER */
 .header {
-  background: rgba(98, 140, 206, 0.9);
-  backdrop-filter: blur(6px);
-  padding: 25px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: white;
+  padding: 16px 24px;
+  border-bottom: 1px solid #e5e7eb;
 }
 
+/* TITLE */
 .header h1 {
-  font-size: 26px;
-  font-weight: bold;
-  color: #000000;
+  font-size: 22px;
+  color: #111;
 }
 
-/* CONTENIDO */
+/* LOGOUT BUTTON */
+.logout {
+  background: #ef4444;
+  color: white;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: 0.2s;
+  margin-left: auto; /* 🔥 esto lo manda al final */
+}
+
+.logout:hover {
+  background: #dc2626;
+}
+
+/* CONTENT */
 .content {
-  padding: 30px;
+  padding: 20px;
   overflow-y: auto;
 }
 
 /* SCROLL */
 .content::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
 }
 
 .content::-webkit-scrollbar-thumb {
-  background: #fafffc;
+  background: #cbd5f5;
   border-radius: 10px;
 }
-@media (max-width: 768px) {
+
+/* 🔥 RESPONSIVE */
+@media (max-width: 900px) {
+
   .layout {
-    flex-direction: column; /* 🔥 cambia estructura */
+    flex-direction: column;
   }
 
+  /* SIDEBAR → TOP NAV */
   .sidebar {
     width: 100%;
-    height: auto;
-
-    flex-direction: row; /* 🔥 horizontal */
+    flex-direction: row;
     align-items: center;
     justify-content: space-between;
-
-    padding: 15px;
+    padding: 10px 15px;
   }
 
   .logo {
-    margin: 0;
-    font-size: 18px;
+    font-size: 16px;
   }
 
   nav {
-    flex-direction: row; /* 🔥 menú horizontal */
-    gap: 10px;
+    flex-direction: row;
+    gap: 5px;
   }
 
   nav a {
-    padding: 10px;
-    font-size: 14px;
+    padding: 8px;
+    font-size: 12px;
+  }
+
+  nav span {
+    display: none; /* 🔥 solo iconos en móvil */
+  }
+
+  /* HEADER */
+  .header {
+    padding: 12px 15px;
+  }
+
+  .header h1 {
+    font-size: 18px;
   }
 
   .logout {
-    padding: 10px;
-    font-size: 13px;
-  }
-
-  .main {
-    width: 100%;
+    padding: 8px 10px;
+    font-size: 12px;
   }
 
   .content {
