@@ -59,7 +59,7 @@ const form = reactive({
 const error = ref("");
 
 const login = () => {
-  if (form.email === "admin@test.com" && form.password === "1234") {
+  if (form.email === "jugador@test.com" && form.password === "1234") {
     localStorage.setItem("auth", "true");
     localStorage.setItem("role", "admin"); // 🔥 guardas rol
     router.push("/login-real");
@@ -68,6 +68,11 @@ const login = () => {
     localStorage.setItem("auth", "true");
     localStorage.setItem("role", "arbitro"); // 🔥 guardas rol
     router.push("/dashboard/dashArbitro");
+
+  } else if (form.email === "administrador@test.com" && form.password === "1234") {
+    localStorage.setItem("auth", "true");
+    localStorage.setItem("role", "administrador"); // 🔥 guardas rol
+    router.push("/dashboard/dashAdministrador");
 
   } else {
     error.value = "Credenciales incorrectas";
