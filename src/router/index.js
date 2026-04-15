@@ -10,6 +10,7 @@ import LoginSecundario from "../views/Session/loginsecundarioview.vue";
 import RolJuegoView from "../views/Dashboard/RolesJuego/rolJuegoView.vue";
 import DashArbitro from "../views/DashArbitro/dashboardView.vue";
 import DashAdministrador from "../views/DashAdministrador/dashAdministradorView.vue";
+import ProgramarJuegoView from "../views/DashAdministrador/programarJuegoView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -73,6 +74,10 @@ const router = createRouter({
         {
           path: "dashAdministrador",
           component: DashAdministrador,
+        },
+        {
+          path: "programarJuego",
+          component: ProgramarJuegoView,
         },
       ],
     },
