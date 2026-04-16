@@ -34,10 +34,23 @@ const password = ref("");
 const error = ref("");
 const router = useRouter();
 
+
 const login = () => {
-  if (email.value === "admin@test.com" && password.value === "1234") {
+  if (email.value === "jugador@test.com" && password.value === "1234") {
     localStorage.setItem("auth", "true");
-    router.push('/dashboard');
+    localStorage.setItem("role", "admin"); // 🔥 guardas rol
+    router.push("/dashboard");
+
+  } else if (email.value === "arbitro@test.com" && password.value === "1234") {
+    localStorage.setItem("auth", "true");
+    localStorage.setItem("role", "arbitro"); // 🔥 guardas rol
+    router.push("/dashboard/dashArbitro");
+
+  } else if (email.value === "administrador@test.com" && password.value === "1234") {
+    localStorage.setItem("auth", "true");
+    localStorage.setItem("role", "administrador"); // 🔥 guardas rol
+    router.push("/dashboard/dashAdministrador");
+
   } else {
     error.value = "Credenciales incorrectas";
   }

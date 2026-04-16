@@ -18,7 +18,7 @@ const router = createRouter({
   routes: [
     {
       path: "/",
-      component: LoginSecundario,
+      component: LoginView,
     },
     {
       path: "/login-real",
