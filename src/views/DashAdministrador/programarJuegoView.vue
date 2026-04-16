@@ -1,6 +1,5 @@
 <template>
   <div class="admin">
-
     <!-- HEADER -->
     <div class="header">
       <div>
@@ -8,9 +7,16 @@
         <p class="subtitle">Gestión de encuentros deportivos</p>
       </div>
 
-      <button class="backBtn" @click="goBack">
-        ← Regresar
-      </button>
+      <!-- 🔥 BOTONES AGRUPADOS -->
+      <div class="actions">
+        <button class="secondaryBtn" @click="goToPartidos">
+          📋 Ver partidos
+        </button>
+
+        <button class="backBtn" @click="goBack">
+          ← Regresar
+        </button>
+      </div>
     </div>
 
     <!-- FILTROS -->
@@ -27,12 +33,10 @@
     </div>
 
     <div class="container">
-
       <!-- EQUIPOS -->
       <div class="card">
         <h3>Equipos</h3>
 
-        <!-- SELECTOR LOCAL / VISITA (RESTORED) -->
         <div class="slotSelector">
           <button
             :class="{ active: teamSlot === 'home' }"
@@ -58,7 +62,6 @@
           >
             <span>⚽ {{ team.name }}</span>
 
-            <!-- contador de partidos -->
             <span v-if="teamMatchCount[team.name]" class="badge">
               {{ teamMatchCount[team.name] }}
             </span>
@@ -68,12 +71,8 @@
 
       <!-- CANCHA -->
       <div class="card fieldCard">
-
         <div class="pitch">
-
-          <div class="score">
-            ⏰ {{ selected.time || "--:--" }}
-          </div>
+          <div class="score">⏰ {{ selected.time || "--:--" }}</div>
 
           <div class="teams">
             <span class="home">{{ selected.home || "LOCAL" }}</span>
@@ -84,21 +83,17 @@
           <div class="circle"></div>
 
           <div class="info">
-            🏟 {{ selected.field || "Cancha" }} ·
-            👨‍⚖ {{ selected.referee || "Árbitro" }} ·
-            📅 {{ selected.date || "--" }}
+            🏟 {{ selected.field || "Cancha" }} · 👨‍⚖
+            {{ selected.referee || "Árbitro" }} · 📅 {{ selected.date || "--" }}
           </div>
-
         </div>
       </div>
 
       <!-- CONFIG -->
       <div class="card config">
-
         <h3 class="configTitle">⚙️ Configuración</h3>
 
         <div class="formGrid">
-
           <div class="field">
             <label>Árbitro</label>
             <select v-model="selected.referee">
@@ -124,21 +119,21 @@
             <label>Hora</label>
             <input type="time" v-model="selected.time" />
           </div>
-
         </div>
 
         <button class="saveBtn" @click="saveMatch">
           💾 Guardar Partido
         </button>
-
       </div>
-
     </div>
   </div>
 </template>
 
 <script setup>
 import { ref, computed } from "vue";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
 
 /* FILTROS */
 const selectedLeague = ref("");
@@ -156,15 +151,19 @@ const teams = [
   { name: "Tigres", league: "Liga Premier", category: "Sub-20" },
 ];
 
-const goBack = () => window.history.back();
+const goBack = () => router.back();
+
+const goToPartidos = () => {
+  router.push({ name: "partidosProgramados" });
+};
 
 /* FILTRO */
 const filteredTeams = computed(() =>
   teams.filter(
-    t =>
+    (t) =>
       (!selectedLeague.value || t.league === selectedLeague.value) &&
-      (!selectedCategory.value || t.category === selectedCategory.value)
-  )
+      (!selectedCategory.value || t.category === selectedCategory.value),
+  ),
 );
 
 /* LOCAL / VISITANTE */
@@ -182,15 +181,14 @@ const selected = ref({
 const referees = ["Carlos", "Luis", "Pedro"];
 const fields = ["Cancha 1", "Cancha 2", "Cancha 3"];
 
-/* PARTIDOS */
 const matches = ref([]);
 
-/* SELECCIONAR EQUIPO */
+/* SELECCIONAR */
 const selectTeam = (team) => {
   selected.value[teamSlot.value] = team;
 };
 
-/* GUARDAR PARTIDO */
+/* GUARDAR */
 const saveMatch = () => {
   if (
     !selected.value.home ||
@@ -215,11 +213,11 @@ const saveMatch = () => {
   };
 };
 
-/* CONTADOR DE PARTIDOS (SIN BLOQUEAR REPETIDOS) */
+/* CONTADOR */
 const teamMatchCount = computed(() => {
   const c = {};
 
-  matches.value.forEach(m => {
+  matches.value.forEach((m) => {
     if (!m.home || !m.away) return;
 
     c[m.home] = (c[m.home] || 0) + 1;
@@ -231,8 +229,6 @@ const teamMatchCount = computed(() => {
 </script>
 
 <style scoped>
-
-/* BASE */
 .admin {
   min-height: 100vh;
   padding: 25px;
@@ -248,18 +244,29 @@ const teamMatchCount = computed(() => {
   margin-bottom: 20px;
 }
 
-.title {
-  font-size: 22px;
-  font-weight: 800;
+/* 🔥 ACCIONES */
+.actions {
+  display: flex;
+  gap: 10px;
 }
 
-.subtitle {
-  font-size: 12px;
-  color: #64748b;
+/* BOTÓN SECUNDARIO */
+.secondaryBtn {
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid #cbd5e1;
+  background: white;
+  cursor: pointer;
+  font-weight: 500;
 }
 
+.secondaryBtn:hover {
+  background: #e0f2fe;
+}
+
+/* BOTÓN REGRESAR */
 .backBtn {
-  padding: 10px 16px;
+  padding: 10px 14px;
   border-radius: 10px;
   border: 1px solid #e2e8f0;
   background: white;
@@ -270,7 +277,7 @@ const teamMatchCount = computed(() => {
   background: #f1f5f9;
 }
 
-/* FILTROS */
+/* RESTO IGUAL */
 .filters {
   display: flex;
   gap: 10px;
@@ -278,16 +285,14 @@ const teamMatchCount = computed(() => {
   flex-wrap: wrap;
 }
 
-/* INPUTS */
-select, input {
-  padding: 10px 12px;
+select,
+input {
+  padding: 10px;
   border-radius: 12px;
   border: 1px solid #e2e8f0;
   background: white;
-  min-width: 140px;
 }
 
-/* GRID */
 .container {
   display: grid;
   grid-template-columns: 1fr 2fr 1fr;
@@ -300,7 +305,6 @@ select, input {
   }
 }
 
-/* CARD */
 .card {
   background: white;
   border-radius: 16px;
@@ -308,7 +312,6 @@ select, input {
   border: 1px solid #e2e8f0;
 }
 
-/* SLOT SELECTOR (RESTORED + MEJORADO) */
 .slotSelector {
   display: flex;
   gap: 8px;
@@ -322,7 +325,6 @@ select, input {
   border: none;
   cursor: pointer;
   background: #e2e8f0;
-  transition: 0.2s;
 }
 
 .slotSelector .active {
@@ -330,7 +332,6 @@ select, input {
   color: white;
 }
 
-/* TEAMS */
 .teamItem {
   display: flex;
   justify-content: space-between;
@@ -351,7 +352,6 @@ select, input {
   font-size: 11px;
 }
 
-/* CANCHA */
 .fieldCard {
   display: flex;
   align-items: center;
@@ -366,12 +366,11 @@ select, input {
   background: linear-gradient(135deg, #1f6f3f, #2f8f4e);
 }
 
-/* LINEAS */
 .line {
   position: absolute;
   width: 2px;
   height: 100%;
-  background: rgba(255,255,255,0.7);
+  background: rgba(255, 255, 255, 0.7);
   left: 50%;
 }
 
@@ -379,21 +378,19 @@ select, input {
   position: absolute;
   width: 90px;
   height: 90px;
-  border: 2px solid rgba(255,255,255,0.7);
+  border: 2px solid rgba(255, 255, 255, 0.7);
   border-radius: 50%;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
 }
 
-/* INFO */
 .score {
   position: absolute;
   top: 10px;
   width: 100%;
   text-align: center;
   color: white;
-  font-weight: bold;
 }
 
 .teams {
@@ -404,11 +401,6 @@ select, input {
   justify-content: space-between;
   padding: 0 25px;
   color: white;
-  font-weight: bold;
-}
-
-.home, .away {
-  text-shadow: 0 2px 6px rgba(0,0,0,0.4);
 }
 
 .info {
@@ -417,33 +409,9 @@ select, input {
   width: 90%;
   left: 5%;
   text-align: center;
-  background: rgba(255,255,255,0.95);
+  background: white;
   padding: 8px;
   border-radius: 10px;
   font-size: 12px;
-}
-
-/* CONFIG */
-.config {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
-.configTitle {
-  font-weight: 800;
-}
-
-/* FORM */
-.formGrid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-
-.field {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
 }
 </style>

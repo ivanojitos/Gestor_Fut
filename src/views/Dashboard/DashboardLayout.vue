@@ -1,6 +1,5 @@
 <template>
   <div class="layout">
-
     <!-- SIDEBAR -->
     <aside class="sidebar">
       <h2 class="logo">⚽ FutManager</h2>
@@ -26,20 +25,15 @@
 
     <!-- MAIN -->
     <div class="main">
-
       <!-- HEADER -->
       <header class="header">
-
-        <button class="logout" @click="logout">
-          🚪 Cerrar sesión
-        </button>
+        <button class="logout" @click="logout">🚪 Cerrar sesión</button>
       </header>
 
       <!-- CONTENT -->
       <section class="content">
         <router-view />
       </section>
-
     </div>
   </div>
 </template>
@@ -57,24 +51,24 @@ const logout = () => {
 </script>
 
 <style scoped>
-
 /* BASE */
 .layout {
   display: flex;
   min-height: 100vh;
-  background: #f3f4f6;
+  background: #f3f3f3;
   font-family: "Segoe UI", sans-serif;
+  color: #111827;
 }
 
 /* SIDEBAR */
 .sidebar {
   width: 240px;
-  background: #1e293b;
-  color: white;
+  background: #ffffff;
   padding: 20px;
   display: flex;
   flex-direction: column;
   gap: 30px;
+  border-right: 1px solid #e5e7eb;
 }
 
 /* LOGO */
@@ -82,6 +76,7 @@ const logout = () => {
   font-size: 22px;
   font-weight: bold;
   text-align: center;
+  color: #111827;
 }
 
 /* NAV */
@@ -98,20 +93,20 @@ nav a {
   padding: 12px;
   border-radius: 10px;
   text-decoration: none;
-  color: #cbd5f5;
+  color: #111827;
   transition: 0.2s;
 }
 
+/* HOVER 🔵 */
 nav a:hover {
-  background: #334155;
-  color: white;
+  background: #e0f2fe;
 }
 
-/* ACTIVE */
+/* ACTIVE 🔵 */
 .router-link-exact-active {
-  background: #22c55e;
-  color: #022c22;
-  font-weight: bold;
+  background: #bae6fd;
+  color: #0284c7;
+  font-weight: 600;
 }
 
 /* MAIN */
@@ -124,33 +119,26 @@ nav a:hover {
 /* HEADER */
 .header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  background: white;
+  background: #ffffff;
   padding: 16px 24px;
   border-bottom: 1px solid #e5e7eb;
 }
 
-/* TITLE */
-.header h1 {
-  font-size: 22px;
-  color: #111;
-}
-
 /* LOGOUT BUTTON */
 .logout {
-  background: #ef4444;
+  background: #0284c7;
   color: white;
   border: none;
   padding: 10px 14px;
   border-radius: 10px;
   cursor: pointer;
   transition: 0.2s;
-  margin-left: auto; /* 🔥 esto lo manda al final */
+  margin-left: auto;
 }
 
 .logout:hover {
-  background: #dc2626;
+  background: #0369a1;
 }
 
 /* CONTENT */
@@ -165,18 +153,16 @@ nav a:hover {
 }
 
 .content::-webkit-scrollbar-thumb {
-  background: #cbd5f5;
+  background: #0284c7;
   border-radius: 10px;
 }
 
-/* 🔥 RESPONSIVE */
+/* RESPONSIVE */
 @media (max-width: 900px) {
-
   .layout {
     flex-direction: column;
   }
 
-  /* SIDEBAR → TOP NAV */
   .sidebar {
     width: 100%;
     flex-direction: row;
@@ -200,16 +186,11 @@ nav a:hover {
   }
 
   nav span {
-    display: none; /* 🔥 solo iconos en móvil */
+    display: none;
   }
 
-  /* HEADER */
   .header {
     padding: 12px 15px;
-  }
-
-  .header h1 {
-    font-size: 18px;
   }
 
   .logout {

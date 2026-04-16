@@ -1,62 +1,99 @@
+<!-- 🔥 VISTA UNIFICADA: PARTIDOS EN CURSO + PROGRAMADOS -->
 <template>
   <div class="admin">
-    <section class="liveSection">
-      <h2>🔴 Partidos en curso</h2>
+    <!-- HEADER -->
+    <div class="header">
+      <h2>⚽ Gestión de Partidos</h2>
 
-      <!-- FILTROS -->
-      <div class="filtersRow">
+      <div class="actions">
+        <button class="secondaryBtn" @click="goToPartidos">
+          📋 Ver partidos
+        </button>
 
-        <!-- IZQUIERDA -->
-        <div class="filters">
+        <button class="primaryBtn" @click="goToProgramarJuego">
+          ➕ Programar juego
+        </button>
+      </div>
+    </div>
 
-          <input type="date" v-model="filterDate" />
-
-          <select v-model="filterShift">
-            <option value="">Todos los turnos</option>
-            <option value="morning">🌅 Matutino</option>
-            <option value="night">🌙 Nocturno</option>
-          </select>
-
-          <!-- NUEVO FILTRO -->
-          <select v-model="filterResult">
-            <option value="">📊 Resultado</option>
-            <option value="win">🟢 Ganados</option>
-            <option value="draw">🟡 Empatados</option>
-            <option value="loss">🔴 Perdidos</option>
-          </select>
-
-          <button class="createBtn" @click="goToProgramarJuego">
-            ➕ Programar juego
-          </button>
-        </div>
-
-        <!-- DERECHA -->
-        <div class="refereeSummary">
-          <div v-for="(count, ref) in refereeCount" :key="ref" class="refItem">
-            👨‍⚖ {{ ref }}: <b>{{ count }}</b>
-          </div>
-        </div>
-
+    <!-- FILTROS GLOBAL -->
+    <div class="filters">
+      <div class="filterItem">
+        <label>📅 Fecha</label>
+        <input type="date" v-model="filterDate" />
       </div>
 
-      <!-- LISTA -->
-      <div v-for="m in filteredMatches" :key="m.id" class="liveCard">
+      <div class="filterItem">
+        <label>🏆 Liga</label>
+        <select v-model="filterLeague">
+          <option value="">Todas</option>
+          <option v-for="l in leagues" :key="l">{{ l }}</option>
+        </select>
+      </div>
 
-        <div class="liveTeams">
+      <div class="filterItem">
+        <label>📂 Categoría</label>
+        <select v-model="filterCategory">
+          <option value="">Todas</option>
+          <option v-for="c in categories" :key="c">{{ c }}</option>
+        </select>
+      </div>
+
+      <div class="filterItem">
+        <label>🕒 Turno</label>
+        <select v-model="filterShift">
+          <option value="">Todos</option>
+          <option value="morning">🌅 Matutino</option>
+          <option value="night">🌙 Nocturno</option>
+        </select>
+      </div>
+
+      <div class="filterItem">
+        <label>📊 Resultado</label>
+        <select v-model="filterResult">
+          <option value="">Todos</option>
+          <option value="win">🟢 Ganados</option>
+          <option value="draw">🟡 Empatados</option>
+          <option value="loss">🔴 Perdidos</option>
+        </select>
+      </div>
+
+      <button class="clearBtn" @click="clearFilters">❌ Limpiar</button>
+    </div>
+
+    <!-- RESUMEN ARBITROS -->
+    <div class="refereeSummary">
+      <div v-for="(count, ref) in refereeCount" :key="ref" class="refItem">
+        👨‍⚖ {{ ref }}: <b>{{ count }}</b>
+      </div>
+    </div>
+
+    <!-- LISTA UNIFICADA -->
+    <div class="list">
+      <div v-for="m in filteredMatches" :key="m.id" class="card">
+        <div class="top">
+          <span>🏆 {{ m.league }}</span>
+          <span>📂 {{ m.category }}</span>
+        </div>
+
+        <div class="teams">
           <b>{{ m.home }} {{ m.homeScore ?? 0 }}</b>
           <span class="vs">VS</span>
           <b>{{ m.away }} {{ m.awayScore ?? 0 }}</b>
         </div>
 
-        <div class="liveInfo">
+        <div class="info">
           <span>📅 {{ m.date }}</span>
           <span>⏰ {{ m.time }}</span>
           <span>🏟 {{ m.field }}</span>
           <span>👨‍⚖ {{ m.referee }}</span>
         </div>
-
       </div>
-    </section>
+    </div>
+
+    <p v-if="!filteredMatches.length" class="empty">
+      No hay partidos con esos filtros
+    </p>
   </div>
 </template>
 
@@ -66,142 +103,222 @@ import { useRouter } from "vue-router";
 
 const router = useRouter();
 
-/* FILTROS */
-const filterDate = ref("");
-const filterShift = ref("");
-const filterResult = ref(""); // 👈 NUEVO
+const goBack = () => router.back();
+const goToProgramarJuego = () => router.push("/dashboard/programarJuego");
 
-/* PARTIDOS */
-const liveMatches = ref([
+const goToPartidos = () => {
+  router.push({ name: "partidosProgramados" });
+};
+/* DATA */
+const matches = ref([
   {
     id: 1,
-    home: "FIFA CLUB",
-    away: "REAL STARS",
+    home: "Real Madrid",
+    away: "Barcelona",
     homeScore: 2,
     awayScore: 1,
-    date: "2026-04-14",
-    time: "08:30",
+    date: "2026-04-20",
+    time: "18:00",
     field: "Cancha 1",
-    referee: "Carlos Mendoza",
+    referee: "Carlos",
+    league: "Liga MX",
+    category: "Libre",
   },
   {
     id: 2,
-    home: "Águilas",
-    away: "Tigres",
+    home: "Tigres",
+    away: "Águilas",
     homeScore: 1,
     awayScore: 1,
-    date: "2026-04-14",
-    time: "19:30",
+    date: "2026-04-20",
+    time: "08:30",
     field: "Cancha 2",
-    referee: "Luis Pérez",
-  },
-  {
-    id: 3,
-    home: "Leones",
-    away: "Dragones",
-    homeScore: 0,
-    awayScore: 3,
-    date: "2026-04-15",
-    time: "10:00",
-    field: "Cancha 1",
-    referee: "Pedro Ruiz",
+    referee: "Luis",
+    league: "Liga Premier",
+    category: "Sub-20",
   },
 ]);
 
-const goToProgramarJuego = () => {
-  router.push("/dashboard/programarJuego");
-};
+/* FILTROS */
+const filterDate = ref("");
+const filterLeague = ref("");
+const filterCategory = ref("");
+const filterShift = ref("");
+const filterResult = ref("");
 
-/* FILTRADO PRINCIPAL */
+const leagues = [...new Set(matches.value.map((m) => m.league))];
+const categories = [...new Set(matches.value.map((m) => m.category))];
+
 const filteredMatches = computed(() => {
-  return liveMatches.value.filter((m) => {
+  return matches.value.filter((m) => {
     const hour = parseInt(m.time.split(":")[0]);
 
     const isMorning = hour >= 6 && hour < 12;
     const isNight = hour >= 18;
 
-    const dateOk = !filterDate.value || m.date === filterDate.value;
-
     let shiftOk = true;
     if (filterShift.value === "morning") shiftOk = isMorning;
     if (filterShift.value === "night") shiftOk = isNight;
 
-    /* RESULTADO */
     let resultOk = true;
+    if (filterResult.value === "win") resultOk = m.homeScore > m.awayScore;
+    if (filterResult.value === "draw") resultOk = m.homeScore === m.awayScore;
+    if (filterResult.value === "loss") resultOk = m.homeScore < m.awayScore;
 
-    if (filterResult.value === "win") {
-      resultOk = (m.homeScore ?? 0) > (m.awayScore ?? 0);
-    }
-
-    if (filterResult.value === "draw") {
-      resultOk = (m.homeScore ?? 0) === (m.awayScore ?? 0);
-    }
-
-    if (filterResult.value === "loss") {
-      resultOk = (m.homeScore ?? 0) < (m.awayScore ?? 0);
-    }
-
-    return dateOk && shiftOk && resultOk;
+    return (
+      (!filterDate.value || m.date === filterDate.value) &&
+      (!filterLeague.value || m.league === filterLeague.value) &&
+      (!filterCategory.value || m.category === filterCategory.value) &&
+      shiftOk &&
+      resultOk
+    );
   });
 });
 
-/* ARBITROS */
 const refereeCount = computed(() => {
-  const count = {};
-
+  const c = {};
   filteredMatches.value.forEach((m) => {
-    if (!m.referee) return;
-    count[m.referee] = (count[m.referee] || 0) + 1;
+    c[m.referee] = (c[m.referee] || 0) + 1;
   });
-
-  return count;
+  return c;
 });
+
+const clearFilters = () => {
+  filterDate.value = "";
+  filterLeague.value = "";
+  filterCategory.value = "";
+  filterShift.value = "";
+  filterResult.value = "";
+};
 </script>
 
 <style scoped>
+/* CONTENEDOR BOTONES */
+.actions {
+  display: flex;
+  gap: 10px;
+}
+/* BOTÓN PRINCIPAL (acción importante) */
+.primaryBtn {
+  background: #3b82f6;
+  color: white;
+  padding: 10px 14px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.2s;
+}
+.primaryBtn:hover {
+  background: #2563eb;
+}
+
+/* BOTÓN SECUNDARIO */
+.secondaryBtn {
+  background: white;
+  color: #0f172a;
+  padding: 10px 14px;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: 0.2s;
+}
+
+.secondaryBtn:hover {
+  background: #e0f2fe;
+}
 .admin {
   padding: 20px;
   font-family: sans-serif;
 }
 
-/* HEADER FILTROS */
-.filtersRow {
+.header {
   display: flex;
   justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 10px;
+  align-items: center;
+  margin-bottom: 20px;
 }
 
-/* FILTROS */
 .filters {
   display: flex;
-  gap: 10px;
   flex-wrap: wrap;
+  gap: 10px;
+  background: white;
+  padding: 15px;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
 }
 
-.filters input,
-.filters select {
-  padding: 10px;
+.filterItem {
+  display: flex;
+  flex-direction: column;
+  font-size: 12px;
+}
+
+input,
+select {
+  padding: 8px;
   border-radius: 8px;
-  border: 1px solid #cbd5e1;
+  border: 1px solid #ccc;
 }
 
-/* BOTÓN */
 .createBtn {
   background: #22c55e;
   color: white;
+  padding: 10px;
   border: none;
-  padding: 10px 14px;
   border-radius: 10px;
-  cursor: pointer;
 }
 
-.createBtn:hover {
-  background: #16a34a;
+.clearBtn {
+  background: #ef4444;
+  color: white;
+  border: none;
+  padding: 8px;
+  border-radius: 8px;
 }
 
-/* ARBITROS */
+.list {
+  display: grid;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.card {
+  background: white;
+  padding: 15px;
+  border-radius: 12px;
+  border-left: 5px solid #3b82f6;
+}
+
+.top {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+}
+
+.teams {
+  text-align: center;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.vs {
+  margin: 0 10px;
+  color: #ef4444;
+}
+
+.info {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+  font-size: 12px;
+}
+
 .refereeSummary {
+  margin-top: 10px;
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
@@ -209,45 +326,13 @@ const refereeCount = computed(() => {
 
 .refItem {
   background: #e0f2fe;
-  padding: 6px 10px;
+  padding: 5px 10px;
   border-radius: 20px;
-  font-size: 12px;
 }
 
-/* CARD */
-.liveCard {
-  background: #fff;
-  padding: 16px;
-  border-radius: 14px;
-  margin-top: 10px;
-  border-left: 6px solid #ef4444;
-}
-
-.liveTeams {
+.empty {
   text-align: center;
-  font-weight: bold;
-  margin-bottom: 8px;
-}
-
-.vs {
-  color: #ef4444;
-  margin: 0 10px;
-  font-weight: bold;
-}
-
-.liveInfo {
-  display: flex;
-  justify-content: center;
-  gap: 12px;
-  flex-wrap: wrap;
-  font-size: 13px;
-  color: #475569;
-}
-
-/* RESPONSIVE */
-@media (max-width: 768px) {
-  .filtersRow {
-    flex-direction: column;
-  }
+  margin-top: 20px;
+  color: gray;
 }
 </style>
