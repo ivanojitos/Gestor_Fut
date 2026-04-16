@@ -1,9 +1,7 @@
 <template>
   <div class="club">
-
     <!-- TOP HEADER -->
     <header class="header">
-
       <div class="teamInfo">
         <img :src="team.logo" class="logo" />
 
@@ -19,10 +17,7 @@
         </div>
       </div>
 
-      <button class="modeBtn" @click="goToGameMode">
-        🎮 MODO JUEGO
-      </button>
-
+      <button class="modeBtn" @click="goToGameMode">🎮 MODO JUEGO</button>
     </header>
 
     <!-- HIGHLIGHTS -->
@@ -35,15 +30,12 @@
 
     <!-- MAIN LAYOUT -->
     <section class="layout">
-
       <!-- LEFT: PLAYERS -->
       <div class="panel">
-
         <h2>👥 Plantilla ({{ players.length }})</h2>
 
         <div class="players">
           <div v-for="p in players" :key="p.number" class="playerCard">
-
             <img :src="p.photo" />
 
             <div class="info">
@@ -51,18 +43,13 @@
               <small>{{ p.position }}</small>
             </div>
 
-            <div class="stats">
-              ⚽ {{ p.goals }} | 🎯 {{ p.assists }}
-            </div>
-
+            <div class="stats">⚽ {{ p.goals }} | 🎯 {{ p.assists }}</div>
           </div>
         </div>
-
       </div>
 
       <!-- RIGHT: MATCHES -->
       <div class="panel">
-
         <h2>📅 Partidos</h2>
 
         <!-- NEXT MATCH -->
@@ -76,20 +63,15 @@
 
         <!-- LAST MATCHES -->
         <div class="match" v-for="m in matches.last" :key="m.id">
-
           <h3>{{ m.home }} {{ m.score }} {{ m.away }}</h3>
 
           <div class="meta">
             <small>🏟 {{ m.stadium }}</small>
             <small>🧑‍⚖️ {{ m.ref }}</small>
           </div>
-
         </div>
-
       </div>
-
     </section>
-
   </div>
 </template>
 
@@ -123,26 +105,29 @@ const players = [
   { name: "Hugo", position: "ST", goals: 10, assists: 2, number: 8 },
   { name: "Leo", position: "ST", goals: 12, assists: 3, number: 9 },
   { name: "Sergio", position: "ST", goals: 8, assists: 5, number: 10 },
-].map(p => ({
+].map((p) => ({
   ...p,
-  photo: `https://i.pravatar.cc/100?img=${Math.floor(Math.random() * 70)}`
+  photo: `https://i.pravatar.cc/100?img=${Math.floor(Math.random() * 70)}`,
 }));
 
 const best = computed(() => ({
-  gk: players.find(p => p.position === "GK"),
-  def: [...players].filter(p => p.position === "DEF")
-    .sort((a,b) => (b.goals + b.assists) - (a.goals + a.assists))[0],
-  mid: [...players].filter(p => p.position === "MID")
-    .sort((a,b) => (b.goals + b.assists) - (a.goals + a.assists))[0],
-  st: [...players].filter(p => p.position === "ST")
-    .sort((a,b) => b.goals - a.goals)[0],
+  gk: players.find((p) => p.position === "GK"),
+  def: [...players]
+    .filter((p) => p.position === "DEF")
+    .sort((a, b) => b.goals + b.assists - (a.goals + a.assists))[0],
+  mid: [...players]
+    .filter((p) => p.position === "MID")
+    .sort((a, b) => b.goals + b.assists - (a.goals + a.assists))[0],
+  st: [...players]
+    .filter((p) => p.position === "ST")
+    .sort((a, b) => b.goals - a.goals)[0],
 }));
 
 const matches = {
   next: {
     home: "FIFA CLUB PRO",
     away: "REAL STARS FC",
-    stadium: "Estadio Central"
+    stadium: "Estadio Central",
   },
   last: [
     {
@@ -151,7 +136,7 @@ const matches = {
       away: "LEGENDS FC",
       score: "3 - 1",
       ref: "Carlos Vega",
-      stadium: "Arena Norte"
+      stadium: "Arena Norte",
     },
     {
       id: 2,
@@ -159,9 +144,9 @@ const matches = {
       away: "FIFA CLUB PRO",
       score: "2 - 2",
       ref: "Miguel Torres",
-      stadium: "Estadio Sur"
-    }
-  ]
+      stadium: "Estadio Sur",
+    },
+  ],
 };
 </script>
 
@@ -178,10 +163,11 @@ const matches = {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: white;
+  background-color: #b4a518;
   padding: 14px;
+  color: white;
   border-radius: 16px;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
 }
 
 .teamInfo {
@@ -207,7 +193,7 @@ const matches = {
 
 /* BUTTON */
 .modeBtn {
-  background: #22c55e;
+  background: linear-gradient(135deg, #0b37ff, #b5b5be);
   color: white;
   border: none;
   padding: 10px 14px;
@@ -224,10 +210,11 @@ const matches = {
 }
 
 .card {
-  background: white;
+  background: linear-gradient(135deg, #04eb17, #251d1d);
   padding: 12px;
+  color: white;
   border-radius: 14px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
   text-align: center;
   font-weight: 600;
 }
@@ -245,7 +232,7 @@ const matches = {
   background: white;
   border-radius: 14px;
   padding: 14px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 /* PLAYERS */
@@ -258,7 +245,6 @@ const matches = {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: #f9fafb;
   padding: 10px;
   border-radius: 12px;
 }
@@ -275,7 +261,7 @@ const matches = {
 
 /* MATCHES */
 .match {
-  background: #f9fafb;
+  background: #cfd4d8;
   padding: 10px;
   border-radius: 12px;
   margin-bottom: 10px;
@@ -283,6 +269,8 @@ const matches = {
 
 .next {
   border-left: 5px solid #22c55e;
+  background-color: #07af39;
+  color: white;
 }
 
 .meta {
