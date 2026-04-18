@@ -43,7 +43,9 @@
         :style="{ top: p.y + '%', left: p.x + '%' }"
         @click="selectPlayer(p)"
       >
-        <img :src="p.photo" />
+        <div class="avatar">
+  {{ p.name.charAt(0) }}
+</div>
         <div>
           <b>#{{ p.number }}</b>
           <small>{{ p.name }}</small>
@@ -81,7 +83,9 @@
           :class="{ benchSelected: selectedBench?.number === p.number }"
           @click="selectBench(p)"
         >
-          <img :src="p.photo" />
+          <div class="avatar">
+  {{ p.name.charAt(0) }}
+</div>
           <div>
             <b>#{{ p.number }} {{ p.name }}</b>
             <small>{{ p.position }}</small>
@@ -96,15 +100,23 @@
 <script setup>
 import { ref, computed } from "vue";
 
-/* PLAYERS */
 const players = [
-  "Juan","Carlos","Luis","Pedro","Mario",
-  "Raul","Jose","Hugo","Leo","Sergio"
-].map((name, i) => ({
-  name,
-  number: i + 1,
-  position: i % 3 === 0 ? "DEL" : i % 3 === 1 ? "MID" : "DEF",
-  photo: `https://i.pravatar.cc/100?img=${i + 20}`
+  { name: "Chivita", number: 10, position: "MED" },
+  { name: "Totu", number: 19, position: "DEF" },
+  { name: "Inving", number: 22, position: "MED" },
+  { name: "Oski", number: 14, position: "MED" },
+  { name: "Raul", number: 5, position: "DEF" },
+  { name: "Cisneros", number: 11, position: "DEF" },
+  { name: "Junior", number: 1, position: "POR" },
+  { name: "Amor", number: 7, position: "MED" },
+  { name: "El Pari", number: 9, position: "DEL" },
+  { name: "Ruben", number: 13, position: "POR" },
+  { name: "Lalo", number: 8, position: "MED" },
+  { name: "El Tio", number: 23, position: "DEF" },
+  { name: "Joshua", number: 3, position: "DEF" }
+].map((p, i) => ({
+  ...p,
+  photo: `https://i.pravatar.cc/100?img=${i + 30}`
 }));
 
 /* 🔥 FORMACIONES PRO */
@@ -210,7 +222,18 @@ function setTactic(t) {
 function buildTeam() {
   const base = selectedFormacion.value.map;
 
-  titulares.value = players.slice(0, 7).map((p, i) => {
+  // 🔥 TITULARES EXACTOS
+  const titularesBase = [
+    players.find(p => p.name === "Junior"),   // 🧤
+    players.find(p => p.name === "Joshua"),   // DEF
+    players.find(p => p.name === "El Tio"),   // DEF
+    players.find(p => p.name === "Oski"),     // MED
+    players.find(p => p.name === "Amor"),     // MED
+    players.find(p => p.name === "Chivita"),  // MED
+    players.find(p => p.name === "El Pari")   // DEL
+  ];
+
+  titulares.value = titularesBase.map((p, i) => {
     const b = base[i] || { x: 50, y: 50 };
     const mod = selectedTactic.value.modifier(b, i);
 
@@ -221,7 +244,10 @@ function buildTeam() {
     };
   });
 
-  banca.value = players.slice(7);
+  // 🔥 BANCA = TODOS LOS DEMÁS
+  banca.value = players.filter(p =>
+    !titularesBase.some(t => t.number === p.number)
+  );
 }
 
 /* SELECT */
@@ -265,6 +291,10 @@ const canSwap = computed(() =>
 buildTeam();
 </script>
 <style scoped>
+
+.card small {
+  margin-left: 6px; /* 🔥 separa la posición */
+}
 
 /* BASE FUT */
 .app {
