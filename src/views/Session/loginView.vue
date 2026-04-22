@@ -47,6 +47,8 @@ const login = async () => {
       password: password.value,
     });
 
+    console.log(response);
+    
     if (response.data.ok) {
       const user = response.data.user;
 
