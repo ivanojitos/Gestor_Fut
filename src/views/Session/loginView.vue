@@ -18,6 +18,9 @@
         </div>
 
         <button type="submit">Ingresar</button>
+        <p class="crear-link" @click="irCrearUsuario">
+          ¿No tienes cuenta? Crear usuario
+        </p>
       </form>
 
       <p class="error" v-if="error">{{ error }}</p>
@@ -28,36 +31,85 @@
 <script setup>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
+import axios from "axios";
 
 const email = ref("");
 const password = ref("");
 const error = ref("");
 const router = useRouter();
 
+const login = async () => {
+  error.value = "";
 
-const login = () => {
-  if (email.value === "jugador@test.com" && password.value === "1234") {
-    localStorage.setItem("auth", "true");
-    localStorage.setItem("role", "admin"); // 🔥 guardas rol
-    router.push("/dashboard");
+  try {
+    const response = await axios.post("https://back-gestor-api.azurewebsites.net/api/login", {
+      correo: email.value,
+      password: password.value,
+    });
 
-  } else if (email.value === "arbitro@test.com" && password.value === "1234") {
-    localStorage.setItem("auth", "true");
-    localStorage.setItem("role", "arbitro"); // 🔥 guardas rol
-    router.push("/dashboard/dashArbitro");
+    if (response.data.ok) {
+      const user = response.data.user;
 
-  } else if (email.value === "administrador@test.com" && password.value === "1234") {
-    localStorage.setItem("auth", "true");
-    localStorage.setItem("role", "administrador"); // 🔥 guardas rol
-    router.push("/dashboard/dashAdministrador");
+      // 🔐 GUARDAR SESIÓN
+      localStorage.setItem("auth", "true");
+      localStorage.setItem("user", JSON.stringify(user));
 
-  } else {
-    error.value = "Credenciales incorrectas";
+      // 🔥 SI TIENES CAMPO ROL EN BD
+      localStorage.setItem("role", user.rol || "jugador");
+
+      // 🚀 REDIRECCIÓN SEGÚN ROL
+      if (user.rol === "admin") {
+        router.push("/dashboard");
+      } else if (user.rol === "arbitro") {
+        router.push("/dashboard/dashArbitro");
+      } else if (user.rol === "administrador") {
+        router.push("/dashboard/dashAdministrador");
+      } else {
+        router.push("/dashboard");
+      }
+    }
+  } catch (err) {
+
+    if (err.response?.status === 401) {
+      error.value = "Contraseña incorrecta";
+    } else if (err.response?.status === 404) {
+      error.value = "Usuario no existe";
+    } else if (err.response?.status === 422) {
+      error.value = "Datos inválidos";
+    } else {
+      error.value = "Error del servidor";
+    }
   }
+};
+
+const irCrearUsuario = () => {
+  router.push("/crearUsuario");
 };
 </script>
 
 <style scoped>
+.crear-link {
+  margin-top: 15px;
+  font-size: 13px;
+  color: #c7d2fe;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.crear-link:hover {
+  color: #818cf8;
+}
+.btn-crear {
+  margin-top: 10px;
+  background: transparent;
+  border: 1px solid #818cf8;
+  color: #a5b4fc;
+}
+
+.btn-crear:hover {
+  background: #6366f1;
+  color: white;
+}
 /* FONDO */
 .container {
   height: 100vh;

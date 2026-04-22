@@ -1,7 +1,6 @@
 <template>
   <div class="page">
     <div class="wrapper">
-
       <!-- 🔥 TARJETA PLAYER -->
       <div class="player-card">
         <div class="card-header">
@@ -30,10 +29,13 @@
 
       <!-- 🔥 PANEL DERECHO -->
       <div class="dashboard">
-
         <!-- INFO -->
         <div class="card">
-          <h3>👤 Perfil</h3>
+          <div class="card-header-edit">
+            <h3>👤 Perfil</h3>
+
+            <button @click="goToEdit" class="edit-btn">✏️</button>
+          </div>
           <div class="grid">
             <p><b>Edad:</b> {{ player.age }}</p>
             <p><b>Número:</b> {{ player.number }}</p>
@@ -44,9 +46,7 @@
         <!-- EQUIPO -->
         <div class="card highlight">
           <h3>🛡️ Equipo</h3>
-          <button @click="goToTeam" class="btn-primary">
-            Ver equipo
-          </button>
+          <button @click="goToTeam" class="btn-primary">Ver equipo</button>
         </div>
 
         <!-- LIGAS -->
@@ -89,14 +89,13 @@
             </div>
           </div>
         </div>
-
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { reactive } from "vue";
+import { reactive, computed } from "vue";
 import { useRouter } from "vue-router";
 
 const router = useRouter();
@@ -104,7 +103,8 @@ const router = useRouter();
 const player = reactive({
   name: "Ivan Alvarez",
   team: "Xpert fut 7",
-  photo: "https://assets.realmadrid.com/is/image/realmadrid/1330603286208?$Mobile$&fit=wrap&wid=312",
+  photo:
+    "https://assets.realmadrid.com/is/image/realmadrid/1330603286208?$Mobile$&fit=wrap&wid=312",
   age: 24,
   number: 10,
   position: "Delantero",
@@ -128,10 +128,39 @@ const stats = [
 const goToTeam = () => {
   router.push(`/dashboard/equipo/${player.team}`);
 };
+const playerExists = computed(() => {
+  return player.name !== ""; // o valida con backend
+});
+
+const goToEdit = () => {
+  router.push({
+    path: "/dashboard/createJugador",
+    query: { edit: true },
+    state: { player }, // 👈 importante
+  });
+};
 </script>
 
 <style scoped>
+.card-header-edit {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 
+.edit-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  transition: transform 0.2s, opacity 0.2s;
+  opacity: 0.7;
+}
+
+.edit-btn:hover {
+  transform: scale(1.2);
+  opacity: 1;
+}
 /* 🔥 FONDO */
 .page {
   min-height: 100vh;
@@ -150,11 +179,11 @@ const goToTeam = () => {
 /* 🔥 PLAYER CARD */
 .player-card {
   width: 320px;
-  background: linear-gradient(135deg,#020617,#ffffff);
+  background: linear-gradient(135deg, #020617, #ffffff);
   border-radius: 20px;
   padding: 20px;
   color: white;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
 }
 
 .card-header {
@@ -219,7 +248,7 @@ const goToTeam = () => {
 
 /* 🔥 CARDS */
 .card {
-  background: linear-gradient(135deg,#020617,#ffffff);
+  background: linear-gradient(135deg, #020617, #ffffff);
   border-radius: 15px;
   padding: 15px;
   color: white;
@@ -238,7 +267,7 @@ const goToTeam = () => {
 
 /* 🔥 BOTON */
 .btn-primary {
-  background: linear-gradient(135deg,#22c55e,#4ade80);
+  background: linear-gradient(135deg, #22c55e, #4ade80);
   border: none;
   padding: 10px;
   border-radius: 10px;
@@ -259,12 +288,12 @@ const goToTeam = () => {
 }
 
 .tags.blue span {
- background: #334155;
+  background: #334155;
 }
 
 /* 🔥 PERFORMANCE */
 .performance {
-  background: linear-gradient(135deg,#020617,#ffffff);
+  background: linear-gradient(135deg, #020617, #ffffff);
 }
 
 .perf-grid {
@@ -279,9 +308,15 @@ const goToTeam = () => {
   border-radius: 10px;
 }
 
-.goals { background: #16a34a; }
-.assists { background: #2563eb; }
-.trophies { background: #f59e0b; }
+.goals {
+  background: #16a34a;
+}
+.assists {
+  background: #2563eb;
+}
+.trophies {
+  background: #f59e0b;
+}
 
 .perf-box span {
   font-size: 20px;
@@ -292,11 +327,10 @@ const goToTeam = () => {
 }
 
 /* 📱 RESPONSIVE */
-@media(max-width:768px){
-  .wrapper{
+@media (max-width: 768px) {
+  .wrapper {
     flex-direction: column;
     align-items: center;
   }
 }
-
 </style>

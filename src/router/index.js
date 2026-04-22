@@ -12,6 +12,8 @@ import DashArbitro from "../views/DashArbitro/dashboardView.vue";
 import DashAdministrador from "../views/DashAdministrador/dashAdministradorView.vue";
 import ProgramarJuegoView from "../views/DashAdministrador/programarJuegoView.vue";
 import PartidosProgramadosView from "../views/DashAdministrador/partidosProgramadosView.vue";
+import CreateJugador from "../views/Dashboard/Perfil/Jugadores/createJugardorView.vue";
+import CrearUsuario from "../views/Session/createUsuarioView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -85,7 +87,15 @@ const router = createRouter({
           name: "partidosProgramados",
           component: PartidosProgramadosView,
         },
+        {
+          path: "createJugador",
+          component: CreateJugador,
+        },
       ],
+    },
+    {
+      path: "/crearUsuario",
+      component: CrearUsuario,
     },
   ],
 });
