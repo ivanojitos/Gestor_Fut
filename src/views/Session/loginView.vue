@@ -46,8 +46,6 @@ const login = async () => {
       correo: email.value,
       password: password.value,
     });
-
-    console.log(response);
     
     if (response.data.ok) {
       const user = response.data.user;
