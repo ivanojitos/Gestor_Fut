@@ -73,7 +73,7 @@ const login = async () => {
     if (err.response?.status === 401) {
       error.value = "Contraseña incorrecta";
     } else if (err.response?.status === 404) {
-      error.value = "Usuario no existe";
+      error.value = "Usuario no existe 21";
     } else if (err.response?.status === 422) {
       error.value = "Datos inválidos";
     } else {
