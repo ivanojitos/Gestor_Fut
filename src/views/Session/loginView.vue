@@ -42,11 +42,14 @@ const login = async () => {
   error.value = "";
 
   try {
-    const response = await axios.post("https://back-gestor-api.azurewebsites.net/api/login", {
-      correo: email.value,
-      password: password.value,
-    });
-    
+    const response = await axios.post(
+      "https://back-gestor-api.azurewebsites.net/api/login",
+      {
+        correo: email.value,
+        password: password.value,
+      },
+    );
+
     if (response.data.ok) {
       const user = response.data.user;
 
@@ -69,11 +72,12 @@ const login = async () => {
       }
     }
   } catch (err) {
-
     if (err.response?.status === 401) {
       error.value = "Contraseña incorrecta";
     } else if (err.response?.status === 404) {
       error.value = "Usuario no existe 21";
+      // 👇 Mostrar lo que viene del backend
+      console.log("Mensaje backend:", err.response?.data);
     } else if (err.response?.status === 422) {
       error.value = "Datos inválidos";
     } else {
