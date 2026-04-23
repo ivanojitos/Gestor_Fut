@@ -81,6 +81,7 @@ const login = async () => {
       console.log("Mensaje backend:", err.response);
     } else if (err.response?.status === 422) {
       error.value = "Datos inválidos";
+       console.log("Mensaje backend ivan:", err.response);
     } else {
       error.value = "Error del servidor 2";
     }
