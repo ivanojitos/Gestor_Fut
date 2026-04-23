@@ -52,7 +52,8 @@ const login = async () => {
 
     if (response.data.ok) {
       const user = response.data.user;
-
+      console.log('entro aqui primero banda');
+      
       // 🔐 GUARDAR SESIÓN
       localStorage.setItem("auth", "true");
       localStorage.setItem("user", JSON.stringify(user));
