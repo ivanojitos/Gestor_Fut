@@ -145,7 +145,6 @@ const guardarUsuario = async () => {
     }
   } catch (error) {
     if (error.response?.status === 422) {
-      console.log(error.response.data.errors);
       alert("Errores en el formulario");
     } else {
       console.error(error);

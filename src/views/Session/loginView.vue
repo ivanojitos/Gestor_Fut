@@ -77,11 +77,8 @@ const login = async () => {
       error.value = "Contraseña incorrecta";
     } else if (err.response?.status === 404) {
       error.value = "Usuario no existe 21";
-      // 👇 Mostrar lo que viene del backend
-      console.log("Mensaje backend:", err.response);
     } else if (err.response?.status === 422) {
       error.value = "Datos inválidos";
-       console.log("Mensaje backend ivan:", err.response);
     } else {
       error.value = "Error del servidor 2";
     }
