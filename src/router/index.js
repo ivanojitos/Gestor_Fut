@@ -100,21 +100,22 @@ const router = createRouter({
   ],
 });
 
-router.beforeEach((to, from, next) => {
+router.beforeEach((to, from) => {
   const isAuth = localStorage.getItem("auth");
   const role = localStorage.getItem("role");
 
-  // 🔒 si no está autenticado
+  // 🔒 no autenticado
   if (to.path.startsWith("/dashboard") && !isAuth) {
-    return next("/");
+    return "/";
   }
 
-  // 🧤 si intenta entrar al dashboard de árbitro sin ser árbitro
+  // 🧤 no es árbitro
   if (to.path.includes("dashArbitro") && role !== "arbitro") {
-    return next("/dashboard");
+    return "/dashboard";
   }
 
-  next();
+  // ✔ permitir navegación
+  return true;
 });
 
 export default router;
