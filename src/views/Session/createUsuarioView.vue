@@ -138,7 +138,7 @@ const guardarUsuario = async () => {
       }
     });
 
-    const response = await axios.post("http://backgestorfut-api-gdbufbgnecdbcqdm.westeurope-01.azurewebsites.net/api/createJugador", data);
+    const response = await axios.post("https://backgestorfut-api-gdbufbgnecdbcqdm.westeurope-01.azurewebsites.net/api/createJugador", data);
 
     if (response.data.ok) {
       alert(response.data.message);
