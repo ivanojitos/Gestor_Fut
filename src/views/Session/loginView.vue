@@ -81,7 +81,7 @@ const login = async () => {
     } else if (err.response?.status === 422) {
       error.value = "Datos inválidos";
     } else {
-      error.value = "Error del servidor";
+      error.value = "Error del servidor 2";
     }
   }
 };
