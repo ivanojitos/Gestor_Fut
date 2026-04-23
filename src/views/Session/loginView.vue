@@ -78,7 +78,7 @@ const login = async () => {
     } else if (err.response?.status === 404) {
       error.value = "Usuario no existe 21";
       // 👇 Mostrar lo que viene del backend
-      console.log("Mensaje backend:", err.response?.data);
+      console.log("Mensaje backend:", err.response);
     } else if (err.response?.status === 422) {
       error.value = "Datos inválidos";
     } else {
