@@ -5,19 +5,19 @@
       <h2 class="logo">⚽ FutManager</h2>
 
       <nav>
-        <router-link to="/dashboard/perfil">
+        <router-link v-if="role === 'jugador'" to="/dashboard/perfil">
           <Home /> <span>Perfil</span>
         </router-link>
 
-        <router-link to="/dashboard/posiciones">
+        <router-link v-if="role === 'jugador'" to="/dashboard/posiciones">
           <Users /> <span>Posiciones</span>
         </router-link>
 
-        <router-link to="/dashboard/roles">
+        <router-link v-if="role === 'jugador'" to="/dashboard/roles">
           <Users /> <span>Rol juego</span>
         </router-link>
 
-        <router-link to="/dashboard/ligas">
+        <router-link v-if="role === 'jugador'" to="/dashboard/ligas">
           <Users /> <span>Ligas</span>
         </router-link>
       </nav>
@@ -41,13 +41,19 @@
 <script setup>
 import { useRouter } from "vue-router";
 import { Home, Users } from "lucide-vue-next";
+import { ref, onMounted } from "vue";
 
 const router = useRouter();
+const role = ref("");
 
 const logout = () => {
   localStorage.removeItem("auth");
   router.push("/");
 };
+
+onMounted(() => {
+  role.value = localStorage.getItem("role");
+});
 </script>
 
 <style scoped>
