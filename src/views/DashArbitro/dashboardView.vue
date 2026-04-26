@@ -212,14 +212,18 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
+import axios from "axios";
 
-const referee = {
-  name: "Carlos Mendoza",
-  age: 34,
-  studies: "Árbitro Profesional • Certificación FIFA",
+const referee = ref({
+  Nombre: "",
+  Edad: "",
+  Estudios: "",
+  Direccion: "",
+  Celular: "",
+  Correo: "",
   photo: "https://i.pravatar.cc/120?img=12",
-};
+});
 
 const generatePlayers = (prefix) =>
   Array.from({ length: 7 }).map((_, i) => ({
@@ -334,26 +338,40 @@ const editForm = ref({
 
 // abrir modal y cargar datos
 const openEdit = () => {
-  editForm.value = {
-    Nombre: referee.Nombre,
-    Edad: referee.Edad,
-    Estudios: referee.Estudios,
-    Direccion: referee.Direccion || "",
-    Celular: referee.Celular || "",
-    Correo: referee.Correo || "",
-  };
-
+  editForm.value = { ...referee.value };
   showEdit.value = true;
 };
 
-// guardar cambios
-const saveProfile = () => {
-  // 🔥 aquí puedes conectar a tu API luego
-  Object.assign(referee, editForm.value);
+const saveProfile = async () => {
+  try {
+    await axios.put(
+      `https://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net/api/arbitro/${referee.value.Id}`,
+      editForm.value,
+    );
 
-  alert("✅ Datos actualizados");
-  showEdit.value = false;
+    // 🔥 actualizar datos en pantalla
+    referee.value = { ...editForm.value };
+
+    alert("✅ Datos actualizados");
+    showEdit.value = false;
+  } catch (error) {
+    console.error(error);
+    alert("❌ Error al actualizar");
+  }
 };
+onMounted(async () => {
+  try {
+    const user = JSON.parse(localStorage.getItem("user"));
+
+    const res = await axios.get(
+      `https://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net/api/arbitro/${user.Id}`,
+    );
+
+    referee.value = res.data;
+  } catch (error) {
+    console.error("Error cargando árbitro", error);
+  }
+});
 </script>
 
 <style scoped>
