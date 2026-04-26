@@ -1,48 +1,54 @@
 <template>
   <div class="container">
+    ```
+    <!-- 🔐 VALIDACIÓN DE CÓDIGO -->
+    <div v-if="!authorized" class="card">
+      <h2>🧤 Acceso árbitros</h2>
+      <p>Ingresa el código de autorización</p>
 
-```
-<!-- 🔐 VALIDACIÓN DE CÓDIGO -->
-<div v-if="!authorized" class="card">
-  <h2>🧤 Acceso árbitros</h2>
-  <p>Ingresa el código de autorización</p>
+      <input
+        v-model="codigo"
+        type="password"
+        placeholder="Código de acceso"
+        @keyup.enter="validarCodigo"
+      />
 
-  <input
-    v-model="codigo"
-    type="password"
-    placeholder="Código de acceso"
-    @keyup.enter="validarCodigo"
-  />
+      <button @click="validarCodigo">Ingresar</button>
 
-  <button @click="validarCodigo">Ingresar</button>
+      <p v-if="error" class="error">{{ error }}</p>
+    </div>
 
-  <p v-if="error" class="error">{{ error }}</p>
-</div>
+    <!-- 📝 FORMULARIO -->
+    <div v-else class="card">
+      <h2>Registro de Árbitro</h2>
 
-<!-- 📝 FORMULARIO -->
-<div v-else class="card">
-  <h2>Registro de Árbitro</h2>
+      <form @submit.prevent="crearArbitro">
+        <input v-model="form.Nombre" placeholder="Nombre completo" required />
+        <input
+          v-model="form.Correo"
+          type="email"
+          placeholder="Correo"
+          required
+        />
+        <input
+          v-model="form.Password"
+          type="password"
+          placeholder="Contraseña"
+          required
+        />
+        <input v-model="form.Edad" type="number" placeholder="Edad" />
+        <input v-model="form.Celular" placeholder="Celular" />
+        <input v-model="form.Direccion" placeholder="Dirección" />
+        <input v-model="form.CP" placeholder="Código Postal" />
+        <input v-model="form.Estudios" placeholder="Estudios" />
 
-  <form @submit.prevent="crearArbitro">
+        <button type="submit">Registrar Árbitro</button>
 
-    <input v-model="form.Nombre" placeholder="Nombre completo" required />
-    <input v-model="form.Correo" type="email" placeholder="Correo" required />
-    <input v-model="form.Password" type="password" placeholder="Contraseña" required />
-    <input v-model="form.Edad" type="number" placeholder="Edad" />
-    <input v-model="form.Celular" placeholder="Celular" />
-    <input v-model="form.Direccion" placeholder="Dirección" />
-    <input v-model="form.CP" placeholder="Código Postal" />
-    <input v-model="form.Estudios" placeholder="Estudios" />
-
-    <button type="submit">Registrar Árbitro</button>
-
-    <p v-if="success" class="success">{{ success }}</p>
-    <p v-if="error" class="error">{{ error }}</p>
-
-  </form>
-</div>
-```
-
+        <p v-if="success" class="success">{{ success }}</p>
+        <p v-if="error" class="error">{{ error }}</p>
+      </form>
+    </div>
+    ```
   </div>
 </template>
 
@@ -63,7 +69,7 @@ const form = ref({
   Celular: "",
   Direccion: "",
   CP: "",
-  Estudios: ""
+  Estudios: "",
 });
 
 // 🔐 VALIDAR CÓDIGO
@@ -81,14 +87,23 @@ const crearArbitro = async () => {
   try {
     const res = await axios.post(
       "https://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net/api/createArbitro",
-      form.value
+      form.value,
     );
 
     success.value = "Árbitro registrado correctamente";
     error.value = "";
-
   } catch (err) {
-    error.value = "Error al registrar";
+    console.log("ERROR COMPLETO:", err);
+
+    if (err.response) {
+      console.log("DATA:", err.response.data); // 🔥 aquí viene tu backend
+      console.log("STATUS:", err.response.status);
+
+      error.value = err.response.data.message || err.response.data.error;
+    } else {
+      console.log("ERROR SIN RESPONSE:", err);
+      error.value = "Error de conexión";
+    }
   }
 };
 </script>
@@ -108,7 +123,7 @@ const crearArbitro = async () => {
   border-radius: 16px;
   width: 100%;
   max-width: 400px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
 }
 
 h2 {
