@@ -23,24 +23,24 @@
       <h2>Registro de Árbitro</h2>
 
       <form @submit.prevent="crearArbitro">
-        <input v-model="form.Nombre" placeholder="Nombre completo" required />
+        <input v-model="form.nombre" placeholder="Nombre completo" required />
         <input
-          v-model="form.Correo"
+          v-model="form.correo"
           type="email"
           placeholder="Correo"
           required
         />
         <input
-          v-model="form.Password"
+          v-model="form.password"
           type="password"
           placeholder="Contraseña"
           required
         />
-        <input v-model="form.Edad" type="number" placeholder="Edad" />
-        <input v-model="form.Celular" placeholder="Celular" />
-        <input v-model="form.Direccion" placeholder="Dirección" />
-        <input v-model="form.CP" placeholder="Código Postal" />
-        <input v-model="form.Estudios" placeholder="Estudios" />
+        <input v-model="form.edad" type="number" placeholder="Edad" />
+        <input v-model="form.celular" placeholder="Celular" />
+        <input v-model="form.direccion" placeholder="Dirección" />
+        <input v-model="form.cp" placeholder="Código Postal" />
+        <input v-model="form.estudios" placeholder="Estudios" />
 
         <button type="submit">Registrar Árbitro</button>
 
@@ -62,14 +62,14 @@ const error = ref("");
 const success = ref("");
 
 const form = ref({
-  Nombre: "",
-  Correo: "",
-  Password: "",
-  Edad: "",
-  Celular: "",
-  Direccion: "",
-  CP: "",
-  Estudios: "",
+  nombre: "",
+  correo: "",
+  password: "",
+  edad: "",
+  celular: "",
+  direccion: "",
+  cp: "",
+  estudios: "",
 });
 
 // 🔐 VALIDAR CÓDIGO
