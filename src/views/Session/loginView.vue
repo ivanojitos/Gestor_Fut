@@ -74,9 +74,9 @@ const login = async () => {
     }
   } catch (err) {
     if (err.response?.status === 401) {
-      console.log(err.response.data.message);
+      console.log(err.response.data.debug);
       
-      error.value = "Contraseña incorrecta";
+      error.value = "Contraseña incorrecta 1";
     } else if (err.response?.status === 404) {
       error.value = "Usuario no existe 21";
     } else if (err.response?.status === 422) {
