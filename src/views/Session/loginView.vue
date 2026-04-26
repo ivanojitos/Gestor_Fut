@@ -164,11 +164,25 @@ const crearArbitro = async () => {
     );
 
     if (response.data.ok) {
-      alert("Árbitro creado correctamente 🔥");
+      const user = response.data.user;
+      const rol = response.data.rol;
+
+      localStorage.setItem("auth", "true");
+      localStorage.setItem("user", JSON.stringify(user));
+      localStorage.setItem("role", rol);
+
+      router.push("/dashboard/dashArbitro");
+
       mostrarFormulario.value = false;
     }
   } catch (err) {
-    errorArbitro.value = "Error al crear árbitro";
+    console.log(err);
+
+    if (err.response) {
+      errorArbitro.value = err.response.data.message || err.response.data.error;
+    } else {
+      errorArbitro.value = "Error de conexión";
+    }
   }
 };
 </script>
