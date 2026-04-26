@@ -52,8 +52,8 @@ const login = async () => {
 
     if (response.data.ok) {
       const user = response.data.user;
-      console.log('entro aqui primero banda');
-      
+      console.log("entro aqui primero banda");
+
       // 🔐 GUARDAR SESIÓN
       localStorage.setItem("auth", "true");
       localStorage.setItem("user", JSON.stringify(user));
@@ -74,8 +74,8 @@ const login = async () => {
     }
   } catch (err) {
     if (err.response?.status === 401) {
-      console.log(err.response.data.debug);
-      
+      console.log(err.response.data); // 👈 aquí ves todo
+
       error.value = "Contraseña incorrecta 1";
     } else if (err.response?.status === 404) {
       error.value = "Usuario no existe 21";
