@@ -5,11 +5,14 @@
       <img :src="referee.photo" class="avatar" />
 
       <div class="info">
-        <h1>{{ referee.name }}</h1>
-        <p>{{ referee.age }} años • {{ referee.studies }}</p>
+        <h1>{{ referee.Nombre }}</h1>
+        <p>{{ referee.Edad }} años • {{ referee.Estudios }}</p>
       </div>
 
       <div class="badge">ÁRBITRO</div>
+
+      <!-- ✏️ EDITAR -->
+      <button class="editBtn" @click="openEdit">✏️</button>
     </section>
 
     <!-- PARTIDOS -->
@@ -187,6 +190,25 @@
       </div>
     </div>
   </div>
+  <!-- ✏️ MODAL EDITAR PERFIL -->
+  <div v-if="showEdit" class="modal">
+    <div class="modalCard editCard">
+      <h2>Editar Perfil</h2>
+
+      <input v-model="editForm.Nombre" placeholder="Nombre" />
+      <input v-model="editForm.Edad" type="number" placeholder="Edad" />
+      <input v-model="editForm.Estudios" placeholder="Estudios" />
+      <input v-model="editForm.Direccion" placeholder="Dirección" />
+      <input v-model="editForm.Celular" placeholder="Celular" />
+      <input v-model="editForm.Correo" placeholder="Correo" />
+
+      <div class="editActions">
+        <button class="saveBtn" @click="saveProfile">Guardar cambios</button>
+
+        <button class="cancelBtn" @click="showEdit = false">Cancelar</button>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script setup>
@@ -298,9 +320,93 @@ const removeEvent = (index, team) => {
     recalcStats();
   }
 };
+
+const showEdit = ref(false);
+
+const editForm = ref({
+  Nombre: "",
+  Edad: "",
+  Estudios: "",
+  Direccion: "",
+  Celular: "",
+  Correo: "",
+});
+
+// abrir modal y cargar datos
+const openEdit = () => {
+  editForm.value = {
+    Nombre: referee.Nombre,
+    Edad: referee.Edad,
+    Estudios: referee.Estudios,
+    Direccion: referee.Direccion || "",
+    Celular: referee.Celular || "",
+    Correo: referee.Correo || "",
+  };
+
+  showEdit.value = true;
+};
+
+// guardar cambios
+const saveProfile = () => {
+  // 🔥 aquí puedes conectar a tu API luego
+  Object.assign(referee, editForm.value);
+
+  alert("✅ Datos actualizados");
+  showEdit.value = false;
+};
 </script>
 
 <style scoped>
+/* BOTÓN EDITAR */
+.editBtn {
+  margin-left: auto;
+  background: #e0f2fe;
+  border: none;
+  padding: 8px 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: 0.2s;
+  font-size: 14px;
+}
+
+.editBtn:hover {
+  background: #0284c7;
+  color: white;
+  transform: scale(1.1);
+}
+
+/* MODAL EDIT */
+.editCard {
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.editCard input {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+/* BOTONES */
+.editActions {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.cancelBtn {
+  flex: 1;
+  background: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 10px;
+}
+
+.cancelBtn:hover {
+  background: #dc2626;
+}
 /* SECTION TITLE */
 .sectionTitle {
   font-size: 18px;
@@ -318,12 +424,12 @@ const removeEvent = (index, team) => {
   cursor: pointer;
   border: 1px solid #e2e8f0;
   transition: all 0.25s ease;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.04);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
 }
 
 .matchCardPro:hover {
   transform: translateY(-5px) scale(1.01);
-  box-shadow: 0 15px 35px rgba(0,0,0,0.08);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
 }
 
 /* TOP */
@@ -360,7 +466,7 @@ const removeEvent = (index, team) => {
   font-weight: 700;
   padding: 6px 10px;
   border-radius: 999px;
-  box-shadow: 0 4px 10px rgba(34,197,94,0.3);
+  box-shadow: 0 4px 10px rgba(34, 197, 94, 0.3);
 }
 
 /* BOTTOM */
