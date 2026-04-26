@@ -74,7 +74,7 @@ const login = async () => {
     }
   } catch (err) {
     if (err.response?.status === 401) {
-      console.log(err.response);
+      console.log(err.response.data.message);
       
       error.value = "Contraseña incorrecta";
     } else if (err.response?.status === 404) {
