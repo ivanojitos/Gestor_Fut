@@ -18,12 +18,56 @@
         </div>
 
         <button type="submit">Ingresar</button>
+        <button type="button" class="btn-crear" @click="mostrarCodigo = true">
+          Registrar Árbitro
+        </button>
         <p class="crear-link" @click="irCrearUsuario">
           ¿No tienes cuenta? Crear usuario
         </p>
       </form>
 
       <p class="error" v-if="error">{{ error }}</p>
+    </div>
+
+    <!-- MODAL CODIGO -->
+    <div v-if="mostrarCodigo" class="modal">
+      <div class="modal-content">
+        <h2>🔐 Código de Árbitro</h2>
+        <input v-model="codigo" placeholder="Ingresa el código" />
+        <p class="error" v-if="errorCodigo">{{ errorCodigo }}</p>
+
+        <button @click="validarCodigo">Validar</button>
+        <button class="btn-cancelar" @click="mostrarCodigo = false">
+          Cancelar
+        </button>
+      </div>
+    </div>
+
+    <!-- FORMULARIO ARBITRO -->
+    <div v-if="mostrarFormulario" class="modal">
+      <div class="modal-content grande">
+        <h2>🧤 Registro de Árbitro</h2>
+
+        <input v-model="arbitro.nombre" placeholder="Nombre" />
+        <input v-model="arbitro.edad" type="number" placeholder="Edad" />
+        <input v-model="arbitro.estudios" placeholder="Estudios" />
+        <input v-model="arbitro.direccion" placeholder="Dirección" />
+        <input v-model="arbitro.cp" placeholder="Código Postal" />
+        <input v-model="arbitro.celular" placeholder="Celular" />
+        <input v-model="arbitro.correo" placeholder="Correo" />
+        <input
+          v-model="arbitro.password"
+          type="password"
+          placeholder="Contraseña"
+        />
+
+        <p class="error" v-if="errorArbitro">{{ errorArbitro }}</p>
+
+        <button @click="crearArbitro">Crear Árbitro</button>
+        <button class="btn-cancelar" @click="mostrarFormulario = false">
+          Cancelar
+        </button>
+      </div>
     </div>
   </div>
 </template>
@@ -52,31 +96,23 @@ const login = async () => {
 
     if (response.data.ok) {
       const user = response.data.user;
-      console.log("entro aqui primero banda");
+      const rol = response.data.rol;
 
-      // 🔐 GUARDAR SESIÓN
       localStorage.setItem("auth", "true");
       localStorage.setItem("user", JSON.stringify(user));
+      localStorage.setItem("role", rol);
 
-      // 🔥 SI TIENES CAMPO ROL EN BD
-      localStorage.setItem("role", user.rol || "jugador");
-
-      // 🚀 REDIRECCIÓN SEGÚN ROL
-      if (user.rol === "admin") {
-        router.push("/dashboard");
-      } else if (user.rol === "arbitro") {
-        router.push("/dashboard/dashArbitro");
-      } else if (user.rol === "administrador") {
+      if (rol === "administrador") {
         router.push("/dashboard/dashAdministrador");
+      } else if (rol === "arbitro") {
+        router.push("/dashboard/dashArbitro");
       } else {
-        router.push("/dashboard");
+        router.push("/dashboard"); // jugador
       }
     }
   } catch (err) {
     if (err.response?.status === 401) {
-      console.log("Password enviado:", err.response.data.debug.input_password);
-      console.log("Hash BD:", err.response.data.debug.hash_bd);
-      error.value = "Contraseña incorrecta 1";
+      error.value = "Contraseña incorrecta";
     } else if (err.response?.status === 404) {
       error.value = "Usuario no existe 21";
     } else if (err.response?.status === 422) {
@@ -90,9 +126,104 @@ const login = async () => {
 const irCrearUsuario = () => {
   router.push("/crearUsuario");
 };
+
+const mostrarCodigo = ref(false);
+const mostrarFormulario = ref(false);
+
+const codigo = ref("");
+const errorCodigo = ref("");
+
+const arbitro = ref({
+  nombre: "",
+  edad: "",
+  estudios: "",
+  direccion: "",
+  cp: "",
+  celular: "",
+  correo: "",
+  password: "",
+});
+
+const errorArbitro = ref("");
+
+const validarCodigo = () => {
+  if (codigo.value === "12345678") {
+    mostrarCodigo.value = false;
+    mostrarFormulario.value = true;
+    errorCodigo.value = "";
+  } else {
+    errorCodigo.value = "❌ No eres árbitro";
+  }
+};
+
+const crearArbitro = async () => {
+  try {
+    const response = await axios.post(
+      "https://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net/api/createArbitro",
+      arbitro.value,
+    );
+
+    if (response.data.ok) {
+      alert("Árbitro creado correctamente 🔥");
+      mostrarFormulario.value = false;
+    }
+  } catch (err) {
+    errorArbitro.value = "Error al crear árbitro";
+  }
+};
 </script>
 
 <style scoped>
+/* MODAL */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.modal-content {
+  background: rgba(15, 23, 42, 0.95);
+  padding: 30px;
+  border-radius: 15px;
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  color: white;
+}
+
+.modal-content.grande {
+  width: 400px;
+}
+
+.modal-content input {
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+}
+
+.btn-cancelar {
+  background: #ef4444;
+}
+
+/* RESPONSIVE */
+@media (max-width: 500px) {
+  .login-card {
+    width: 90%;
+    padding: 25px;
+  }
+
+  .modal-content {
+    width: 90%;
+  }
+}
 .crear-link {
   margin-top: 15px;
   font-size: 13px;
