@@ -345,19 +345,11 @@ const openEdit = () => {
 const saveProfile = async () => {
   try {
     const user = JSON.parse(localStorage.getItem("user"));
-
-    const id = user.Id || user.id;
-console.log(id);
-    
-    
-const saveProfile = async () => {
-  try {
-    const user = JSON.parse(localStorage.getItem("user"));
     const id = user.Id || user.id;
 
     const response = await axios.put(
       `https://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net/api/arbitro/${id}`,
-      editForm.value
+      editForm.value,
     );
 
     console.log("RESPUESTA:", response.data);
@@ -369,9 +361,8 @@ const saveProfile = async () => {
       alert("✅ Datos actualizados");
       showEdit.value = false;
     }
-
   } catch (error) {
-    console.error(error,response.data);
+    console.error(error, response);
     alert("❌ Error al actualizar");
   }
 };

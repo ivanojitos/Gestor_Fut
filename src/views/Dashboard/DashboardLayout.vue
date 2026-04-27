@@ -20,6 +20,10 @@
         <router-link v-if="role === 'jugador'" to="/dashboard/ligas">
           <Users /> <span>Ligas</span>
         </router-link>
+
+         <router-link v-if="role === 'master'" to="/dashboard/crearLiga">
+          <Users /> <span>Crear Ligas</span>
+        </router-link>
       </nav>
     </aside>
 

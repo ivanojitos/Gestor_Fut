@@ -106,8 +106,10 @@ const login = async () => {
         router.push("/dashboard/dashAdministrador");
       } else if (rol === "arbitro") {
         router.push("/dashboard/dashArbitro");
-      } else {
+      } else if (rol === "jugador") {
         router.push("/dashboard"); // jugador
+      } else if (rol === "master") {
+        router.push("/dashboardMaster"); // master
       }
     }
   } catch (err) {
