@@ -350,16 +350,26 @@ const saveProfile = async () => {
 console.log(id);
     
     
-    await axios.put(
+const saveProfile = async () => {
+  try {
+    const user = JSON.parse(localStorage.getItem("user"));
+    const id = user.Id || user.id;
+
+    const response = await axios.put(
       `https://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net/api/arbitro/${id}`,
-      editForm.value,
+      editForm.value
     );
 
-    // Mantén el ID también
-    referee.value = { ...referee.value, ...editForm.value };
+    console.log("RESPUESTA:", response.data);
 
-    alert("✅ Datos actualizados");
-    showEdit.value = false;
+    if (response.data.ok) {
+      // 🔥 usar lo que regresa el backend
+      referee.value = response.data.data;
+
+      alert("✅ Datos actualizados");
+      showEdit.value = false;
+    }
+
   } catch (error) {
     console.error(error);
     alert("❌ Error al actualizar");
