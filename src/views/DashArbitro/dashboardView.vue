@@ -371,7 +371,7 @@ const saveProfile = async () => {
     }
 
   } catch (error) {
-    console.error(error);
+    console.error(error,response.data);
     alert("❌ Error al actualizar");
   }
 };
