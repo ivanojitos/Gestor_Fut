@@ -1,47 +1,29 @@
 <template>
   <div class="container">
-    <div class="overlay"></div>
-
     <div class="card">
       <h1>🏆 Crear Liga</h1>
-      <p class="subtitle">Registra una nueva liga deportiva</p>
+      <p class="subtitle">Registra una nueva liga</p>
 
       <form @submit.prevent="crearLiga">
-        <div class="grid">
-          <div class="input-group">
-            <input v-model="liga.Nombre" required />
-            <label>Nombre</label>
-          </div>
-
-          <div class="input-group">
-            <input v-model="liga.Logo" />
-            <label>URL Logo</label>
-          </div>
-
-          <div class="input-group">
-            <input v-model="liga.Categorias" />
-            <label>Categorías</label>
-          </div>
-
-          <div class="input-group">
-            <input v-model="liga.Direccion" />
-            <label>Dirección</label>
-          </div>
-
-          <div class="input-group">
-            <input v-model="liga.Celular" />
-            <label>Celular</label>
-          </div>
-
-          <div class="input-group">
-            <select v-model="liga.Estatus">
-              <option value="Activo">Activo</option>
-              <option value="Inactivo">Inactivo</option>
-            </select>
-            <label class="label-fixed">Estatus</label>
-          </div>
+        
+        <!-- LOGO UPLOAD -->
+        <div class="logo-upload">
+          <img
+            :src="preview || defaultLogo"
+            class="logo-preview"
+          />
+          <input type="file" @change="handleFile" />
         </div>
 
+        <!-- INPUTS -->
+        <div class="form">
+          <input v-model="liga.Nombre" placeholder="Nombre" required />
+          <input v-model="liga.Categorias" placeholder="Categorías" />
+          <input v-model="liga.Direccion" placeholder="Dirección" />
+          <input v-model="liga.Celular" placeholder="Celular" />
+        </div>
+
+        <!-- BUTTON -->
         <button :disabled="loading">
           {{ loading ? "Guardando..." : "Crear Liga" }}
         </button>
@@ -59,59 +41,68 @@ import axios from "axios";
 
 const liga = ref({
   Nombre: "",
-  Logo: "",
+  Logo: "", // 🔥 aquí guardas base64 o URL
   Categorias: "",
   Direccion: "",
   Celular: "",
-  Estatus: "Activo",
 });
 
+const preview = ref(null);
+const defaultLogo = "https://via.placeholder.com/120";
+
+const loading = ref(false);
 const error = ref("");
 const success = ref("");
 
-const loading = ref(false);
+// 📸 manejar imagen
+const handleFile = (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
 
+  const reader = new FileReader();
+
+  reader.onload = () => {
+    preview.value = reader.result;
+    liga.value.Logo = reader.result; // 🔥 mandas base64 al back
+  };
+
+  reader.readAsDataURL(file);
+};
+
+// 🚀 crear liga
 const crearLiga = async () => {
   error.value = "";
   success.value = "";
   loading.value = true;
+
   if (!liga.value.Nombre) {
     error.value = "El nombre es obligatorio";
     loading.value = false;
     return;
   }
+
   try {
     const res = await axios.post(
       "https://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net/api/ligas",
-      liga.value,
+      liga.value
     );
 
-    console.log("RESPUESTA:", res.data);
-
     if (res.data.ok) {
-      success.value = "✅ Liga creada correctamente";
+      success.value = "✅ Liga creada";
 
-      // 🔥 usar lo que regresa el backend (por si quieres mostrarla)
-      const nuevaLiga = res.data.data;
-      console.log("Nueva liga:", nuevaLiga);
-
-      // 🔥 resetear form
       liga.value = {
         Nombre: "",
         Logo: "",
         Categorias: "",
         Direccion: "",
         Celular: "",
-        Estatus: "Activo",
       };
+
+      preview.value = null;
     }
   } catch (err) {
-    console.error(err);
-
     error.value =
-      err.response?.data?.error ||
-      err.response?.data?.message ||
-      "❌ Error al crear liga";
+      err.response?.data?.error || "Error al crear liga";
   } finally {
     loading.value = false;
   }
@@ -121,113 +112,78 @@ const crearLiga = async () => {
 <style scoped>
 /* 🌌 FONDO */
 .container {
-  height: 100vh;
-  background: url("https://images.unsplash.com/photo-1518091043644-c1d4457512c6")
-    no-repeat center/cover;
+  min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  position: relative;
-}
-
-.overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    135deg,
-    rgba(15, 23, 42, 0.85),
-    rgba(59, 130, 246, 0.6)
-  );
+  background: linear-gradient(135deg, #0f172a, #1e3a8a);
+  padding: 20px;
 }
 
 /* 🧊 CARD */
 .card {
-  position: relative;
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(18px);
-  padding: 35px;
+  width: 100%;
+  max-width: 500px;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  padding: 25px;
   border-radius: 20px;
-  width: 420px;
-  max-width: 95%;
   color: white;
   text-align: center;
-  box-shadow: 0 0 40px rgba(59, 130, 246, 0.3);
 }
 
-/* TITULOS */
+/* TITULO */
 h1 {
-  color: #60a5fa;
   margin-bottom: 5px;
 }
 
 .subtitle {
-  font-size: 14px;
+  font-size: 13px;
+  margin-bottom: 20px;
   color: #cbd5f5;
-  margin-bottom: 25px;
 }
 
-/* GRID */
-.grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 15px;
+/* LOGO */
+.logo-upload {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.logo-preview {
+  width: 100px;
+  height: 100px;
+  border-radius: 15px;
+  object-fit: cover;
+  margin-bottom: 10px;
+  border: 2px solid #3b82f6;
+}
+
+/* FORM */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 /* INPUTS */
-.input-group {
-  position: relative;
-}
-
-.input-group input,
-.input-group select {
-  width: 100%;
-  padding: 10px;
+input {
+  padding: 12px;
+  border-radius: 10px;
   border: none;
-  border-bottom: 2px solid #60a5fa;
-  background: transparent;
-  color: white;
   outline: none;
 }
 
-/* LABEL */
-.input-group label {
-  position: absolute;
-  left: 0;
-  top: 10px;
-  font-size: 13px;
-  color: #93c5fd;
-  transition: 0.3s;
-}
-
-.input-group input:focus + label,
-.input-group input:valid + label {
-  top: -10px;
-  font-size: 11px;
-  color: #3b82f6;
-}
-
-.label-fixed {
-  top: -10px;
-  font-size: 11px;
-}
-
-/* BOTON */
+/* BUTTON */
 button {
-  margin-top: 20px;
-  width: 100%;
+  margin-top: 15px;
   padding: 12px;
   border-radius: 12px;
   border: none;
-  font-weight: bold;
   background: linear-gradient(135deg, #3b82f6, #6366f1);
   color: white;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-button:hover {
-  transform: scale(1.05);
-  box-shadow: 0 0 20px rgba(99, 102, 241, 0.6);
+  font-weight: bold;
 }
 
 /* MENSAJES */
@@ -241,14 +197,27 @@ button:hover {
   margin-top: 10px;
 }
 
-/* 📱 RESPONSIVE */
-@media (max-width: 600px) {
-  .grid {
-    grid-template-columns: 1fr;
+/* 📱 TABLET */
+@media (min-width: 600px) {
+  .card {
+    padding: 30px;
   }
 
+  .form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+  }
+
+  .form input:nth-child(1) {
+    grid-column: span 2;
+  }
+}
+
+/* 🖥 DESKTOP */
+@media (min-width: 900px) {
   .card {
-    padding: 25px;
+    max-width: 600px;
   }
 }
 </style>
