@@ -63,7 +63,7 @@ const fetchLigas = async () => {
 };
 
 const goCreate = () => {
-  alert("Ir a crear liga 🚀");
+  router.push("/dashboard/crearLiga"); // master
 };
 
 const editLiga = (liga) => {
