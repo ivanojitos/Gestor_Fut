@@ -348,6 +348,8 @@ const saveProfile = async () => {
 
     const id = user.Id || user.id;
 
+    console.log(id);
+    
     await axios.put(
       `https://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net/api/arbitro/${id}`,
       editForm.value,
