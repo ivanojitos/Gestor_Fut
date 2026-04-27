@@ -109,7 +109,7 @@ const login = async () => {
       } else if (rol === "jugador") {
         router.push("/dashboard"); // jugador
       } else if (rol === "master") {
-        router.push("/dashboardMaster"); // master
+        router.push("/dashboard/crearLiga"); // master
       }
     }
   } catch (err) {
