@@ -344,13 +344,17 @@ const openEdit = () => {
 
 const saveProfile = async () => {
   try {
+    const user = JSON.parse(localStorage.getItem("user"));
+
+    const id = user.Id || user.id;
+
     await axios.put(
-      `https://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net/api/arbitro/${referee.value.Id}`,
+      `https://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net/api/arbitro/${id}`,
       editForm.value,
     );
 
-    // 🔥 actualizar datos en pantalla
-    referee.value = { ...editForm.value };
+    // Mantén el ID también
+    referee.value = { ...referee.value, ...editForm.value };
 
     alert("✅ Datos actualizados");
     showEdit.value = false;
@@ -359,6 +363,7 @@ const saveProfile = async () => {
     alert("❌ Error al actualizar");
   }
 };
+
 onMounted(async () => {
   try {
     const user = JSON.parse(localStorage.getItem("user"));
