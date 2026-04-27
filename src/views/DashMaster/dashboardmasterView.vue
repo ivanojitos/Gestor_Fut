@@ -49,7 +49,9 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import axios from "axios";
+import { useRouter } from "vue-router";
 
+const router = useRouter();
 const ligas = ref([]);
 const defaultLogo = "https://via.placeholder.com/100";
 
