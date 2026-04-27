@@ -42,7 +42,9 @@
           </div>
         </div>
 
-        <button type="submit">🚀 Crear Liga</button>
+        <button :disabled="loading">
+          {{ loading ? "Guardando..." : "Crear Liga" }}
+        </button>
       </form>
 
       <p class="error" v-if="error">{{ error }}</p>
@@ -67,20 +69,33 @@ const liga = ref({
 const error = ref("");
 const success = ref("");
 
+const loading = ref(false);
+
 const crearLiga = async () => {
   error.value = "";
   success.value = "";
-
+  loading.value = true;
+  if (!liga.value.Nombre) {
+    error.value = "El nombre es obligatorio";
+    loading.value = false;
+    return;
+  }
   try {
     const res = await axios.post(
-      "https://TU_BACK/api/ligas",
-      liga.value
+      "https://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net/api/ligas",
+      liga.value,
     );
+
+    console.log("RESPUESTA:", res.data);
 
     if (res.data.ok) {
       success.value = "✅ Liga creada correctamente";
 
-      // reset form
+      // 🔥 usar lo que regresa el backend (por si quieres mostrarla)
+      const nuevaLiga = res.data.data;
+      console.log("Nueva liga:", nuevaLiga);
+
+      // 🔥 resetear form
       liga.value = {
         Nombre: "",
         Logo: "",
@@ -91,7 +106,14 @@ const crearLiga = async () => {
       };
     }
   } catch (err) {
-    error.value = err.response?.data?.error || "Error al crear liga";
+    console.error(err);
+
+    error.value =
+      err.response?.data?.error ||
+      err.response?.data?.message ||
+      "❌ Error al crear liga";
+  } finally {
+    loading.value = false;
   }
 };
 </script>
