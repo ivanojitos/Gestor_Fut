@@ -34,6 +34,33 @@
 import { ref } from "vue";
 import axios from "axios";
 
+const parseError = (err) => {
+  console.log("ERROR COMPLETO:", err);
+
+  // 🔥 error del backend
+  if (err.response) {
+    const data = err.response.data;
+
+    if (data.error) return data.error;
+    if (data.message) return data.message;
+
+    // si viene array de errores
+    if (Array.isArray(data.errors)) {
+      return data.errors.join(", ");
+    }
+
+    return "Error del servidor";
+  }
+
+  // 🔥 error de red
+  if (err.request) {
+    return "No hay conexión con el servidor";
+  }
+
+  // 🔥 error desconocido
+  return err.message || "Error inesperado";
+};
+
 const liga = ref({
   Nombre: "",
   Logo: "", // 🔥 aquí guardas base64 o URL
@@ -65,41 +92,35 @@ const handleFile = (e) => {
 const crearLiga = async () => {
   error.value = "";
   success.value = "";
-  loading.value = true;     
+  loading.value = true;
 
-  console.log(liga);
-  
-if (!liga.value.Nombre || !liga.value.Nombre.trim()) {
-  error.value = "El nombre es obligatorio 1";
-  loading.value = false;
-  return;
-}
+  // 🔥 VALIDACIÓN FRONT
+  if (!liga.value.Nombre || !liga.value.Nombre.trim()) {
+    error.value = "El nombre es obligatorio";
+    loading.value = false;
+    return;
+  }
 
   try {
     const formData = new FormData();
 
-    formData.append("Nombre", liga.value.Nombre);
-    formData.append("Direccion", liga.value.Direccion);
-    formData.append("Celular", liga.value.Celular);
+    formData.append("Nombre", liga.value.Nombre.trim());
+    formData.append("Direccion", liga.value.Direccion || "");
+    formData.append("Celular", liga.value.Celular || "");
 
     if (file.value) {
-      formData.append("Logo", file.value); // 🔥 AQUÍ ESTÁ LA CLAVE
+      formData.append("Logo", file.value);
     }
 
-    console.log(formData);
     const res = await axios.post(
       "https://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net/api/ligas",
       formData,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      },
     );
 
     if (res.data.ok) {
-      success.value = "✅ Liga creada";
+      success.value = res.data.message || "✅ Liga creada correctamente";
 
+      // reset
       liga.value = {
         Nombre: "",
         Direccion: "",
@@ -108,11 +129,11 @@ if (!liga.value.Nombre || !liga.value.Nombre.trim()) {
 
       file.value = null;
       preview.value = null;
+    } else {
+      error.value = res.data.error || "Error al crear liga";
     }
   } catch (err) {
-    console.log(err);
-    
-    error.value = err.response?.data?.error || "Error al crear liga";
+    error.value = parseError(err); // 🔥 AQUÍ LA MAGIA
   } finally {
     loading.value = false;
   }
