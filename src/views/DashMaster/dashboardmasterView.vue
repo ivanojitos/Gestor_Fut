@@ -10,13 +10,12 @@
     <div class="grid">
       <div v-for="liga in ligas" :key="liga.Id" class="card">
         <!-- LOGO -->
-        <img :src="liga.Logo || defaultLogo" class="logo" />
+        <img :src="getLogo(liga.Logo)" class="logo" />
 
         <!-- INFO -->
         <div class="info">
           <h2>{{ liga.Nombre }}</h2>
-          <p class="cat">⚽ {{ liga.Categorias }}</p>
-
+          <p class="cat">⚽ Liga deportiva</p>
           <div class="details">
             <span>📍 {{ liga.Direccion }}</span>
             <span>📞 {{ liga.Celular }}</span>
@@ -58,7 +57,7 @@ const defaultLogo = "https://via.placeholder.com/100";
 const fetchLigas = async () => {
   try {
     const res = await axios.get(
-      "http://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net/api/ligas"
+      "http://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net/api/ligasGet",
     );
 
     console.log("RESPUESTA:", res.data); // 👈 DEBUG
@@ -67,6 +66,12 @@ const fetchLigas = async () => {
   } catch (error) {
     console.error("Error cargando ligas", error);
   }
+};
+
+const getLogo = (logo) => {
+  if (!logo) return defaultLogo;
+
+  return `http://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net${logo}`;
 };
 
 const goCreate = () => {
@@ -81,7 +86,9 @@ const deleteLiga = async (id) => {
   if (!confirm("¿Eliminar liga?")) return;
 
   try {
-    await axios.delete(`http://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net/api/ligas/${id}`);
+    await axios.delete(
+      `http://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net/api/ligas/${id}`,
+    );
     ligas.value = ligas.value.filter((l) => l.Id !== id);
   } catch (error) {
     console.error(error);
