@@ -94,7 +94,7 @@ const crearLiga = async () => {
         Direccion: "",
         Celular: "",
       };
-
+ 
       preview.value = null;
     }
   } catch (err) {
