@@ -1,5 +1,8 @@
 <template>
   <div class="container">
+    <router-link to="/dashboard/dashboardMaster" class="btn-home">
+      ⬅ Volver al Dashboard
+    </router-link>
     <div class="card">
       <h1>🏆 Crear Liga</h1>
       <p class="subtitle">Registra una nueva liga</p>
