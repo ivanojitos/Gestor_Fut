@@ -83,7 +83,7 @@ const fetchAdmins = async () => {
 
 // 🚀 NAVIGATE CREATE
 const goCreate = () => {
-  router.push("/dashboard/crearAdmin");
+  router.push("/dashboard/dasboardMasterCreate");
 };
 
 // ✏️ EDIT
