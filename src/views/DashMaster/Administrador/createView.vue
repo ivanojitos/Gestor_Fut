@@ -1,7 +1,6 @@
 <template>
   <div class="container">
     <div class="card">
-      
       <!-- 🔙 BACK -->
       <router-link to="/dashboard/dashboardMasterAdmin" class="btn-back">
         ⬅ Volver a Administradores
@@ -13,21 +12,28 @@
 
       <!-- FORM -->
       <form @submit.prevent="crearAdmin">
-
         <div class="form-grid">
-          <input v-model="admin.Correo" placeholder="Correo electrónico" required />
+          <input v-model="admin.nombre" placeholder="Nombre completo" />
 
-          <input v-model="admin.Celular" placeholder="Celular" />
+          <input v-model="admin.edad" type="number" placeholder="Edad" />
 
-          <input 
-            v-model="admin.Password" 
-            type="password" 
-            placeholder="Contraseña" 
-            required 
+          <input
+            v-model="admin.correo"
+            placeholder="Correo electrónico"
+            required
+          />
+
+          <input v-model="admin.celular" placeholder="Celular" />
+
+          <input
+            v-model="admin.password"
+            type="password"
+            placeholder="Contraseña"
+            required
           />
 
           <!-- SELECT LIGA -->
-          <select v-model="admin.Id_Ligas">
+          <select v-model="admin.id_ligas">
             <option value="">Seleccionar Liga</option>
             <option v-for="liga in ligas" :key="liga.Id" :value="liga.Id">
               {{ liga.Nombre }}
@@ -35,7 +41,7 @@
           </select>
 
           <!-- STATUS -->
-          <select v-model="admin.Estatus">
+          <select v-model="admin.estatus">
             <option value="Activo">Activo</option>
             <option value="Inactivo">Inactivo</option>
           </select>
@@ -50,7 +56,6 @@
       <!-- MENSAJES -->
       <p class="error" v-if="error">{{ error }}</p>
       <p class="success" v-if="success">{{ success }}</p>
-
     </div>
   </div>
 </template>
@@ -59,14 +64,18 @@
 import { ref, onMounted } from "vue";
 import axios from "axios";
 
-const API = "https://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net";
+const API =
+  "https://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net";
 
+// 🔥 DATA LIMPIA (minúsculas)
 const admin = ref({
-  Celular: "",
-  Id_Ligas: "",
-  Estatus: "Activo",
-  Password: "",
-  Correo: ""
+  nombre: "",
+  edad: "",
+  celular: "",
+  id_ligas: "",
+  estatus: "Activo",
+  password: "",
+  correo: "",
 });
 
 const ligas = ref([]);
@@ -93,7 +102,7 @@ const crearAdmin = async () => {
   success.value = "";
   loading.value = true;
 
-  if (!admin.value.Correo || !admin.value.Password) {
+  if (!admin.value.correo || !admin.value.password) {
     error.value = "Correo y contraseña son obligatorios";
     loading.value = false;
     return;
@@ -106,16 +115,17 @@ const crearAdmin = async () => {
       success.value = "✅ Administrador creado correctamente";
 
       admin.value = {
-        Celular: "",
-        Id_Ligas: "",
-        Estatus: "Activo",
-        Password: "",
-        Correo: ""
+        nombre: "",
+        edad: "",
+        celular: "",
+        id_ligas: "",
+        estatus: "Activo",
+        password: "",
+        correo: "",
       };
     } else {
       error.value = res.data.error;
     }
-
   } catch (err) {
     console.error(err);
     error.value = "Error al crear administrador";
@@ -126,7 +136,6 @@ const crearAdmin = async () => {
 
 onMounted(fetchLigas);
 </script>
-
 <style scoped>
 /* 🌌 BACKGROUND */
 .container {
@@ -142,7 +151,7 @@ onMounted(fetchLigas);
 .card {
   width: 100%;
   max-width: 550px;
-  background: rgba(255,255,255,0.06);
+  background: rgba(255, 255, 255, 0.06);
   backdrop-filter: blur(20px);
   padding: 25px;
   border-radius: 20px;
@@ -184,7 +193,8 @@ h1 {
 }
 
 /* INPUTS */
-input, select {
+input,
+select {
   padding: 12px;
   border-radius: 10px;
   border: none;
