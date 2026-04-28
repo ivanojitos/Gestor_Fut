@@ -57,8 +57,13 @@ const defaultLogo = "https://via.placeholder.com/100";
 
 const fetchLigas = async () => {
   try {
-    const res = await axios.get("http://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net/api/ligas");
-    ligas.value = res.data;
+    const res = await axios.get(
+      "http://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net/api/ligas"
+    );
+
+    console.log("RESPUESTA:", res.data); // 👈 DEBUG
+
+    ligas.value = res.data.data || []; // 🔥 AQUÍ ESTÁ LA CLAVE
   } catch (error) {
     console.error("Error cargando ligas", error);
   }

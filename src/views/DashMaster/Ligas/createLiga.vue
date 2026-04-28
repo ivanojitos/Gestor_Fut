@@ -1,14 +1,16 @@
 <template>
   <div class="container">
     <div class="card">
+      <!-- 🔙 BOTÓN -->
       <router-link to="/dashboard/dashboardMaster" class="btn-home">
         ⬅ Volver al Dashboard
       </router-link>
+
       <h1>🏆 Crear Liga</h1>
       <p class="subtitle">Registra una nueva liga</p>
 
       <form @submit.prevent="crearLiga">
-        <!-- LOGO UPLOAD -->
+        <!-- LOGO -->
         <div class="logo-upload">
           <img :src="preview || defaultLogo" class="logo-preview" />
           <input type="file" @change="handleFile" />
@@ -27,6 +29,7 @@
         </button>
       </form>
 
+      <!-- MENSAJES -->
       <p class="error" v-if="error">{{ error }}</p>
       <p class="success" v-if="success">{{ success }}</p>
     </div>
@@ -37,17 +40,16 @@
 import { ref } from "vue";
 import axios from "axios";
 
+// 🔥 PARSEADOR DE ERRORES
 const parseError = (err) => {
   console.log("ERROR COMPLETO:", err);
 
-  // 🔥 error del backend
   if (err.response) {
     const data = err.response.data;
 
     if (data.error) return data.error;
     if (data.message) return data.message;
 
-    // si viene array de errores
     if (Array.isArray(data.errors)) {
       return data.errors.join(", ");
     }
@@ -55,24 +57,21 @@ const parseError = (err) => {
     return "Error del servidor";
   }
 
-  // 🔥 error de red
   if (err.request) {
     return "No hay conexión con el servidor";
   }
 
-  // 🔥 error desconocido
   return err.message || "Error inesperado";
 };
 
+// 🔥 STATE
 const liga = ref({
   Nombre: "",
-  Logo: "", // 🔥 aquí guardas base64 o URL
   Direccion: "",
   Celular: "",
 });
 
 const file = ref(null);
-
 const preview = ref(null);
 const defaultLogo = "https://via.placeholder.com/120";
 
@@ -80,24 +79,22 @@ const loading = ref(false);
 const error = ref("");
 const success = ref("");
 
-// 📸 manejar imagen
+// 📸 HANDLE FILE
 const handleFile = (e) => {
   const selected = e.target.files[0];
   if (!selected) return;
 
-  file.value = selected; // 🔥 guardas archivo real
-
-  // preview visual (esto sí se queda)
+  file.value = selected;
   preview.value = URL.createObjectURL(selected);
 };
 
-// 🚀 crear liga
+// 🚀 CREAR LIGA
 const crearLiga = async () => {
   error.value = "";
   success.value = "";
   loading.value = true;
 
-  // 🔥 VALIDACIÓN FRONT
+  // VALIDACIÓN FRONT
   if (!liga.value.Nombre || !liga.value.Nombre.trim()) {
     error.value = "El nombre es obligatorio";
     loading.value = false;
@@ -117,13 +114,13 @@ const crearLiga = async () => {
 
     const res = await axios.post(
       "https://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net/api/ligas",
-      formData,
+      formData
     );
 
     if (res.data.ok) {
       success.value = res.data.message || "✅ Liga creada correctamente";
 
-      // reset
+      // RESET
       liga.value = {
         Nombre: "",
         Direccion: "",
@@ -136,7 +133,7 @@ const crearLiga = async () => {
       error.value = res.data.error || "Error al crear liga";
     }
   } catch (err) {
-    error.value = parseError(err); // 🔥 AQUÍ LA MAGIA
+    error.value = parseError(err);
   } finally {
     loading.value = false;
   }
@@ -144,6 +141,29 @@ const crearLiga = async () => {
 </script>
 
 <style scoped>
+/* 🌌 CONTENEDOR */
+.container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #0f172a, #1e3a8a);
+  padding: 15px;
+}
+
+/* 🧊 CARD */
+.card {
+  width: 100%;
+  max-width: 500px;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  padding: 20px;
+  border-radius: 20px;
+  color: white;
+  text-align: center;
+}
+
+/* 🔙 BOTÓN */
 .btn-home {
   display: inline-block;
   margin-bottom: 15px;
@@ -158,27 +178,6 @@ const crearLiga = async () => {
 
 .btn-home:hover {
   background: #334155;
-}
-/* 🌌 FONDO */
-.container {
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: linear-gradient(135deg, #0f172a, #1e3a8a);
-  padding: 20px;
-}
-
-/* 🧊 CARD */
-.card {
-  width: 100%;
-  max-width: 500px;
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(20px);
-  padding: 25px;
-  border-radius: 20px;
-  color: white;
-  text-align: center;
 }
 
 /* TITULO */
@@ -218,6 +217,8 @@ h1 {
 
 /* INPUTS */
 input {
+  width: 100%;
+  box-sizing: border-box;
   padding: 12px;
   border-radius: 10px;
   border: none;
@@ -226,6 +227,7 @@ input {
 
 /* BUTTON */
 button {
+  width: 100%;
   margin-top: 15px;
   padding: 12px;
   border-radius: 12px;
@@ -246,12 +248,43 @@ button {
   margin-top: 10px;
 }
 
-/* 📱 TABLET */
-@media (min-width: 600px) {
+/* 📱 MÓVIL */
+@media (max-width: 480px) {
   .card {
-    padding: 30px;
+    padding: 15px;
   }
 
+  h1 {
+    font-size: 20px;
+  }
+
+  .subtitle {
+    font-size: 12px;
+  }
+
+  input {
+    padding: 10px;
+    font-size: 14px;
+  }
+
+  button {
+    padding: 10px;
+    font-size: 14px;
+  }
+
+  .logo-preview {
+    width: 80px;
+    height: 80px;
+  }
+
+  .btn-home {
+    font-size: 12px;
+    padding: 6px 10px;
+  }
+}
+
+/* 📱 TABLET */
+@media (min-width: 600px) {
   .form {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -267,6 +300,7 @@ button {
 @media (min-width: 900px) {
   .card {
     max-width: 600px;
+    padding: 30px;
   }
 }
 </style>
