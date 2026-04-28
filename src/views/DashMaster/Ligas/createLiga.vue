@@ -67,11 +67,11 @@ const crearLiga = async () => {
   success.value = "";
   loading.value = true;
 
-  if (!liga.value.Nombre) {
-    error.value = "El nombre es obligatorio";
-    loading.value = false;
-    return;
-  }
+if (!liga.value.Nombre || !liga.value.Nombre.trim()) {
+  error.value = "El nombre es obligatorio";
+  loading.value = false;
+  return;
+}
 
   try {
     const formData = new FormData();
