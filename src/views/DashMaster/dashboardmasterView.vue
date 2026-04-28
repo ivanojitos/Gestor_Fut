@@ -57,7 +57,7 @@ const defaultLogo = "https://via.placeholder.com/100";
 const fetchLigas = async () => {
   try {
     const res = await axios.get(
-      "http://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net/api/ligas",
+      "https://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net/api/ligas",
     );
 
     console.log("RESPUESTA:", res.data); // 👈 DEBUG
@@ -71,7 +71,7 @@ const fetchLigas = async () => {
 const getLogo = (logo) => {
   if (!logo) return defaultLogo;
 
-  return `http://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net${logo}`;
+  return `https://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net${logo}`;
 };
 
 const goCreate = () => {
@@ -87,7 +87,7 @@ const deleteLiga = async (id) => {
 
   try {
     await axios.delete(
-      `http://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net/api/ligas/${id}`,
+      `https://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net/api/ligas/${id}`,
     );
     ligas.value = ligas.value.filter((l) => l.Id !== id);
   } catch (error) {
