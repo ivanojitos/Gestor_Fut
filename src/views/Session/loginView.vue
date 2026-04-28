@@ -102,7 +102,7 @@ const login = async () => {
       localStorage.setItem("user", JSON.stringify(user));
       localStorage.setItem("role", rol);
 
-      if (rol === "administrador") {
+      if (rol === "admin") {
         router.push("/dashboard/dashAdministrador");
       } else if (rol === "arbitro") {
         router.push("/dashboard/dashArbitro");
