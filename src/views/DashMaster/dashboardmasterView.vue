@@ -57,7 +57,7 @@ const defaultLogo = "https://via.placeholder.com/100";
 
 const fetchLigas = async () => {
   try {
-    const res = await axios.get("http://localhost:3000/api/ligas");
+    const res = await axios.get("http://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net/api/ligas");
     ligas.value = res.data;
   } catch (error) {
     console.error("Error cargando ligas", error);
@@ -76,7 +76,7 @@ const deleteLiga = async (id) => {
   if (!confirm("¿Eliminar liga?")) return;
 
   try {
-    await axios.delete(`http://localhost:3000/api/ligas/${id}`);
+    await axios.delete(`http://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net/api/ligas/${id}`);
     ligas.value = ligas.value.filter((l) => l.Id !== id);
   } catch (error) {
     console.error(error);
