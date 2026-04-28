@@ -5,13 +5,9 @@
       <p class="subtitle">Registra una nueva liga</p>
 
       <form @submit.prevent="crearLiga">
-        
         <!-- LOGO UPLOAD -->
         <div class="logo-upload">
-          <img
-            :src="preview || defaultLogo"
-            class="logo-preview"
-          />
+          <img :src="preview || defaultLogo" class="logo-preview" />
           <input type="file" @change="handleFile" />
         </div>
 
@@ -45,6 +41,8 @@ const liga = ref({
   Celular: "",
 });
 
+const file = ref(null);
+
 const preview = ref(null);
 const defaultLogo = "https://via.placeholder.com/120";
 
@@ -54,17 +52,13 @@ const success = ref("");
 
 // 📸 manejar imagen
 const handleFile = (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
+  const selected = e.target.files[0];
+  if (!selected) return;
 
-  const reader = new FileReader();
+  file.value = selected; // 🔥 guardas archivo real
 
-  reader.onload = () => {
-    preview.value = reader.result;
-    liga.value.Logo = reader.result; // 🔥 mandas base64 al back
-  };
-
-  reader.readAsDataURL(file);
+  // preview visual (esto sí se queda)
+  preview.value = URL.createObjectURL(selected);
 };
 
 // 🚀 crear liga
@@ -80,9 +74,24 @@ const crearLiga = async () => {
   }
 
   try {
+    const formData = new FormData();
+
+    formData.append("Nombre", liga.value.Nombre);
+    formData.append("Direccion", liga.value.Direccion);
+    formData.append("Celular", liga.value.Celular);
+
+    if (file.value) {
+      formData.append("Logo", file.value); // 🔥 AQUÍ ESTÁ LA CLAVE
+    }
+
     const res = await axios.post(
       "https://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net/api/ligas",
-      liga.value
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      },
     );
 
     if (res.data.ok) {
@@ -90,16 +99,15 @@ const crearLiga = async () => {
 
       liga.value = {
         Nombre: "",
-        Logo: "",
         Direccion: "",
         Celular: "",
       };
- 
+
+      file.value = null;
       preview.value = null;
     }
   } catch (err) {
-    error.value =
-      err.response?.data?.error || "Error al crear liga";
+    error.value = err.response?.data?.error || "Error al crear liga";
   } finally {
     loading.value = false;
   }
