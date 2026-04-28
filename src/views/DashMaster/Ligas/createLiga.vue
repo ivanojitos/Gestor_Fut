@@ -18,7 +18,6 @@
         <!-- INPUTS -->
         <div class="form">
           <input v-model="liga.Nombre" placeholder="Nombre" required />
-          <input v-model="liga.Categorias" placeholder="Categorías" />
           <input v-model="liga.Direccion" placeholder="Dirección" />
           <input v-model="liga.Celular" placeholder="Celular" />
         </div>
@@ -42,7 +41,6 @@ import axios from "axios";
 const liga = ref({
   Nombre: "",
   Logo: "", // 🔥 aquí guardas base64 o URL
-  Categorias: "",
   Direccion: "",
   Celular: "",
 });
@@ -93,7 +91,6 @@ const crearLiga = async () => {
       liga.value = {
         Nombre: "",
         Logo: "",
-        Categorias: "",
         Direccion: "",
         Celular: "",
       };
