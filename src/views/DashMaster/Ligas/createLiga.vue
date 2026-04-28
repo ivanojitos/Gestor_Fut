@@ -65,10 +65,12 @@ const handleFile = (e) => {
 const crearLiga = async () => {
   error.value = "";
   success.value = "";
-  loading.value = true;
+  loading.value = true;     
 
+  console.log(liga);
+  
 if (!liga.value.Nombre || !liga.value.Nombre.trim()) {
-  error.value = "El nombre es obligatorio";
+  error.value = "El nombre es obligatorio 1";
   loading.value = false;
   return;
 }
@@ -84,6 +86,7 @@ if (!liga.value.Nombre || !liga.value.Nombre.trim()) {
       formData.append("Logo", file.value); // 🔥 AQUÍ ESTÁ LA CLAVE
     }
 
+    console.log(formData);
     const res = await axios.post(
       "https://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net/api/ligas",
       formData,
@@ -107,6 +110,8 @@ if (!liga.value.Nombre || !liga.value.Nombre.trim()) {
       preview.value = null;
     }
   } catch (err) {
+    console.log(err);
+    
     error.value = err.response?.data?.error || "Error al crear liga";
   } finally {
     loading.value = false;
