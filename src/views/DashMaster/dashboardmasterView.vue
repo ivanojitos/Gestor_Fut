@@ -57,7 +57,7 @@ const defaultLogo = "https://via.placeholder.com/100";
 const fetchLigas = async () => {
   try {
     const res = await axios.get(
-      "http://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net/api/ligasGet",
+      "http://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net/api/ligas",
     );
 
     console.log("RESPUESTA:", res.data); // 👈 DEBUG
