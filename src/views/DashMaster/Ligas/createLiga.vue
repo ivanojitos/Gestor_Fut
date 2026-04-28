@@ -1,9 +1,9 @@
 <template>
   <div class="container">
-    <router-link to="/dashboard/dashboardMaster" class="btn-home">
-      ⬅ Volver al Dashboard
-    </router-link>
     <div class="card">
+      <router-link to="/dashboard/dashboardMaster" class="btn-home">
+        ⬅ Volver al Dashboard
+      </router-link>
       <h1>🏆 Crear Liga</h1>
       <p class="subtitle">Registra una nueva liga</p>
 
@@ -144,6 +144,21 @@ const crearLiga = async () => {
 </script>
 
 <style scoped>
+.btn-home {
+  display: inline-block;
+  margin-bottom: 15px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: #1e293b;
+  color: white;
+  text-decoration: none;
+  font-size: 13px;
+  transition: 0.3s;
+}
+
+.btn-home:hover {
+  background: #334155;
+}
 /* 🌌 FONDO */
 .container {
   min-height: 100vh;
