@@ -24,6 +24,9 @@
          <router-link v-if="role === 'master'" to="/dashboard/crearLiga">
           <Users /> <span>Crear Ligas</span>
         </router-link>
+         <router-link v-if="role === 'master'" to="/dashboard/dashboardMasterAdmin">
+          <Users /> <span>Administrador</span>
+        </router-link>
       </nav>
     </aside>
 

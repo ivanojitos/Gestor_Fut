@@ -17,6 +17,7 @@ import CrearUsuario from "../views/Session/createUsuarioView.vue";
 import CreateArbitroView from "../views/Session/arbitro/CreateArbitroView.vue";
 import CreateMaster from "../views/DashMaster/Ligas/createLiga.vue";
 import dashboardMaster from "../views/DashMaster/dashboardmasterView.vue";
+import dashboardMasterAdmin from "../views/DashMaster/Administrador/indexView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -105,7 +106,12 @@ const router = createRouter({
         {
           path: "dashboardMaster",
           component: dashboardMaster,
+        },
+        {
+          path: "dashboardMasterAdmin",
+          component: dashboardMasterAdmin,
         }
+
       ],
     },
     {
