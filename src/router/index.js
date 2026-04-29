@@ -12,7 +12,10 @@ const router = createRouter({
     ...authRoutes,
 
     {
-      ...dashboardRoutes,
+      path: "/dashboard",
+      component: dashboardRoutes.component, // 👈 SOLO el component
+      meta: { requiresAuth: true },
+
       children: [
         ...dashboardRoutes.children,
         ...adminRoutes,
@@ -33,7 +36,7 @@ router.beforeEach((to) => {
   }
 
   if (to.meta?.role && to.meta.role !== role) {
-    return { name: "Dashboard" };
+    return { name: "Perfil" }; // 👈 mejor que "Dashboard"
   }
 
   return true;

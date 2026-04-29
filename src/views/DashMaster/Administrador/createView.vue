@@ -136,6 +136,7 @@ const crearAdmin = async () => {
 
 onMounted(fetchLigas);
 </script>
+
 <style scoped>
 /* 🌌 BACKGROUND */
 .container {
