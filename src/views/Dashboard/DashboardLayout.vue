@@ -25,7 +25,10 @@
           <Users /> <span>Crear Ligas</span>
         </router-link>
 
-        <router-link v-if="role === 'master'" to="/dashboard/dashboardMasterAdmin">
+        <router-link
+          v-if="role === 'master'"
+          to="/dashboard/dashboardMasterAdmin"
+        >
           <Users /> <span>Administrador</span>
         </router-link>
 
@@ -36,7 +39,6 @@
         <router-link v-if="role === 'admin'" to="/dashboard/equipos">
           <Users /> <span>Equipos</span>
         </router-link>
-
       </nav>
     </aside>
 
@@ -69,8 +71,7 @@ const logout = () => {
 };
 
 onMounted(() => {
-  role.value = localStorage.getItem("role");
-    console.log(role);
+  console.log(role);
 });
 </script>
 
