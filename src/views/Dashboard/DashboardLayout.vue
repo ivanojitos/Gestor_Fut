@@ -33,7 +33,7 @@
         </router-link>
 
         <router-link v-if="role === 'admin'" to="/dashboard/categorias">
-          <Users /> <span>Categorias</span>
+          <Users /> <span>Categorias 1</span>
         </router-link>
 
         <router-link v-if="role === 'admin'" to="/dashboard/equipos">
