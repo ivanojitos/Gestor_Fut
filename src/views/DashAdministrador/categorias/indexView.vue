@@ -71,7 +71,7 @@ const fetchLigas = async () => {
   try {
     const res = await axios.get(`${API}/api/ligas`);
 
-    console.log(res.data); // 👈 DEBUG
+    console.log(res.data.data); // 👈 DEBUG
 
     ligas.value = res.data.data; // ✅ AQUÍ ESTÁ LA CLAVE
   } catch (err) {
