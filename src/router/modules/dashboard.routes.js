@@ -1,3 +1,5 @@
+import DashboardLayout from "@/views/Dashboard/DashboardLayout.vue";
+
 export default {
   path: "/dashboard",
   name: "Dashboard",

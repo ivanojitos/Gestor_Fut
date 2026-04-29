@@ -1,11 +1,11 @@
 import { createRouter, createWebHistory } from "vue-router";
 
 // 📦 módulos de rutas
-import authRoutes from "./modules/auth.routes";
+import authRoutes      from "./modules/auth.routes";
 import dashboardRoutes from "./modules/dashboard.routes";
-import adminRoutes from "./modules/admin.routes";
-import arbitroRoutes from "./modules/arbitro.routes";
-import masterRoutes from "./modules/master.routes";
+import adminRoutes     from "./modules/admin.routes";
+import arbitroRoutes   from "./modules/arbitro.routes";
+import masterRoutes    from "./modules/master.routes";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
