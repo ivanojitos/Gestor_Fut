@@ -82,6 +82,14 @@ const password = ref("");
 const error = ref("");
 const router = useRouter();
 
+// 🎯 mapa de redirección por rol (FORMA PRO)
+const roleRedirect = {
+  admin: { name: "DashAdministrador" },
+  arbitro: { name: "DashArbitro" },
+  jugador: { name: "Perfil" },
+  master: { name: "DashboardMaster" },
+};
+
 const login = async () => {
   error.value = "";
 
@@ -102,33 +110,27 @@ const login = async () => {
       localStorage.setItem("user", JSON.stringify(user));
       localStorage.setItem("role", rol);
 
-      if (rol === "admin") {
-        router.push("/dashboard/dashAdministrador");
-      } else if (rol === "arbitro") {
-        router.push("/dashboard/dashArbitro");
-      } else if (rol === "jugador") {
-        router.push("/dashboard"); // jugador
-      } else if (rol === "master") {
-        router.push("/dashboard/dashboardMaster"); // master
-      }
+      // 🚀 navegación limpia
+      router.push(roleRedirect[rol] || { name: "Login" });
     }
   } catch (err) {
     if (err.response?.status === 401) {
       error.value = "Contraseña incorrecta";
     } else if (err.response?.status === 404) {
-      error.value = "Usuario no existe 21";
+      error.value = "Usuario no existe";
     } else if (err.response?.status === 422) {
       error.value = "Datos inválidos";
     } else {
-      error.value = "Error del servidor 2";
+      error.value = "Error del servidor";
     }
   }
 };
 
 const irCrearUsuario = () => {
-  router.push("/crearUsuario");
+  router.push({ name: "CrearUsuario" });
 };
 
+// MODALES
 const mostrarCodigo = ref(false);
 const mostrarFormulario = ref(false);
 
@@ -173,13 +175,12 @@ const crearArbitro = async () => {
       localStorage.setItem("user", JSON.stringify(user));
       localStorage.setItem("role", rol);
 
-      router.push("/dashboard/dashArbitro");
+      // 🚀 navegación limpia
+      router.push({ name: "DashArbitro" });
 
       mostrarFormulario.value = false;
     }
   } catch (err) {
-    console.log(err);
-
     if (err.response) {
       errorArbitro.value = err.response.data.message || err.response.data.error;
     } else {

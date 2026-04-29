@@ -5,38 +5,41 @@
       <h2 class="logo">⚽ FutManager</h2>
 
       <nav>
-        <router-link v-if="role === 'jugador'" to="/dashboard/perfil">
+        <!-- JUGADOR -->
+        <router-link v-if="role === 'jugador'" :to="{ name: 'Perfil' }">
           <Home /> <span>Perfil</span>
         </router-link>
 
-        <router-link v-if="role === 'jugador'" to="/dashboard/posiciones">
+        <router-link v-if="role === 'jugador'" :to="{ name: 'Posiciones' }">
           <Users /> <span>Posiciones</span>
         </router-link>
 
-        <router-link v-if="role === 'jugador'" to="/dashboard/roles">
+        <router-link v-if="role === 'jugador'" :to="{ name: 'Roles' }">
           <Users /> <span>Rol juego</span>
         </router-link>
 
-        <router-link v-if="role === 'jugador'" to="/dashboard/ligas">
+        <router-link v-if="role === 'jugador'" :to="{ name: 'Ligas' }">
           <Users /> <span>Ligas</span>
         </router-link>
 
-        <router-link v-if="role === 'master'" to="/dashboard/crearLiga">
+        <!-- MASTER -->
+        <router-link v-if="role === 'master'" :to="{ name: 'CrearLiga' }">
           <Users /> <span>Crear Ligas</span>
         </router-link>
 
         <router-link
           v-if="role === 'master'"
-          to="/dashboard/dashboardMasterAdmin"
+          :to="{ name: 'DashboardMasterAdmin' }"
         >
           <Users /> <span>Administrador</span>
         </router-link>
 
-        <router-link v-if="role === 'admin'" to="/dashboard/categorias">
-          <Users /> <span>Categorias 1</span>
+        <!-- ADMIN -->
+        <router-link v-if="role === 'admin'" :to="{ name: 'Categorias' }">
+          <Users /> <span>Categorias</span>
         </router-link>
 
-        <router-link v-if="role === 'admin'" to="/dashboard/equipos">
+        <router-link v-if="role === 'admin'" :to="{ name: 'Equipos' }">
           <Users /> <span>Equipos</span>
         </router-link>
       </nav>

@@ -10,16 +10,12 @@ import masterRoutes from "./modules/master.routes";
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-    // 🔐 autenticación
     ...authRoutes,
 
-    // 🧩 dashboard principal
     {
       ...dashboardRoutes,
       children: [
         ...dashboardRoutes.children,
-
-        // 👇 módulos adicionales dentro del dashboard
         ...adminRoutes,
         ...arbitroRoutes,
         ...masterRoutes,
@@ -28,19 +24,19 @@ const router = createRouter({
   ],
 });
 
-// 🛡️ navegación protegida
+// 🛡️ GUARD GLOBAL
 router.beforeEach((to) => {
   const isAuth = localStorage.getItem("auth");
   const role = localStorage.getItem("role");
 
-  // 🔒 proteger dashboard
-  if (to.path.startsWith("/dashboard") && !isAuth) {
-    return "/";
+  // 🔒 PROTEGER RUTAS PRIVADAS
+  if (to.meta?.requiresAuth && !isAuth) {
+    return { name: "Login" };
   }
 
-  // 🎭 validar rol si la ruta lo requiere
+  // 🎭 VALIDAR ROL
   if (to.meta?.role && to.meta.role !== role) {
-    return "/dashboard";
+    return { name: "Dashboard" };
   }
 
   return true;
