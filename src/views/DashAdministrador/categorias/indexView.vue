@@ -30,8 +30,8 @@
           <label>Seleccionar Liga</label>
           <select v-model="form.id_liga" required>
             <option disabled value="">Selecciona una liga</option>
-            <option v-for="liga in ligas" :key="liga.id" :value="liga.id">
-              {{ liga.nombre }}
+            <option v-for="liga in ligas" :key="liga.Id" :value="liga.Id">
+              {{ liga.Nombre }}
             </option>
           </select>
         </div>
@@ -70,8 +70,12 @@ const error = ref("");
 const fetchLigas = async () => {
   try {
     const res = await axios.get(`${API}/api/ligas`);
-    ligas.value = res.data;
+
+    console.log(res.data); // 👈 DEBUG
+
+    ligas.value = res.data.data; // ✅ AQUÍ ESTÁ LA CLAVE
   } catch (err) {
+    console.error(err);
     error.value = "Error cargando ligas";
   }
 };
