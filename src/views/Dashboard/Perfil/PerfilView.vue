@@ -126,7 +126,7 @@ const stats = [
 ];
 
 const goToTeam = () => {
-  router.push(`/dashboard/equipo/${player.team}`);
+  router.push({ name: "EquipoDetalle", params: { id: player.team } });
 };
 const playerExists = computed(() => {
   return player.name !== ""; // o valida con backend
@@ -134,7 +134,7 @@ const playerExists = computed(() => {
 
 const goToEdit = () => {
   router.push({
-    path: "/dashboard/createJugador",
+    name: "CreateJugador",
     query: { edit: true },
     state: { player }, // 👈 importante
   });

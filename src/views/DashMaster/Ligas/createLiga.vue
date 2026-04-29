@@ -2,7 +2,7 @@
   <div class="container">
     <div class="card">
       <!-- 🔙 BOTÓN -->
-      <router-link to="/dashboard/dashboardMaster" class="btn-home">
+      <router-link :to="{name: 'dashboardMaster'}" class="btn-home">
         ⬅ Volver al Dashboard
       </router-link>
 

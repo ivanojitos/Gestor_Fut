@@ -91,7 +91,7 @@ const team = {
 };
 
 const goToGameMode = () => {
-  router.push(`/dashboard/ModoJuego/${team.id}`);
+  router.push({ name: "ModoJuego", params: { id: team.id } });
 };
 
 const players = [

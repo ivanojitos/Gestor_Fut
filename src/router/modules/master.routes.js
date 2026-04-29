@@ -11,4 +11,10 @@ export default [
     component: () => import("@/views/DashMaster/Administrador/indexView.vue"),
     meta: { role: "master" },
   },
+  {
+    path: "crearLiga",
+    name: "CrearLiga",
+    component: () => import("@/views/DashMaster/Ligas/createLiga.vue"),
+    meta: { role: "master" },
+  },
 ];

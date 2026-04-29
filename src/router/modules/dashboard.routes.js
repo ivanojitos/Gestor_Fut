@@ -4,7 +4,7 @@ export default {
   path: "/dashboard",
   name: "Dashboard",
   component: DashboardLayout,
-  meta: { requiresAuth: true }, // 🔐 importante
+  meta: { requiresAuth: true },
   children: [
     {
       path: "",
@@ -19,16 +19,6 @@ export default {
       path: "perfil",
       name: "Perfil",
       component: () => import("@/views/Dashboard/Perfil/PerfilView.vue"),
-    },
-    {
-      path: "equipo/:id",
-      name: "EquipoDetalle",
-      component: () => import("@/views/Dashboard/Perfil/EquipoDetalleView.vue"),
-    },
-    {
-      path: "modojuego/:id",
-      name: "ModoJuego",
-      component: () => import("@/views/Dashboard/Perfil/ModoJuegoView.vue"),
     },
     {
       path: "posiciones",

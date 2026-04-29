@@ -75,7 +75,7 @@ const getLogo = (logo) => {
 };
 
 const goCreate = () => {
-  router.push("/dashboard/crearLiga"); // master
+  router.push({ name: "crearLiga" }); // master
 };
 
 const editLiga = (liga) => {

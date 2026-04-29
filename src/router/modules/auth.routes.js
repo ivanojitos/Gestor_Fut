@@ -6,8 +6,7 @@ export default [
   },
   {
     path: "/login-real",
-    name: "LoginReal",
-    component: () => import("@/views/Session/loginView.vue"),
+    redirect: { name: "Login" },
   },
   {
     path: "/crearUsuario",

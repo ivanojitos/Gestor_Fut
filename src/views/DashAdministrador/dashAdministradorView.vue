@@ -104,7 +104,7 @@ import { useRouter } from "vue-router";
 const router = useRouter();
 
 const goBack = () => router.back();
-const goToProgramarJuego = () => router.push("/dashboard/programarJuego");
+const goToProgramarJuego = () => router.push({ name: "programarJuego" });
 
 const goToPartidos = () => {
   router.push({ name: "partidosProgramados" });

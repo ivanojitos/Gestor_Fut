@@ -83,7 +83,7 @@ const fetchAdmins = async () => {
 
 // 🚀 NAVIGATE CREATE
 const goCreate = () => {
-  router.push("/dashboard/dasboardMasterCreate");
+  router.push({ name: "dashboardMasterCreate" });
 };
 
 // ✏️ EDIT

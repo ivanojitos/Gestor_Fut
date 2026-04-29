@@ -62,17 +62,17 @@ const login = () => {
   if (form.email === "jugador@test.com" && form.password === "1234") {
     localStorage.setItem("auth", "true");
     localStorage.setItem("role", "admin"); // 🔥 guardas rol
-    router.push("/login-real");
+    router.push({ name: "loginReal" });
 
   } else if (form.email === "arbitro@test.com" && form.password === "1234") {
     localStorage.setItem("auth", "true");
     localStorage.setItem("role", "arbitro"); // 🔥 guardas rol
-    router.push("/dashboard/dashArbitro");
+    router.push({ name: "dashArbitro" });
 
   } else if (form.email === "administrador@test.com" && form.password === "1234") {
     localStorage.setItem("auth", "true");
     localStorage.setItem("role", "administrador"); // 🔥 guardas rol
-    router.push("/dashboard/dashAdministrador");
+    router.push({ name: "dashAdministrador" });
 
   } else {
     error.value = "Credenciales incorrectas";

@@ -1,8 +1,8 @@
 <template>
   <div class="container">
-    <div class="card">
+    <div class="card"> 
       <!-- 🔙 BACK -->
-      <router-link to="/dashboard/dashboardMasterAdmin" class="btn-back">
+      <router-link :to="{name: dashboardMasterAdmin }" class="btn-back">
         ⬅ Volver a Administradores
       </router-link>
 
