@@ -21,12 +21,22 @@
           <Users /> <span>Ligas</span>
         </router-link>
 
-         <router-link v-if="role === 'master'" to="/dashboard/crearLiga">
+        <router-link v-if="role === 'master'" to="/dashboard/crearLiga">
           <Users /> <span>Crear Ligas</span>
         </router-link>
-         <router-link v-if="role === 'master'" to="/dashboard/dashboardMasterAdmin">
+
+        <router-link v-if="role === 'master'" to="/dashboard/dashboardMasterAdmin">
           <Users /> <span>Administrador</span>
         </router-link>
+
+        <router-link v-if="role === 'admin'" to="/dashboard/categorias">
+          <Users /> <span>Categorias</span>
+        </router-link>
+
+        <router-link v-if="role === 'admin'" to="/dashboard/equipos">
+          <Users /> <span>Equipos</span>
+        </router-link>
+        
       </nav>
     </aside>
 
