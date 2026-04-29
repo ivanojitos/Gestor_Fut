@@ -74,7 +74,7 @@ const logout = () => {
 };
 
 onMounted(() => {
-  console.log(role);
+role.value = localStorage.getItem("role"); // 👈 🔥 ESTA ES LA CLAVE
 });
 </script>
 
