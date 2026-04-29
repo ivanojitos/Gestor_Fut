@@ -36,7 +36,7 @@
         <router-link v-if="role === 'admin'" to="/dashboard/equipos">
           <Users /> <span>Equipos</span>
         </router-link>
-        
+
       </nav>
     </aside>
 
@@ -70,6 +70,7 @@ const logout = () => {
 
 onMounted(() => {
   role.value = localStorage.getItem("role");
+    console.log(role);
 });
 </script>
 
