@@ -104,10 +104,10 @@ import { useRouter } from "vue-router";
 const router = useRouter();
 
 const goBack = () => router.back();
-const goToProgramarJuego = () => router.push({ name: "programarJuego" });
+const goToProgramarJuego = () => router.push({ name: "ProgramarJuego" });
 
 const goToPartidos = () => {
-  router.push({ name: "partidosProgramados" });
+  router.push({ name: "PartidosProgramados" });
 };
 /* DATA */
 const matches = ref([
