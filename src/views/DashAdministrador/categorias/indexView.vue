@@ -7,6 +7,10 @@
       <button @click="goToCreate">
         ➕ Nueva Categoría
       </button>
+      <button @click="goToHome">
+        ➕ Casa
+      </button>
+      
     </div>
 
     <!-- LOADING -->
@@ -92,6 +96,10 @@ const fetchCategorias = async () => {
 // 🔽 NAV
 const goToCreate = () => {
   router.push({ name: "CategoriasCreate" }); // 👈 ajusta el nombre
+};
+
+const goToHome = () => {
+  router.push({ name: "dashAdministrador" });
 };
 
 onMounted(fetchCategorias);
