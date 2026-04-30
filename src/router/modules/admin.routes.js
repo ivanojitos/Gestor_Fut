@@ -23,4 +23,10 @@ export default [
     component: () => import("@/views/DashAdministrador/categorias/indexView.vue"),
     meta: { role: "admin" },
   },
+  {
+    path: "createCategoria",
+    name: "CategoriasCreate",
+    component: () => import("@/views/DashAdministrador/categorias/createView.vue"),
+    meta: { role: "admin" },
+  },
 ];

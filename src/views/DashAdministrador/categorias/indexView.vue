@@ -1,243 +1,233 @@
 <template>
   <div class="page">
-    <!-- CARD -->
-    <div class="card">
-      <!-- HEADER -->
-      <div class="header">
-        <h2>⚽ Crear Categoría</h2>
-        <p>Asigna una categoría a una liga existente</p>
-      </div>
+    <!-- HEADER -->
+    <div class="top-bar">
+      <h1>⚽ Categorías por Liga</h1>
 
-      <!-- FORM -->
-      <form @submit.prevent="submitForm" class="form">
-        <!-- NOMBRE -->
-        <div class="input-group">
-          <input v-model="form.nombre" required />
-          <label>Nombre de la categoría</label>
-        </div>
-
-        <!-- ESTATUS -->
-        <div class="select-group">
-          <label>Estatus</label>
-          <select v-model="form.estatus">
-            <option value="activo">Activo</option>
-            <option value="inactivo">Inactivo</option>
-          </select>
-        </div>
-
-        <!-- LIGA -->
-        <div class="select-group">
-          <label>Seleccionar Liga</label>
-          <select v-model="form.id_liga" required>
-            <option disabled value="">Selecciona una liga</option>
-            <option v-for="liga in ligas" :key="liga.Id" :value="liga.Id">
-              {{ liga.Nombre }}
-            </option>
-          </select>
-        </div>
-
-        <!-- BUTTON -->
-        <button :disabled="loading">
-          <span v-if="!loading">Guardar Categoría</span>
-          <span v-else>Guardando...</span>
-        </button>
-      </form>
-
-      <!-- ERROR -->
-      <p v-if="error" class="error">{{ error }}</p>
+      <button @click="goToCreate">
+        ➕ Nueva Categoría
+      </button>
     </div>
+
+    <!-- LOADING -->
+    <div v-if="loading" class="loading">
+      Cargando categorías...
+    </div>
+
+    <!-- CONTENIDO -->
+    <div v-else class="grid">
+      <div
+        v-for="(categorias, liga) in agrupadas"
+        :key="liga"
+        class="liga-card"
+      >
+        <!-- HEADER LIGA -->
+        <div class="liga-header">
+          <h2>{{ liga }}</h2>
+          <span>{{ categorias.length }} categorías</span>
+        </div>
+
+        <!-- CATEGORIAS -->
+        <div class="categorias">
+          <div
+            v-for="cat in categorias"
+            :key="cat.Id"
+            class="categoria"
+          >
+            <h3>{{ cat.Nombre }}</h3>
+            <p :class="cat.Estatus">
+              {{ cat.Estatus }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ERROR -->
+    <p v-if="error" class="error">{{ error }}</p>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import axios from "axios";
+import { useRouter } from "vue-router";
 
-const API =
-  "https://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net";
+const API = "https://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net";
 
-const form = ref({
-  nombre: "",
-  estatus: "activo",
-  id_liga: "",
-});
+const router = useRouter();
 
-const ligas = ref([]);
-const loading = ref(false);
+const categorias = ref([]);
+const loading = ref(true);
 const error = ref("");
 
-// 🔽 Obtener ligas
-const fetchLigas = async () => {
+// 🔥 AGRUPAR POR LIGA
+const agrupadas = computed(() => {
+  return categorias.value.reduce((acc, cat) => {
+    const liga = cat.Liga;
+
+    if (!acc[liga]) {
+      acc[liga] = [];
+    }
+
+    acc[liga].push(cat);
+
+    return acc;
+  }, {});
+});
+
+// 🔽 FETCH
+const fetchCategorias = async () => {
   try {
-    const res = await axios.get(`${API}/api/ligas`);
+    const res = await axios.get(`${API}/api/categorias`);
 
-    console.log(res.data.data); // 👈 DEBUG
-
-    ligas.value = res.data.data; // ✅ AQUÍ ESTÁ LA CLAVE
+    categorias.value = res.data.data;
   } catch (err) {
-    console.error(err);
-    error.value = "Error cargando ligas";
-  }
-};
-
-// 🔽 Enviar
-const submitForm = async () => {
-  loading.value = true;
-  error.value = "";
-
-  try {
-    await axios.post(`${API}/api/categorias`, {
-      Nombre: form.value.nombre,
-      Estatus: form.value.estatus,
-      Id_Liga: form.value.id_liga,
-    });
-
-    alert("✅ Categoría creada");
-
-    form.value = {
-      nombre: "",
-      estatus: "activo",
-      id_liga: "",
-    };
-  } catch (err) {
-    error.value = "Error al guardar";
+    error.value = "Error cargando categorías";
   } finally {
     loading.value = false;
   }
 };
 
-onMounted(fetchLigas);
+// 🔽 NAV
+const goToCreate = () => {
+  router.push({ name: "createCategoria" }); // 👈 ajusta el nombre
+};
+
+onMounted(fetchCategorias);
 </script>
 
 <style scoped>
-/* 🌌 BACKGROUND */
+/* 🌌 PAGE */
 .page {
   min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: linear-gradient(135deg, #1e293b, #6366f1);
-  padding: 20px;
-}
-
-/* 💎 CARD */
-.card {
-  width: 100%;
-  max-width: 420px;
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(20px);
-  border-radius: 20px;
   padding: 30px;
+  background: linear-gradient(135deg, #0f172a, #1e293b);
   color: white;
-  box-shadow: 0 0 40px rgba(99, 102, 241, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  font-family: "Segoe UI", sans-serif;
 }
 
-/* 🧠 HEADER */
-.header h2 {
-  font-size: 24px;
-  margin-bottom: 5px;
-  color: #c7d2fe;
-}
-
-.header p {
-  font-size: 13px;
-  color: #cbd5f5;
-  margin-bottom: 20px;
-}
-
-/* 📦 FORM */
-.form {
+/* 🔝 HEADER */
+.top-bar {
   display: flex;
-  flex-direction: column;
-  gap: 18px;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
 }
 
-/* ✍ INPUT FLOAT */
-.input-group {
-  position: relative;
-}
-
-.input-group input {
-  width: 100%;
-  padding: 12px;
-  border: none;
-  border-bottom: 2px solid #818cf8;
-  background: transparent;
-  color: white;
-  outline: none;
-}
-
-.input-group label {
-  position: absolute;
-  top: 12px;
-  left: 0;
-  font-size: 14px;
-  color: #a5b4fc;
-  transition: 0.3s;
-}
-
-.input-group input:focus + label,
-.input-group input:valid + label {
-  top: -10px;
-  font-size: 12px;
-  color: #6366f1;
-}
-
-/* 📥 SELECT */
-.select-group label {
-  font-size: 13px;
-  color: #cbd5f5;
-}
-
-.select-group select {
-  width: 100%;
-  padding: 12px;
-  border-radius: 10px;
-  border: none;
-  background: #1e293b;
-  color: white;
-  outline: none;
-}
-
-/* 🚀 BUTTON */
-button {
-  margin-top: 10px;
-  padding: 14px;
-  border: none;
-  border-radius: 12px;
-  background: linear-gradient(135deg, #3b82f6, #6366f1);
-  color: white;
+.top-bar h1 {
+  font-size: 28px;
   font-weight: bold;
+}
+
+.top-bar button {
+  background: linear-gradient(135deg, #3b82f6, #6366f1);
+  border: none;
+  padding: 12px 18px;
+  border-radius: 12px;
+  color: white;
   cursor: pointer;
+  font-weight: bold;
   transition: 0.3s;
 }
 
-button:hover {
+.top-bar button:hover {
   transform: scale(1.05);
   box-shadow: 0 0 20px rgba(99, 102, 241, 0.6);
 }
 
-button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+/* 📦 GRID */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+/* 🧊 CARD LIGA */
+.liga-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  border-radius: 20px;
+  padding: 20px;
+  border: 1px solid rgba(255,255,255,0.1);
+  transition: 0.3s;
+}
+
+.liga-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 0 25px rgba(99, 102, 241, 0.3);
+}
+
+/* 🧠 HEADER LIGA */
+.liga-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+
+.liga-header h2 {
+  font-size: 18px;
+  color: #c7d2fe;
+}
+
+.liga-header span {
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+/* 📊 CATEGORIAS */
+.categorias {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* 🔹 ITEM */
+.categoria {
+  background: #1e293b;
+  padding: 12px;
+  border-radius: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: 0.2s;
+}
+
+.categoria:hover {
+  background: #334155;
+}
+
+/* 🏷️ STATUS */
+.activo {
+  color: #22c55e;
+}
+
+.inactivo {
+  color: #ef4444;
+}
+
+/* ⏳ LOADING */
+.loading {
+  text-align: center;
+  margin-top: 40px;
 }
 
 /* ❌ ERROR */
 .error {
-  margin-top: 10px;
+  margin-top: 20px;
   color: #f87171;
-  font-size: 13px;
+  text-align: center;
 }
 
 /* 📱 RESPONSIVE */
-@media (max-width: 500px) {
-  .card {
-    padding: 20px;
+@media (max-width: 600px) {
+  .top-bar {
+    flex-direction: column;
+    gap: 10px;
   }
 
-  .header h2 {
-    font-size: 20px;
+  .top-bar h1 {
+    font-size: 22px;
   }
 }
 </style>
