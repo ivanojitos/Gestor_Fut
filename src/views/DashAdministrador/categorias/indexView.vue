@@ -91,7 +91,7 @@ const fetchCategorias = async () => {
 
 // 🔽 NAV
 const goToCreate = () => {
-  router.push({ name: "createCategoria" }); // 👈 ajusta el nombre
+  router.push({ name: "CategoriasCreate" }); // 👈 ajusta el nombre
 };
 
 onMounted(fetchCategorias);
