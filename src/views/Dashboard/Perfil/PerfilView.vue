@@ -166,19 +166,23 @@ const stats = [
 ];
 
 const fetchData = async () => {
-  const user = (await axios.get(`${API}/api/jugadores/${player.Id}`)).data.data;
+  if (!player.Id) return;
 
-  player.name = user.Nombre;
-  player.ligas = user.ligas || [];
-  player.categorias = user.categorias || [];
-  player.rating = user.Rating || 80;
-  player.position = user.Posicion || "N/A";
+  const res = await axios.get(`${API}/api/jugadores/${player.Id}`);
+  const user = res.data.data;
+
+  console.log("DATA BACK:", user); // 🔥 DEBUG
+
+  player.name = user.NombreCompleto;
+  player.age = user.Edad;
+  player.number = user.Numero;
+  player.position = user.Posicion;
   player.photo = user.Foto || "https://via.placeholder.com/150";
 
   ligas.value = (await axios.get(`${API}/api/ligas`)).data.data;
   categorias.value = (await axios.get(`${API}/api/categorias`)).data.data;
 
-  const resEquipo = await axios.get(`${API}/api/jugadores/${player.Id}`)
+  const resEquipo = await axios.get(`${API}/api/jugadores/${player.Id}`);
   equipo.value = resEquipo.data?.data?.[0] || null;
 };
 
