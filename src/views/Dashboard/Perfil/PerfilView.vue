@@ -182,7 +182,7 @@ const fetchData = async () => {
   ligas.value = (await axios.get(`${API}/api/ligas`)).data.data;
   categorias.value = (await axios.get(`${API}/api/categorias`)).data.data;
 
-  const resEquipo = await axios.get(`${API}/api/jugadores/${player.Id}`);
+  const resEquipo = await axios.get(`${API}/api/equipos/jugador/${player.Id}`);
   equipo.value = resEquipo.data?.data?.[0] || null;
 };
 
