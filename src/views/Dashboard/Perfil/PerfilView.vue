@@ -130,8 +130,10 @@ const API =
 
 const router = useRouter();
 
+const storedUser = JSON.parse(localStorage.getItem("user"));
+
 const player = reactive({
-  Id: localStorage.getItem("userId"),
+  Id: storedUser?.Id || null,
   name: "",
   ligas: [],
   categorias: [],
