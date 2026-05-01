@@ -166,7 +166,7 @@ const stats = [
 ];
 
 const fetchData = async () => {
-  const user = (await axios.get(`${API}/api/jugador/${player.Id}`)).data.data;
+  const user = (await axios.get(`${API}/api/jugadores/${player.Id}`)).data.data;
 
   player.name = user.Nombre;
   player.ligas = user.ligas || [];
@@ -178,7 +178,7 @@ const fetchData = async () => {
   ligas.value = (await axios.get(`${API}/api/ligas`)).data.data;
   categorias.value = (await axios.get(`${API}/api/categorias`)).data.data;
 
-  const resEquipo = await axios.get(`${API}/api/equipos/jugador/${player.Id}`);
+  const resEquipo = await axios.get(`${API}/api/jugadores/${player.Id}`)
   equipo.value = resEquipo.data?.data?.[0] || null;
 };
 
