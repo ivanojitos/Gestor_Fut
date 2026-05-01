@@ -1,7 +1,6 @@
 <template>
   <div class="page">
     <div class="wrapper">
-
       <!-- 🔥 BOTÓN SOLO SI NO TIENE EQUIPO -->
       <button
         v-if="!equipo"
@@ -39,7 +38,6 @@
 
       <!-- 🔥 PANEL DERECHO -->
       <div class="dashboard">
-
         <!-- PERFIL -->
         <div class="card">
           <h3>👤 Perfil</h3>
@@ -54,16 +52,16 @@
 
           <div v-if="equipo">
             <img v-if="equipo.Logo" :src="equipo.Logo" class="team-logo" />
-            <p><b>{{ equipo.Nombre }}</b></p>
+            <p>
+              <b>{{ equipo.Nombre }}</b>
+            </p>
           </div>
 
           <div v-else>
             <p>No tienes equipo</p>
           </div>
 
-          <button @click="goToTeam" class="btn-primary">
-            Ver equipo
-          </button>
+          <button @click="goToTeam" class="btn-primary">Ver equipo</button>
         </div>
 
         <!-- LIGAS -->
@@ -77,7 +75,6 @@
           <h3>📂 Categorías</h3>
           <span v-for="c in player.categorias" :key="c">{{ c }}</span>
         </div>
-
       </div>
     </div>
   </div>
@@ -128,7 +125,8 @@ import { reactive, ref, onMounted } from "vue";
 import axios from "axios";
 import { useRouter } from "vue-router";
 
-const API = "https://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net";
+const API =
+  "https://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net";
 
 const router = useRouter();
 
@@ -226,11 +224,206 @@ onMounted(fetchData);
 </script>
 
 <style scoped>
-.page { padding:20px; }
-.wrapper { display:flex; gap:20px; flex-wrap:wrap; }
-.player-card { width:300px; background:#111; color:white; padding:20px; border-radius:15px; }
-.modal { position:fixed; inset:0; background:#0008; display:flex; justify-content:center; align-items:center; }
-.modal-box { background:white; padding:20px; border-radius:10px; display:flex; flex-direction:column; gap:10px; }
-.btn-primary { background:#22c55e; padding:10px; border:none; border-radius:10px; color:white; }
-.team-logo { width:50px; }
+/* 🌌 FONDO GLOBAL */
+.page {
+  min-height: 100vh;
+  padding: 30px;
+  background: linear-gradient(135deg, #0f172a, #1e293b);
+  font-family: "Segoe UI", sans-serif;
+  color: white;
+}
+
+/* 🧱 LAYOUT */
+.wrapper {
+  display: flex;
+  gap: 30px;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+/* 🔘 BOTÓN CREAR */
+.btn-primary {
+  background: linear-gradient(135deg, #22c55e, #4ade80);
+  border: none;
+  padding: 12px 18px;
+  border-radius: 12px;
+  color: white;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.btn-primary:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 20px rgba(34, 197, 94, 0.5);
+}
+
+/* 🧊 PLAYER CARD */
+.player-card {
+  width: 320px;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(25px);
+  border-radius: 20px;
+  padding: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+  transition: 0.3s;
+}
+
+.player-card:hover {
+  transform: translateY(-5px);
+}
+
+/* HEADER PLAYER */
+.card-header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.rating {
+  font-size: 38px;
+  font-weight: bold;
+  color: #22c55e;
+}
+
+.position {
+  font-size: 13px;
+  opacity: 0.7;
+}
+
+/* INFO PLAYER */
+.player-main {
+  text-align: center;
+}
+
+.player-img {
+  width: 130px;
+  border-radius: 15px;
+  margin: 10px 0;
+}
+
+.player-info h2 {
+  margin: 5px 0;
+}
+
+/* 📊 STATS */
+.stats {
+  margin-top: 15px;
+}
+
+.stat {
+  font-size: 12px;
+  margin-bottom: 10px;
+}
+
+.bar {
+  height: 6px;
+  background: #1e293b;
+  border-radius: 10px;
+}
+
+.fill {
+  height: 100%;
+  background: linear-gradient(90deg, #22c55e, #4ade80);
+}
+
+/* 📊 DASHBOARD */
+.dashboard {
+  max-width: 450px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* 🧊 CARDS */
+.card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(25px);
+  border-radius: 15px;
+  padding: 15px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: 0.3s;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+}
+
+/* DESTACADO */
+.highlight {
+  border: 1px solid #22c55e;
+}
+
+/* 🏷️ TAGS */
+.card span {
+  display: inline-block;
+  background: #334155;
+  padding: 5px 10px;
+  border-radius: 20px;
+  margin: 4px;
+  font-size: 12px;
+}
+
+/* 🏆 LOGO EQUIPO */
+.team-logo {
+  width: 60px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+}
+
+/* 🪟 MODAL */
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  backdrop-filter: blur(5px);
+}
+
+.modal-box {
+  background: #0f172a;
+  padding: 25px;
+  border-radius: 20px;
+  width: 320px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* INPUTS */
+.modal-box input,
+.modal-box select {
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  background: #1e293b;
+  color: white;
+}
+
+/* ERROR */
+.error {
+  color: #f87171;
+  font-size: 12px;
+}
+
+/* 📱 RESPONSIVE */
+@media (max-width: 768px) {
+  .wrapper {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .player-card {
+    width: 100%;
+    max-width: 350px;
+  }
+
+  .dashboard {
+    width: 100%;
+  }
+}
 </style>
