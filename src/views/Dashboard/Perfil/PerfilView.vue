@@ -115,7 +115,7 @@
         <option value="DEL">Delantero</option>
       </select>
 
-      <input v-model="editForm.photo" placeholder="Foto URL" />
+      <input type="file" @change="handleFile" accept="image/*" />
 
       <div class="actions">
         <button @click="updatePlayer" class="btn-primary">
@@ -287,17 +287,29 @@ const updatePlayer = async () => {
   try {
     saving.value = true;
 
-    const res = await axios.put(`${API}/api/jugadores/${player.Id}`, {
-      NombreCompleto: editForm.name,
-      Edad: editForm.age,
-      Numero: editForm.number,
-      Posicion: editForm.position,
-      Foto: editForm.photo,
-    });
+    const formData = new FormData();
 
-    const updated = res.data;
+    formData.append("NombreCompleto", editForm.name);
+    formData.append("Edad", editForm.age);
+    formData.append("Numero", editForm.number);
+    formData.append("Posicion", editForm.position);
 
-    // 🔥 MAPEO CORRECTO BACK → FRONT
+    if (photoFile.value) {
+      formData.append("Foto", photoFile.value);
+    }
+
+    const res = await axios.put(
+      `${API}/api/jugadores/${player.Id}`,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      },
+    );
+
+    const updated = res.data.data;
+
     player.name = updated.NombreCompleto;
     player.age = updated.Edad;
     player.number = updated.Numero;
@@ -342,6 +354,12 @@ const leaveTeam = async () => {
   } finally {
     saving.value = false;
   }
+};
+
+const photoFile = ref(null);
+
+const handleFile = (event) => {
+  photoFile.value = event.target.files[0];
 };
 
 const goToJoinTeam = () => {
