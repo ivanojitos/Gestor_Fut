@@ -1,9 +1,7 @@
 <template>
   <div class="app">
-
     <!-- FORMATIONS + TACTICS -->
     <div class="formations">
-
       <!-- FORMACIONES -->
       <button
         v-for="f in formaciones"
@@ -23,7 +21,6 @@
       >
         ⚽ {{ t.name }}
       </button>
-
     </div>
 
     <!-- FIELD -->
@@ -44,21 +41,20 @@
         @click="selectPlayer(p)"
       >
         <div class="avatar">
-  {{ p.name.charAt(0) }}
-</div>
+          {{ p.name.charAt(0) }}
+        </div>
         <div>
           <b>#{{ p.number }}</b>
           <small>{{ p.name }}</small>
         </div>
       </div>
-
     </section>
 
     <!-- PANEL -->
     <section class="panel">
       <div class="card">
         <h3>Cancha</h3>
-        <p>{{ selectedPlayer?.name || 'Ninguno' }}</p>
+        <p>{{ selectedPlayer?.name || "Ninguno" }}</p>
       </div>
 
       <div class="card">
@@ -84,8 +80,8 @@
           @click="selectBench(p)"
         >
           <div class="avatar">
-  {{ p.name.charAt(0) }}
-</div>
+            {{ p.name.charAt(0) }}
+          </div>
           <div>
             <b>#{{ p.number }} {{ p.name }}</b>
             <small>{{ p.position }}</small>
@@ -93,121 +89,133 @@
         </div>
       </div>
     </section>
-
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
+import axios from "axios";
 
-const players = [
-  { name: "Chivita", number: 10, position: "MED" },
-  { name: "Totu", number: 19, position: "DEF" },
-  { name: "Inving", number: 22, position: "MED" },
-  { name: "Oski", number: 14, position: "MED" },
-  { name: "Raul", number: 5, position: "DEF" },
-  { name: "Cisneros", number: 11, position: "DEF" },
-  { name: "Junior", number: 1, position: "POR" },
-  { name: "Amor", number: 7, position: "MED" },
-  { name: "El Pari", number: 9, position: "DEL" },
-  { name: "Ruben", number: 13, position: "POR" },
-  { name: "Lalo", number: 8, position: "MED" },
-  { name: "El Tio", number: 23, position: "DEF" },
-  { name: "Joshua", number: 3, position: "DEF" }
-].map((p, i) => ({
-  ...p,
-  photo: `https://i.pravatar.cc/100?img=${i + 30}`
-}));
+const API =
+  "https://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net";
 
-/* 🔥 FORMACIONES PRO */
-const formaciones = [
-  {
-    name: "1-2-3-1",
-    map: [
-      {x:50,y:85},
-      {x:30,y:65},{x:70,y:65},
-      {x:20,y:45},{x:50,y:45},{x:80,y:45},
-      {x:50,y:25}
-    ]
-  },
-  {
-    name: "1-2-2-2",
-    map: [
-      {x:50,y:85},
-      {x:30,y:65},{x:70,y:65},
-      {x:30,y:45},{x:70,y:45},
-      {x:30,y:25},{x:70,y:25}
-    ]
-  },
-  {
-    name: "1-3-3",
-    map: [
-      {x:50,y:85},
-      {x:25,y:60},{x:50,y:60},{x:75,y:60},
-      {x:25,y:35},{x:50,y:35},{x:75,y:35}
-    ]
-  },
-  {
-    name: "1-3-2-1",
-    map: [
-      {x:50,y:85},
-      {x:25,y:65},{x:50,y:65},{x:75,y:65},
-      {x:35,y:45},{x:65,y:45},
-      {x:50,y:25}
-    ]
-  },
-  {
-    name: "1-4-1-1",
-    map: [
-      {x:50,y:85},
-      {x:20,y:65},{x:40,y:65},{x:60,y:65},{x:80,y:65},
-      {x:50,y:45},
-      {x:50,y:25}
-    ]
-  },
-  {
-    name: "1-4-2",
-    map: [
-      {x:50,y:85},
-      {x:20,y:65},{x:40,y:65},{x:60,y:65},{x:80,y:65},
-      {x:35,y:35},{x:65,y:35}
-    ]
-  }
-];
+const storedUser = JSON.parse(localStorage.getItem("user"));
 
-/* ⚽ ESTILOS */
-const estilosJuego = [
-  {
-    name: "Posesión",
-    modifier: (p) => ({ x: p.x, y: p.y })
-  },
-  {
-    name: "Contraataque",
-    modifier: (p, i) => ({ x: p.x + (i % 2 ? 5 : -5), y: p.y + 2 })
-  },
-  {
-    name: "Presión Alta",
-    modifier: (p) => ({ x: p.x, y: p.y - 6 })
-  },
-  {
-    name: "Balones Largos",
-    modifier: (p, i) => ({
-      x: i === 0 ? 50 : p.x,
-      y: i === 0 ? 80 : p.y
-    })
-  }
-];
-
-const selectedFormacion = ref(formaciones[0]);
-const selectedTactic = ref(estilosJuego[0]);
-
+const players = ref([]);
 const titulares = ref([]);
 const banca = ref([]);
 
 const selectedPlayer = ref(null);
 const selectedBench = ref(null);
 
-/* 🔥 ENGINE CORE */
+/* 🔥 FORMACIONES */
+const formaciones = [
+  {
+    name: "1-2-3-1",
+    map: [
+      { x: 50, y: 85 },
+      { x: 30, y: 65 },
+      { x: 70, y: 65 },
+      { x: 20, y: 45 },
+      { x: 50, y: 45 },
+      { x: 80, y: 45 },
+      { x: 50, y: 25 },
+    ],
+  },
+  {
+    name: "1-3-3",
+    map: [
+      { x: 50, y: 85 },
+      { x: 25, y: 60 },
+      { x: 50, y: 60 },
+      { x: 75, y: 60 },
+      { x: 25, y: 35 },
+      { x: 50, y: 35 },
+      { x: 75, y: 35 },
+    ],
+  },
+];
+
+const estilosJuego = [
+  { name: "Posesión", modifier: (p) => ({ x: p.x, y: p.y }) },
+  {
+    name: "Contraataque",
+    modifier: (p, i) => ({ x: p.x + (i % 2 ? 5 : -5), y: p.y + 2 }),
+  },
+];
+
+const selectedFormacion = ref(formaciones[0]);
+const selectedTactic = ref(estilosJuego[0]);
+
+/* 🔥 API */
+const fetchPlayers = async () => {
+  try {
+    if (!storedUser) return;
+
+    const resEquipo = await axios.get(
+      `${API}/api/equipos/jugador/${storedUser.Id}`,
+    );
+
+    const equipoData = resEquipo.data.data;
+
+    if (!equipoData || equipoData.length === 0) return;
+
+    const equipo = equipoData[0];
+
+    const resJugadores = await axios.get(
+      `${API}/api/equipos/${equipo.Id}/jugadores`,
+    );
+
+    players.value = resJugadores.data.data.map((p, i) => ({
+      name: p.NombreCompleto,
+      number: p.Numero,
+      position: p.Posicion,
+      photo: p.Foto || `https://i.pravatar.cc/100?img=${i + 20}`,
+    }));
+
+    buildTeam(); // 🔥 IMPORTANTE
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+onMounted(fetchPlayers);
+
+/* 🔥 FILTRO POR POSICIÓN */
+function getPlayersByPosition(pos) {
+  return players.value.filter((p) => p.position === pos);
+}
+
+/* 🔥 ENGINE REAL (SIN HARDCODE) */
+function buildTeam() {
+  const base = selectedFormacion.value.map;
+
+  const orden = [
+    ...getPlayersByPosition("POR"),
+    ...getPlayersByPosition("DEF"),
+    ...getPlayersByPosition("MED"),
+    ...getPlayersByPosition("DEL"),
+  ];
+
+  const titularesTemp = orden.slice(0, base.length);
+
+  titulares.value = titularesTemp.map((p, i) => {
+    const b = base[i] || { x: 50, y: 50 };
+    const mod = selectedTactic.value.modifier(b, i);
+
+    return {
+      ...p,
+      x: mod.x,
+      y: mod.y,
+    };
+  });
+
+  banca.value = players.value.filter(
+    (p) => !titularesTemp.some((t) => t.number === p.number),
+  );
+}
+
+/* 🎮 CONTROLES */
 function applyFormation(f) {
   selectedFormacion.value = f;
   buildTeam();
@@ -216,38 +224,6 @@ function applyFormation(f) {
 function setTactic(t) {
   selectedTactic.value = t;
   buildTeam();
-}
-
-/* 🧠 MOTOR UNIFICADO */
-function buildTeam() {
-  const base = selectedFormacion.value.map;
-
-  // 🔥 TITULARES EXACTOS
-  const titularesBase = [
-    players.find(p => p.name === "Junior"),   // 🧤
-    players.find(p => p.name === "Joshua"),   // DEF
-    players.find(p => p.name === "El Tio"),   // DEF
-    players.find(p => p.name === "Oski"),     // MED
-    players.find(p => p.name === "Amor"),     // MED
-    players.find(p => p.name === "Chivita"),  // MED
-    players.find(p => p.name === "El Pari")   // DEL
-  ];
-
-  titulares.value = titularesBase.map((p, i) => {
-    const b = base[i] || { x: 50, y: 50 };
-    const mod = selectedTactic.value.modifier(b, i);
-
-    return {
-      ...p,
-      x: mod.x,
-      y: mod.y
-    };
-  });
-
-  // 🔥 BANCA = TODOS LOS DEMÁS
-  banca.value = players.filter(p =>
-    !titularesBase.some(t => t.number === p.number)
-  );
 }
 
 /* SELECT */
@@ -263,8 +239,12 @@ function selectBench(p) {
 function swapPlayers() {
   if (!selectedPlayer.value || !selectedBench.value) return;
 
-  const i = titulares.value.findIndex(p => p.number === selectedPlayer.value.number);
-  const j = banca.value.findIndex(p => p.number === selectedBench.value.number);
+  const i = titulares.value.findIndex(
+    (p) => p.number === selectedPlayer.value.number,
+  );
+  const j = banca.value.findIndex(
+    (p) => p.number === selectedBench.value.number,
+  );
 
   if (i === -1 || j === -1) return;
 
@@ -273,7 +253,7 @@ function swapPlayers() {
   titulares.value[i] = {
     ...banca.value[j],
     x: selectedPlayer.value.x,
-    y: selectedPlayer.value.y
+    y: selectedPlayer.value.y,
   };
 
   banca.value[j] = temp;
@@ -283,22 +263,17 @@ function swapPlayers() {
 }
 
 /* ENABLE */
-const canSwap = computed(() =>
-  selectedPlayer.value && selectedBench.value
-);
-
-/* INIT */
-buildTeam();
+const canSwap = computed(() => selectedPlayer.value && selectedBench.value);
 </script>
-<style scoped>
 
+<style scoped>
 .card small {
   margin-left: 6px; /* 🔥 separa la posición */
 }
 
 /* BASE FUT */
 .app {
-  font-family: 'Segoe UI';
+  font-family: "Segoe UI";
   background: radial-gradient(circle at top, #0b1220, #020617);
   color: white;
   padding: 16px;
@@ -318,7 +293,7 @@ button {
   background: #1e293b;
   color: white;
   cursor: pointer;
-  transition: .2s;
+  transition: 0.2s;
 }
 
 .active {
@@ -336,7 +311,7 @@ button {
   height: 520px;
   border-radius: 20px;
   overflow: hidden;
-  box-shadow: 0 0 40px rgba(0,0,0,0.7);
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.7);
 }
 
 .pitch {
@@ -380,8 +355,12 @@ button {
   transform: translateX(-50%);
 }
 
-.goal.top { top: 0; }
-.goal.bottom { bottom: 0; }
+.goal.top {
+  top: 0;
+}
+.goal.bottom {
+  bottom: 0;
+}
 
 /* PLAYER */
 .player {
@@ -390,7 +369,7 @@ button {
   display: flex;
   gap: 6px;
   align-items: center;
-  background: rgba(255,255,255,0.95);
+  background: rgba(255, 255, 255, 0.95);
   color: black;
   padding: 6px 10px;
   border-radius: 12px;
@@ -418,7 +397,7 @@ button {
 }
 
 .card {
-  background: rgba(255,255,255,0.05);
+  background: rgba(255, 255, 255, 0.05);
   padding: 10px;
   border-radius: 12px;
 }
