@@ -7,7 +7,7 @@
 
         <div>
           <h1>{{ team.name }}</h1>
-          <p class="sub">Season 2026 • Career Mode</p>
+          <p class="sub">{{ team.liga }} • {{ team.categoria }}</p>
 
           <div class="stats">
             <span>🏆 {{ team.wins }}</span>
@@ -100,6 +100,8 @@ const team = ref({
   id: null,
   name: "",
   logo: "",
+  liga: "",
+  categoria: "",
   wins: 0,
   losses: 0,
   position: 0,
@@ -135,6 +137,8 @@ const fetchData = async () => {
       id: equipo.Id,
       name: equipo.Nombre,
       logo: equipo.Logo || "https://via.placeholder.com/120",
+      liga: equipo.Liga || "Sin liga",
+      categoria: equipo.Categoria || "Sin categoría",
       wins: equipo.PG || 0,
       losses: equipo.PP || 0,
       position: 1,
