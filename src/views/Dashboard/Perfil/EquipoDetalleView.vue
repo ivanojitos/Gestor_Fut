@@ -76,78 +76,91 @@
 </template>
 
 <script setup>
-import { computed } from "vue";
+import { ref, onMounted, computed } from "vue";
+import axios from "axios";
 import { useRouter } from "vue-router";
+
+const API =
+  "https://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net";
 
 const router = useRouter();
 
-const team = {
-  id: 1,
-  name: "FIFA CLUB PRO",
-  logo: "https://i.pravatar.cc/120?img=32",
-  wins: 12,
-  losses: 4,
-  position: 2,
-};
+const storedUser = JSON.parse(localStorage.getItem("user"));
+
+const team = ref({
+  id: null,
+  name: "",
+  logo: "",
+  wins: 0,
+  losses: 0,
+  position: 0,
+});
+
+const players = ref([]);
 
 const goToGameMode = () => {
-  router.push({ name: "ModoJuego", params: { id: team.id } });
+  router.push({ name: "ModoJuego", params: { id: team.value.id } });
 };
 
-const players = [
-  { name: "Juan", position: "GK", goals: 0, assists: 1, number: 1 },
-  { name: "Carlos", position: "DEF", goals: 2, assists: 3, number: 2 },
-  { name: "Luis", position: "DEF", goals: 1, assists: 2, number: 3 },
-  { name: "Pedro", position: "DEF", goals: 0, assists: 1, number: 4 },
-  { name: "Mario", position: "MID", goals: 3, assists: 5, number: 5 },
-  { name: "Raul", position: "MID", goals: 4, assists: 6, number: 6 },
-  { name: "Jose", position: "MID", goals: 2, assists: 4, number: 7 },
-  { name: "Hugo", position: "ST", goals: 10, assists: 2, number: 8 },
-  { name: "Leo", position: "ST", goals: 12, assists: 3, number: 9 },
-  { name: "Sergio", position: "ST", goals: 8, assists: 5, number: 10 },
-].map((p) => ({
-  ...p,
-  photo: `https://i.pravatar.cc/100?img=${Math.floor(Math.random() * 70)}`,
-}));
+const fetchData = async () => {
+  try {
+    if (!storedUser) return;
 
+    // 🔥 EQUIPO
+    const resEquipo = await axios.get(
+      `${API}/api/equipos/jugador/${storedUser.Id}`,
+    );
+    const equipo = resEquipo.data.data;
+
+    if (!equipo) return;
+
+    team.value = {
+      id: equipo.Id,
+      name: equipo.Nombre,
+      logo: equipo.Logo || "https://via.placeholder.com/120",
+      wins: equipo.PG || 0,
+      losses: equipo.PP || 0,
+      position: 1,
+    };
+
+    // 🔥 JUGADORES
+    const resJugadores = await axios.get(
+      `${API}/api/equipos/${equipo.Id}/jugadores`,
+    );
+
+    players.value = resJugadores.data.data.map((p) => ({
+      name: p.NombreCompleto,
+      position: p.Posicion,
+      number: p.Numero,
+      goals: p.Goles || 0,
+      assists: p.Asistencias || 0,
+      photo:
+        p.Foto ||
+        `https://i.pravatar.cc/100?img=${Math.floor(Math.random() * 70)}`,
+    }));
+  } catch (err) {
+    console.error("ERROR:", err);
+  }
+};
+
+onMounted(fetchData);
+
+// 🔥 BEST PLAYERS
 const best = computed(() => ({
-  gk: players.find((p) => p.position === "GK"),
-  def: [...players]
-    .filter((p) => p.position === "DEF")
-    .sort((a, b) => b.goals + b.assists - (a.goals + a.assists))[0],
-  mid: [...players]
-    .filter((p) => p.position === "MID")
-    .sort((a, b) => b.goals + b.assists - (a.goals + a.assists))[0],
-  st: [...players]
-    .filter((p) => p.position === "ST")
-    .sort((a, b) => b.goals - a.goals)[0],
+  gk: players.value.find((p) => p.position === "GK") || {},
+  def:
+    [...players.value]
+      .filter((p) => p.position === "DEF")
+      .sort((a, b) => b.goals + b.assists - (a.goals + a.assists))[0] || {},
+  mid:
+    [...players.value]
+      .filter((p) => p.position === "MID")
+      .sort((a, b) => b.goals + b.assists - (a.goals + a.assists))[0] || {},
+  st:
+    [...players.value]
+      .filter((p) => p.position === "ST")
+      .sort((a, b) => b.goals - a.goals)[0] || {},
 }));
-
-const matches = {
-  next: {
-    home: "FIFA CLUB PRO",
-    away: "REAL STARS FC",
-    stadium: "Estadio Central",
-  },
-  last: [
-    {
-      id: 1,
-      home: "FIFA CLUB PRO",
-      away: "LEGENDS FC",
-      score: "3 - 1",
-      ref: "Carlos Vega",
-      stadium: "Arena Norte",
-    },
-    {
-      id: 2,
-      home: "DRAGONS FC",
-      away: "FIFA CLUB PRO",
-      score: "2 - 2",
-      ref: "Miguel Torres",
-      stadium: "Estadio Sur",
-    },
-  ],
-};
 </script>
 
 <style scoped>
