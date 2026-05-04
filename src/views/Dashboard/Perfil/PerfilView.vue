@@ -97,7 +97,9 @@
       <input v-model="editForm.photo" placeholder="Foto URL" />
 
       <div class="actions">
-        <button @click="updatePlayer" class="btn-primary">Guardar</button>
+        <button @click="updatePlayer" class="btn-primary">
+          {{ saving ? "Guardando..." : "Guardar" }}
+        </button>
         <button @click="showEditModal = false" class="btn-secondary">
           Cancelar
         </button>
@@ -115,6 +117,7 @@ const API =
   "https://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net";
 
 const router = useRouter();
+const saving = ref(false);
 
 const storedUser = JSON.parse(localStorage.getItem("user"));
 
@@ -247,6 +250,8 @@ const openEdit = () => {
 
 const updatePlayer = async () => {
   try {
+    saving.value = true;
+
     await axios.put(`${API}/api/jugadores/${player.Id}`, {
       NombreCompleto: editForm.name,
       Edad: editForm.age,
@@ -255,10 +260,13 @@ const updatePlayer = async () => {
       Foto: editForm.photo,
     });
 
+    Object.assign(player, editForm); // 🔥 elegante
+
     showEditModal.value = false;
-    fetchData(); // 🔥 refresca datos
   } catch (err) {
     console.error(err);
+  } finally {
+    saving.value = false;
   }
 };
 </script>
