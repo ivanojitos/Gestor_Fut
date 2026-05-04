@@ -56,7 +56,7 @@
         <div class="match next">
           <h3>🔜 Próximo partido</h3>
           <p>
-            <b>{{ matches.next.home }}</b> vs <b>{{ matches.next.away }}</b>
+            <b>{{ matches?.next?.home }}</b> vs <b>{{ matches.next.away }}</b>
           </p>
           <small>🏟 {{ matches.next.stadium }}</small>
         </div>
@@ -79,6 +79,15 @@
 import { ref, onMounted, computed } from "vue";
 import axios from "axios";
 import { useRouter } from "vue-router";
+
+const matches = ref({
+  next: {
+    home: "",
+    away: "",
+    stadium: "",
+  },
+  last: [],
+});
 
 const API =
   "https://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net";
@@ -110,10 +119,18 @@ const fetchData = async () => {
     const resEquipo = await axios.get(
       `${API}/api/equipos/jugador/${storedUser.Id}`,
     );
-    const equipo = resEquipo.data.data;
 
-    if (!equipo) return;
+    const equipoData = resEquipo.data.data;
 
+    // 🔴 VALIDACIÓN IMPORTANTE
+    if (!equipoData || equipoData.length === 0) {
+      console.warn("No tienes equipo");
+      return;
+    }
+
+    const equipo = equipoData[0]; // ✅ ahora sí correcto
+
+    // 🔥 SET TEAM
     team.value = {
       id: equipo.Id,
       name: equipo.Nombre,
@@ -122,6 +139,9 @@ const fetchData = async () => {
       losses: equipo.PP || 0,
       position: 1,
     };
+
+    // 🔴 VALIDAR ID
+    if (!equipo.Id) return;
 
     // 🔥 JUGADORES
     const resJugadores = await axios.get(
