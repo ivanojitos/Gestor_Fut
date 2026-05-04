@@ -9,4 +9,10 @@ export default [
     name: "ModoJuego",
     component: () => import("@/views/Dashboard/Perfil/ModoJuegoView.vue"),
   }
+  ,
+    {
+    path: "/buscarEquipo",
+    name: "BuscarEquipo",
+    component: () => import("@/views/Dashboard/Perfil//Jugadores/BuscarEquipoView.vue"),
+  }
 ];

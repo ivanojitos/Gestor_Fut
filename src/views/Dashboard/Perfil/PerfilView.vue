@@ -345,7 +345,7 @@ const leaveTeam = async () => {
 };
 
 const goToJoinTeam = () => {
-  router.push({ name: "Equipos" }); // 👈 ajusta al nombre real de tu ruta
+  router.push({ name: "BuscarEquipo" }); // 👈 ajusta al nombre real de tu ruta
 };
 </script>
 
