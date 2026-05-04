@@ -221,7 +221,7 @@ const goToTeam = () => {
   if (!equipo.value) return alert("No tienes equipo");
 
   router.push({
-    name: "Home",
+    name: "EquipoDetalle",
     params: { id: equipo.value.Id },
   });
 };
