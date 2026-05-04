@@ -252,7 +252,7 @@ const updatePlayer = async () => {
   try {
     saving.value = true;
 
-    await axios.put(`${API}/api/jugadores/${player.Id}`, {
+    const res = await axios.put(`${API}/api/jugadores/${player.Id}`, {
       NombreCompleto: editForm.name,
       Edad: editForm.age,
       Numero: editForm.number,
@@ -260,7 +260,14 @@ const updatePlayer = async () => {
       Foto: editForm.photo,
     });
 
-    Object.assign(player, editForm); // 🔥 elegante
+    const updated = res.data;
+
+    // 🔥 MAPEO CORRECTO BACK → FRONT
+    player.name = updated.NombreCompleto;
+    player.age = updated.Edad;
+    player.number = updated.Numero;
+    player.position = updated.Posicion;
+    player.photo = updated.Foto;
 
     showEditModal.value = false;
   } catch (err) {
