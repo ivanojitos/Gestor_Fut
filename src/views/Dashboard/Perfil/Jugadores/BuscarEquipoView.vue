@@ -193,9 +193,9 @@ onMounted(() => {
 <style scoped>
 .page {
   min-height: 100vh;
-  background: linear-gradient(135deg, #0f172a, #1e293b);
+  background: #f8fafc; /* blanco suave tipo dashboard */
   padding: 20px;
-  color: white;
+  color: #0f172a;
 }
 
 .container {
@@ -206,6 +206,7 @@ onMounted(() => {
 .title {
   font-size: 28px;
   margin-bottom: 20px;
+  color: #0f172a;
 }
 
 /* 🔍 FILTROS */
@@ -219,9 +220,13 @@ onMounted(() => {
 .filters select {
   padding: 10px;
   border-radius: 10px;
-  border: none;
+  border: 1px solid #e2e8f0;
+  background: white;
+  color: #0f172a;
+  outline: none;
 }
 
+/* BOTÓN BUSCAR */
 .btn-search {
   background: #22c55e;
   border: none;
@@ -229,6 +234,11 @@ onMounted(() => {
   border-radius: 10px;
   color: white;
   cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn-search:hover {
+  background: #16a34a;
 }
 
 /* GRID */
@@ -240,18 +250,20 @@ onMounted(() => {
 
 /* CARD */
 .card {
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(10px);
+  background: white;
+  border: 1px solid #e2e8f0;
   border-radius: 15px;
   padding: 15px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   transition: 0.2s;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 }
 
 .card:hover {
   transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
 }
 
 .card-top {
@@ -264,22 +276,25 @@ onMounted(() => {
   height: 60px;
   border-radius: 12px;
   object-fit: cover;
+  border: 1px solid #e2e8f0;
 }
 
 .info h3 {
   margin: 0;
+  color: #0f172a;
 }
 
 .info p {
   font-size: 12px;
-  color: #94a3b8;
+  color: #64748b;
 }
 
 .players {
   font-size: 12px;
+  color: #475569;
 }
 
-/* BOTÓN */
+/* BOTÓN UNIRSE */
 .btn-join {
   margin-top: 10px;
   background: #3b82f6;
@@ -288,12 +303,21 @@ onMounted(() => {
   border-radius: 10px;
   color: white;
   cursor: pointer;
+  transition: 0.2s;
 }
 
 .btn-join:hover {
   background: #2563eb;
 }
 
+/* TEXTOS ESTADO */
+.sent {
+  margin-top: 10px;
+  color: #64748b;
+  font-size: 13px;
+}
+
+/* EMPTY */
 .empty {
   text-align: center;
   margin-top: 20px;
