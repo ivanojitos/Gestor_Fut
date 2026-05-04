@@ -51,20 +51,37 @@
 
         <!-- 🛡️ EQUIPO -->
         <div class="card equipo">
-          <h3>Equipo</h3>
+          <div class="equipo-header">
+            <h3>Equipo</h3>
+
+            <button
+              v-if="equipo"
+              class="leave-btn"
+              @click="showLeaveModal = true"
+            >
+              Salir
+            </button>
+          </div>
 
           <div v-if="equipo" class="team-box">
             <img v-if="equipo.Logo" :src="equipo.Logo" />
-            <div>
+
+            <div class="team-info">
               <b>{{ equipo.Nombre }}</b>
-              <p4>{{ player.ligas[0] || "Sin liga" }}</p4>
-              <p5>{{ player.categorias[0] || "Sin categoría" }}</p5>
+              <span class="sub">{{ player.ligas[0] || "Sin liga" }}</span>
+              <span class="sub">{{
+                player.categorias[0] || "Sin categoría"
+              }}</span>
             </div>
           </div>
 
-          <p v-else>No tienes equipo</p>
+          <div v-else class="no-team">
+            <p>No tienes equipo</p>
+          </div>
 
-          <button @click="goToTeam" class="btn-primary">Ver equipo</button>
+          <button v-if="equipo" @click="goToTeam" class="btn-primary small">
+            Ver equipo
+          </button>
         </div>
 
         <!-- 🏟️ INFO EXTRA -->
@@ -101,6 +118,20 @@
           {{ saving ? "Guardando..." : "Guardar" }}
         </button>
         <button @click="showEditModal = false" class="btn-secondary">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div v-if="showLeaveModal" class="modal">
+    <div class="modal-box small-modal">
+      <h3>Salir del equipo</h3>
+      <p>¿Estás seguro de que quieres salir de este equipo?</p>
+
+      <div class="actions">
+        <button @click="leaveTeam" class="btn-danger">Sí, salir</button>
+        <button @click="showLeaveModal = false" class="btn-secondary">
           Cancelar
         </button>
       </div>
@@ -272,6 +303,39 @@ const updatePlayer = async () => {
     showEditModal.value = false;
   } catch (err) {
     console.error(err);
+  } finally {
+    saving.value = false;
+  }
+};
+
+const showLeaveModal = ref(false);
+
+const leaveTeam = async () => {
+  if (!equipo.value) return;
+
+  try {
+    saving.value = true;
+
+    const res = await axios.put(
+      `${API}/api/jugadores/${player.Id}/salir-equipo`
+    );
+
+    // 🔥 limpiar estado completo
+    equipo.value = null;
+    player.ligas = [];
+    player.categorias = [];
+
+    // opcional si manejas Id_Equipo
+    player.Id_Equipo = null;
+
+    showLeaveModal.value = false;
+
+    // 🔥 feedback
+    alert("Saliste del equipo correctamente");
+
+  } catch (err) {
+    console.error(err);
+    alert("Error al salir del equipo");
   } finally {
     saving.value = false;
   }
@@ -507,5 +571,67 @@ const updatePlayer = async () => {
   padding: 10px;
   border-radius: 10px;
   cursor: pointer;
+}
+.equipo-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* TEAM BOX MÁS LIMPIO */
+.team-box {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin: 10px 0;
+}
+
+.team-box img {
+  width: 55px;
+  height: 55px;
+  border-radius: 12px;
+  object-fit: cover;
+}
+
+/* INFO */
+.team-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.team-info b {
+  font-size: 15px;
+}
+
+.sub {
+  font-size: 12px;
+  color: #64748b;
+}
+
+/* BOTÓN VER */
+.small {
+  padding: 8px;
+  font-size: 13px;
+}
+
+/* BOTÓN SALIR (SUTIL) */
+.leave-btn {
+  background: transparent;
+  border: none;
+  font-size: 12px;
+  color: #ef4444;
+  cursor: pointer;
+  opacity: 0.7;
+}
+
+.leave-btn:hover {
+  opacity: 1;
+  text-decoration: underline;
+}
+
+/* NO TEAM */
+.no-team {
+  color: #64748b;
+  font-size: 13px;
 }
 </style>
