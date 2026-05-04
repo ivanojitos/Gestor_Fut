@@ -48,14 +48,14 @@
         </div>
 
         <div class="card ligas">
-          <h3>🏟️ Ligas</h3>
+          <h3>🏟️ Liga</h3>
           <div class="tags">
             <span v-for="l in player.ligas" :key="l">{{ l }}</span>
           </div>
         </div>
 
         <div class="card categorias">
-          <h3>📂 Categorías</h3>
+          <h3>📂 Categoría</h3>
           <div class="tags">
             <span v-for="c in player.categorias" :key="c">{{ c }}</span>
           </div>
@@ -116,19 +116,30 @@ const fetchData = async () => {
   const res = await axios.get(`${API}/api/jugadores/${player.Id}`);
   const user = res.data.data;
 
-  console.log("DATA BACK:", user); // 🔥 DEBUG
-
   player.name = user.NombreCompleto;
   player.age = user.Edad;
   player.number = user.Numero;
   player.position = user.Posicion;
   player.photo = user.Foto || "https://via.placeholder.com/150";
 
+  // 🔥 Traer catálogos
   ligas.value = (await axios.get(`${API}/api/ligas`)).data.data;
   categorias.value = (await axios.get(`${API}/api/categorias`)).data.data;
 
+  // 🔥 Traer equipo
   const resEquipo = await axios.get(`${API}/api/equipos/jugador/${player.Id}`);
   equipo.value = resEquipo.data?.data?.[0] || null;
+
+  // 🔥 ASIGNAR NOMBRES (CLAVE)
+  if (equipo.value) {
+    const liga = ligas.value.find((l) => l.Id === equipo.value.Id_Liga);
+    const categoria = categorias.value.find(
+      (c) => c.Id === equipo.value.Id_Categoria,
+    );
+
+    player.ligas = liga ? [liga.Nombre] : [];
+    player.categorias = categoria ? [categoria.Nombre] : [];
+  }
 };
 
 const validatePassword = () => {
