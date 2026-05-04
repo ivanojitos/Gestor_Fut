@@ -1,51 +1,40 @@
 <template>
   <div class="page">
     <div class="container">
-      <!-- 🔘 CREAR EQUIPO -->
-      <button
-        v-if="!equipo"
-        class="btn-primary top-btn"
-        @click="showPasswordModal = true"
-      >
-        ➕ Crear equipo
-      </button>
+      <!-- IZQUIERDA -->
+      <div class="left">
+        <div class="player-card">
+          <div class="card-top">
+            <span class="rating">{{ player.rating || 75 }}</span>
+            <span class="position">{{ player.position }}</span>
+          </div>
 
-      <!-- 🔥 PLAYER CARD -->
-      <div class="player-card">
-        <div class="card-top">
-          <span class="rating">{{ player.rating || 75 }}</span>
-          <span class="position">{{ player.position }}</span>
-        </div>
+          <img :src="player.photo" class="player-img" />
 
-        <img :src="player.photo" class="player-img" />
+          <h2>{{ player.name }}</h2>
+          <p class="team">{{ equipo?.Nombre || "Sin equipo" }}</p>
 
-        <h2>{{ player.name }}</h2>
-        <p class="team">{{ equipo?.Nombre || "Sin equipo" }}</p>
-
-        <div class="stats">
-          <div v-for="s in stats" :key="s.label" class="stat">
-            <span>{{ s.icon }} {{ s.label }}</span>
-            <div class="bar">
-              <div class="fill" :style="{ width: s.value + '%' }"></div>
+          <div class="stats">
+            <div v-for="s in stats" :key="s.label" class="stat">
+              <span>{{ s.icon }} {{ s.label }}</span>
+              <div class="bar">
+                <div class="fill" :style="{ width: s.value + '%' }"></div>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- 🔥 DASHBOARD -->
-      <div class="dashboard">
-        <!-- PERFIL -->
-        <div class="card">
+      <!-- DERECHA -->
+      <div class="right">
+        <div class="card perfil">
           <h3>👤 Perfil</h3>
-          <div class="grid">
-            <p><b>Edad:</b> {{ player.age }}</p>
-            <p><b>Número:</b> {{ player.number }}</p>
-            <p><b>Posición:</b> {{ player.position }}</p>
-          </div>
+          <p><b>Edad:</b> {{ player.age }}</p>
+          <p><b>Número:</b> {{ player.number }}</p>
+          <p><b>Posición:</b> {{ player.position }}</p>
         </div>
 
-        <!-- EQUIPO -->
-        <div class="card highlight">
+        <div class="card equipo">
           <h3>🛡️ Equipo</h3>
 
           <div v-if="equipo" class="team-box">
@@ -58,16 +47,14 @@
           <button @click="goToTeam" class="btn-primary">Ver equipo</button>
         </div>
 
-        <!-- LIGAS -->
-        <div class="card">
+        <div class="card ligas">
           <h3>🏟️ Ligas</h3>
           <div class="tags">
             <span v-for="l in player.ligas" :key="l">{{ l }}</span>
           </div>
         </div>
 
-        <!-- CATEGORIAS -->
-        <div class="card">
+        <div class="card categorias">
           <h3>📂 Categorías</h3>
           <div class="tags">
             <span v-for="c in player.categorias" :key="c">{{ c }}</span>
@@ -197,18 +184,27 @@ onMounted(fetchData);
 
 /* CONTENEDOR */
 .container {
-  max-width: 1100px;
+  max-width: 1200px;
   margin: auto;
   display: grid;
   grid-template-columns: 320px 1fr;
-  gap: 25px;
+  gap: 20px;
+  align-items: stretch; /* 🔥 clave */
+}
+
+/* COLUMNAS */
+.left {
+  display: flex;
+}
+
+.right {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-auto-rows: 1fr; /* 🔥 llena espacios */
+  gap: 15px;
 }
 
 /* BOTÓN */
-.top-btn {
-  grid-column: span 2;
-}
-
 .btn-primary {
   background: #22c55e;
   border: none;
@@ -217,10 +213,12 @@ onMounted(fetchData);
   color: white;
   cursor: pointer;
   font-weight: 600;
+  transition: 0.2s;
 }
 
 .btn-primary:hover {
   background: #16a34a;
+  transform: translateY(-1px);
 }
 
 /* PLAYER CARD */
@@ -228,10 +226,16 @@ onMounted(fetchData);
   background: white;
   border-radius: 20px;
   padding: 20px;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   text-align: center;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.08);
 }
 
+/* TOP PLAYER */
 .card-top {
   display: flex;
   justify-content: space-between;
@@ -239,7 +243,7 @@ onMounted(fetchData);
 }
 
 .rating {
-  font-size: 28px;
+  font-size: 32px;
   font-weight: bold;
   color: #22c55e;
 }
@@ -249,12 +253,14 @@ onMounted(fetchData);
   color: #666;
 }
 
+/* IMG */
 .player-img {
-  width: 120px;
+  width: 130px;
   border-radius: 15px;
-  margin: 10px 0;
+  margin: 10px auto;
 }
 
+/* TEAM */
 .team {
   color: #666;
   font-size: 14px;
@@ -284,29 +290,31 @@ onMounted(fetchData);
   border-radius: 10px;
 }
 
-/* DASHBOARD */
-.dashboard {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
-/* CARDS */
+/* CARDS DERECHA */
 .card {
   background: white;
   border-radius: 15px;
   padding: 15px;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
-/* GRID PERFIL */
+/* PERFIL GRID */
 .grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 10px;
 }
 
-/* EQUIPO */
+/* EQUIPO DESTACADO */
+.equipo {
+  grid-column: span 2;
+  border-left: 4px solid #22c55e;
+}
+
+/* TEAM BOX */
 .team-box {
   display: flex;
   align-items: center;
@@ -332,18 +340,17 @@ onMounted(fetchData);
   font-size: 12px;
 }
 
-/* DESTACADO */
-.highlight {
-  border-left: 4px solid #22c55e;
-}
-
 /* RESPONSIVE */
 @media (max-width: 900px) {
   .container {
     grid-template-columns: 1fr;
   }
 
-  .top-btn {
+  .right {
+    grid-template-columns: 1fr;
+  }
+
+  .equipo {
     grid-column: span 1;
   }
 }
