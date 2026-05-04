@@ -1,45 +1,64 @@
 <template>
   <div class="page">
     <div class="container">
-      <!-- IZQUIERDA -->
-      <div class="left">
-        <div class="player-card">
-          <div class="card-top">
-            <span class="rating">{{ player.rating || 75 }}</span>
-            <span class="position">{{ player.position }}</span>
-          </div>
+      <!-- 🔥 HEADER -->
+      <div class="header">
+        <img :src="player.photo" class="avatar" />
+        <div>
+          <h1>{{ player.name }}</h1>
+          <p>{{ player.position }} • #{{ player.number }}</p>
+          <span class="team">{{ equipo?.Nombre || "Sin equipo" }}</span>
+        </div>
 
-          <img :src="player.photo" class="player-img" />
-
-          <h2>{{ player.name }}</h2>
-          <p class="team">{{ equipo?.Nombre || "Sin equipo" }}</p>
-
-          <div class="stats">
-            <div v-for="s in stats" :key="s.label" class="stat">
-              <span>{{ s.icon }} {{ s.label }}</span>
-              <div class="bar">
-                <div class="fill" :style="{ width: s.value + '%' }"></div>
-              </div>
-            </div>
-          </div>
+        <div class="rating-box">
+          <span>{{ player.rating || 75 }}</span>
         </div>
       </div>
 
-      <!-- DERECHA -->
-      <div class="right">
-        <div class="card perfil">
-          <h3>👤 Perfil</h3>
-          <p><b>Edad:</b> {{ player.age }}</p>
-          <p><b>Número:</b> {{ player.number }}</p>
-          <p><b>Posición:</b> {{ player.position }}</p>
+      <!-- 🔥 MAIN GRID -->
+      <div class="grid">
+        <!-- 📊 STATS GRANDES -->
+        <div class="card stats">
+          <h3>Rendimiento</h3>
+
+          <div class="stat" v-for="s in stats" :key="s.label">
+            <div class="stat-top">
+              <span>{{ s.icon }} {{ s.label }}</span>
+              <b>{{ s.value }}</b>
+            </div>
+            <div class="bar">
+              <div class="fill" :style="{ width: s.value + '%' }"></div>
+            </div>
+          </div>
         </div>
 
+        <!-- 👤 PERFIL -->
+        <div class="card perfil">
+          <h3>Perfil</h3>
+          <div class="info">
+            <div>
+              <b>Edad</b><span>{{ player.age }}</span>
+            </div>
+            <div>
+              <b>Número</b><span>{{ player.number }}</span>
+            </div>
+            <div>
+              <b>Posición</b><span>{{ player.position }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 🛡️ EQUIPO -->
         <div class="card equipo">
-          <h3>🛡️ Equipo</h3>
+          <h3>Equipo</h3>
 
           <div v-if="equipo" class="team-box">
             <img v-if="equipo.Logo" :src="equipo.Logo" />
-            <b>{{ equipo.Nombre }}</b>
+            <div>
+              <b>{{ equipo.Nombre }}</b>
+              <p>{{ player.ligas[0] || "Sin liga" }}</p>
+              <p>{{ player.categorias[0] || "Sin categoría" }}</p>
+            </div>
           </div>
 
           <p v-else>No tienes equipo</p>
@@ -47,17 +66,13 @@
           <button @click="goToTeam" class="btn-primary">Ver equipo</button>
         </div>
 
-        <div class="card ligas">
-          <h3>🏟️ Liga</h3>
-          <div class="tags">
-            <span v-for="l in player.ligas" :key="l">{{ l }}</span>
-          </div>
-        </div>
+        <!-- 🏟️ INFO EXTRA -->
+        <div class="card extra">
+          <h3>Competición</h3>
 
-        <div class="card categorias">
-          <h3>📂 Categoría</h3>
           <div class="tags">
-            <span v-for="c in player.categorias" :key="c">{{ c }}</span>
+            <span>{{ player.ligas[0] || "Sin liga" }}</span>
+            <span>{{ player.categorias[0] || "Sin categoría" }}</span>
           </div>
         </div>
       </div>
@@ -188,111 +203,93 @@ onMounted(fetchData);
 <style scoped>
 .page {
   min-height: 100vh;
-  background: #f8fafc;
-  padding: 30px;
-  font-family: "Segoe UI", sans-serif;
+  background: #f1f5f9;
+  padding: 20px;
+  font-family: "Inter", sans-serif;
 }
 
 /* CONTENEDOR */
 .container {
-  max-width: 1200px;
+  max-width: 1100px;
   margin: auto;
-  display: grid;
-  grid-template-columns: 320px 1fr;
-  gap: 20px;
-  align-items: stretch; /* 🔥 clave */
 }
 
-/* COLUMNAS */
-.left {
-  display: flex;
-}
-
-.right {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-auto-rows: 1fr; /* 🔥 llena espacios */
-  gap: 15px;
-}
-
-/* BOTÓN */
-.btn-primary {
-  background: #22c55e;
-  border: none;
-  padding: 10px 16px;
-  border-radius: 10px;
-  color: white;
-  cursor: pointer;
-  font-weight: 600;
-  transition: 0.2s;
-}
-
-.btn-primary:hover {
-  background: #16a34a;
-  transform: translateY(-1px);
-}
-
-/* PLAYER CARD */
-.player-card {
+/* 🔥 HEADER */
+.header {
   background: white;
   border-radius: 20px;
   padding: 20px;
-  width: 100%;
-  height: 100%;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
+  margin-bottom: 20px;
+}
+
+.avatar {
+  width: 80px;
+  border-radius: 15px;
+}
+
+.header h1 {
+  margin: 0;
+}
+
+.team {
+  font-size: 13px;
+  color: #64748b;
+}
+
+/* RATING */
+.rating-box {
+  margin-left: auto;
+  background: #22c55e;
+  color: white;
+  font-size: 28px;
+  font-weight: bold;
+  padding: 10px 18px;
+  border-radius: 15px;
+}
+
+/* 🔥 GRID */
+.grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  grid-auto-rows: minmax(150px, auto);
+  gap: 15px;
+}
+
+/* CARDS */
+.card {
+  background: white;
+  border-radius: 15px;
+  padding: 15px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  text-align: center;
-  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.08);
-}
-
-/* TOP PLAYER */
-.card-top {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 10px;
-}
-
-.rating {
-  font-size: 32px;
-  font-weight: bold;
-  color: #22c55e;
-}
-
-.position {
-  font-size: 13px;
-  color: #666;
-}
-
-/* IMG */
-.player-img {
-  width: 130px;
-  border-radius: 15px;
-  margin: 10px auto;
-}
-
-/* TEAM */
-.team {
-  color: #666;
-  font-size: 14px;
 }
 
 /* STATS */
 .stats {
-  margin-top: 15px;
+  grid-row: span 2;
 }
 
 .stat {
-  font-size: 12px;
   margin-bottom: 10px;
-  text-align: left;
+}
+
+.stat-top {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
 }
 
 .bar {
   height: 6px;
   background: #e5e7eb;
   border-radius: 10px;
-  margin-top: 3px;
+  margin-top: 4px;
 }
 
 .fill {
@@ -301,68 +298,80 @@ onMounted(fetchData);
   border-radius: 10px;
 }
 
-/* CARDS DERECHA */
-.card {
-  background: white;
-  border-radius: 15px;
-  padding: 15px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-/* PERFIL GRID */
-.grid {
+/* PERFIL */
+.info {
   display: grid;
-  grid-template-columns: 1fr 1fr;
   gap: 10px;
 }
 
-/* EQUIPO DESTACADO */
-.equipo {
-  grid-column: span 2;
-  border-left: 4px solid #22c55e;
+.info div {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
 }
 
-/* TEAM BOX */
+/* EQUIPO */
+.equipo {
+  grid-column: span 1;
+}
+
 .team-box {
   display: flex;
-  align-items: center;
   gap: 10px;
+  align-items: center;
 }
 
 .team-box img {
-  width: 40px;
-  border-radius: 8px;
+  width: 50px;
+  border-radius: 10px;
 }
 
 /* TAGS */
 .tags {
   display: flex;
+  gap: 10px;
   flex-wrap: wrap;
-  gap: 6px;
 }
 
 .tags span {
-  background: #e5e7eb;
-  padding: 5px 10px;
+  background: #e2e8f0;
+  padding: 6px 12px;
   border-radius: 20px;
   font-size: 12px;
 }
 
-/* RESPONSIVE */
-@media (max-width: 900px) {
-  .container {
+/* BOTÓN */
+.btn-primary {
+  margin-top: 10px;
+  background: #22c55e;
+  border: none;
+  padding: 10px;
+  border-radius: 10px;
+  color: white;
+  cursor: pointer;
+}
+
+.btn-primary:hover {
+  background: #16a34a;
+}
+
+/* 📱 RESPONSIVE */
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .rating-box {
+    align-self: flex-end;
+  }
+
+  .grid {
     grid-template-columns: 1fr;
   }
 
-  .right {
-    grid-template-columns: 1fr;
-  }
-
-  .equipo {
-    grid-column: span 1;
+  .stats {
+    grid-row: span 1;
   }
 }
 </style>
