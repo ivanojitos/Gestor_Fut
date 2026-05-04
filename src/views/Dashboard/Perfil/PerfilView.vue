@@ -13,6 +13,7 @@
         <div class="rating-box">
           <span>{{ player.rating || 75 }}</span>
         </div>
+        <button class="edit-btn" @click="openEdit">✏️</button>
       </div>
 
       <!-- 🔥 MAIN GRID -->
@@ -56,8 +57,8 @@
             <img v-if="equipo.Logo" :src="equipo.Logo" />
             <div>
               <b>{{ equipo.Nombre }}</b>
-              <p>{{ player.ligas[0] || "Sin liga" }}</p>
-              <p>{{ player.categorias[0] || "Sin categoría" }}</p>
+              <p4>{{ player.ligas[0] || "Sin liga" }}</p4>
+              <p5>{{ player.categorias[0] || "Sin categoría" }}</p5>
             </div>
           </div>
 
@@ -75,6 +76,31 @@
             <span>{{ player.categorias[0] || "Sin categoría" }}</span>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+  <div v-if="showEditModal" class="modal">
+    <div class="modal-box">
+      <h3>Editar perfil</h3>
+
+      <input v-model="editForm.name" placeholder="Nombre" />
+      <input v-model="editForm.age" type="number" placeholder="Edad" />
+      <input v-model="editForm.number" type="number" placeholder="Número" />
+
+      <select v-model="editForm.position">
+        <option value="POR">Portero</option>
+        <option value="DEF">Defensa</option>
+        <option value="MED">Medio</option>
+        <option value="DEL">Delantero</option>
+      </select>
+
+      <input v-model="editForm.photo" placeholder="Foto URL" />
+
+      <div class="actions">
+        <button @click="updatePlayer" class="btn-primary">Guardar</button>
+        <button @click="showEditModal = false" class="btn-secondary">
+          Cancelar
+        </button>
       </div>
     </div>
   </div>
@@ -198,6 +224,43 @@ const goToTeam = () => {
 };
 
 onMounted(fetchData);
+
+const showEditModal = ref(false);
+
+const editForm = reactive({
+  name: "",
+  age: "",
+  number: "",
+  position: "",
+  photo: "",
+});
+
+const openEdit = () => {
+  editForm.name = player.name;
+  editForm.age = player.age;
+  editForm.number = player.number;
+  editForm.position = player.position;
+  editForm.photo = player.photo;
+
+  showEditModal.value = true;
+};
+
+const updatePlayer = async () => {
+  try {
+    await axios.put(`${API}/api/jugadores/${player.Id}`, {
+      NombreCompleto: editForm.name,
+      Edad: editForm.age,
+      Numero: editForm.number,
+      Posicion: editForm.position,
+      Foto: editForm.photo,
+    });
+
+    showEditModal.value = false;
+    fetchData(); // 🔥 refresca datos
+  } catch (err) {
+    console.error(err);
+  }
+};
 </script>
 
 <style scoped>
@@ -373,5 +436,61 @@ onMounted(fetchData);
   .stats {
     grid-row: span 1;
   }
+}
+/* BOTÓN EDIT */
+.edit-btn {
+  margin-left: 10px;
+  background: transparent;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: 0.2s;
+}
+
+.edit-btn:hover {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+/* MODAL */
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-box {
+  background: white;
+  padding: 20px;
+  border-radius: 15px;
+  width: 320px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.modal-box input,
+.modal-box select {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+/* BOTONES */
+.actions {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-secondary {
+  background: #e5e7eb;
+  border: none;
+  padding: 10px;
+  border-radius: 10px;
+  cursor: pointer;
 }
 </style>
