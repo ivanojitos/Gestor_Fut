@@ -77,6 +77,10 @@
 
           <div v-else class="no-team">
             <p>No tienes equipo</p>
+
+            <button class="btn-join" @click="goToJoinTeam">
+              Buscar equipo
+            </button>
           </div>
 
           <button v-if="equipo" @click="goToTeam" class="btn-primary small">
@@ -317,7 +321,7 @@ const leaveTeam = async () => {
     saving.value = true;
 
     const res = await axios.put(
-      `${API}/api/jugadores/${player.Id}/salir-equipo`
+      `${API}/api/jugadores/${player.Id}/salir-equipo`,
     );
 
     // 🔥 limpiar estado completo
@@ -332,13 +336,16 @@ const leaveTeam = async () => {
 
     // 🔥 feedback
     alert("Saliste del equipo correctamente");
-
-  } catch (err) {
-    console.error(err);
+  } catch (error) {
+    console.error("ERROR REAL:", error);
     alert("Error al salir del equipo");
   } finally {
     saving.value = false;
   }
+};
+
+const goToJoinTeam = () => {
+  router.push({ name: "Equipos" }); // 👈 ajusta al nombre real de tu ruta
 };
 </script>
 
@@ -633,5 +640,19 @@ const leaveTeam = async () => {
 .no-team {
   color: #64748b;
   font-size: 13px;
+}
+.btn-join {
+  margin-top: 10px;
+  background: #e2e8f0;
+  border: none;
+  padding: 8px;
+  border-radius: 10px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn-join:hover {
+  background: #cbd5f5;
 }
 </style>
