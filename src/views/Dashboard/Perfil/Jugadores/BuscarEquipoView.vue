@@ -35,15 +35,24 @@
             </div>
           </div>
 
-          <button @click="solicitar(eq.Id)" class="btn-join">
-            Solicitar unirme
+          <button
+            v-if="!tieneEquipo && !solicitudesEnviadas.includes(eq.Id)"
+            @click="solicitar(eq.Id)"
+            class="btn-join"
+            :disabled="loadingSolicitud === eq.Id"
+          >
+            {{
+              loadingSolicitud === eq.Id ? "Enviando..." : "Solicitar unirme"
+            }}
           </button>
+
+          <span v-else-if="tieneEquipo" class="sent">
+            ⚽ Ya tienes equipo
+          </span>
+
+          <span v-else class="sent"> ✅ Solicitud enviada </span>
         </div>
       </div>
-
-      <p v-if="equipos.length === 0" class="empty">
-        No hay equipos disponibles
-      </p>
     </div>
   </div>
 </template>
@@ -52,7 +61,8 @@
 import { ref, onMounted } from "vue";
 import axios from "axios";
 
-const API = "https://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net";
+const API =
+  "https://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net";
 
 const ligas = ref([]);
 const categorias = ref([]);
@@ -69,32 +79,60 @@ const fetchCatalogos = async () => {
 };
 
 const fetchEquipos = async () => {
-  const res = await axios.get(`${API}/api/equipos`, {
-    params: {
-      Id_Liga: selectedLiga.value,
-      Id_Categoria: selectedCategoria.value,
-    },
-  });
+  try {
+    const res = await axios.get(`${API}/api/equipos`, {
+      params: {
+        Id_Liga: selectedLiga.value,
+        Id_Categoria: selectedCategoria.value,
+      },
+    });
 
-  equipos.value = res.data.data;
+    equipos.value = res.data.data || [];
+  } catch (error) {
+    console.error(error);
+    equipos.value = [];
+  }
 };
 
+const storedUser = JSON.parse(localStorage.getItem("user")) || null;
+
+const solicitudesEnviadas = ref([]);
+
 const solicitar = async (idEquipo) => {
+  if (!storedUser) return alert("Debes iniciar sesión");
+
   try {
+    loadingSolicitud.value = idEquipo;
+
     await axios.post(`${API}/api/solicitudes`, {
       Id_Equipo: idEquipo,
+      Id_Jugador: storedUser.Id,
     });
+
+    solicitudesEnviadas.value.push(idEquipo);
 
     alert("Solicitud enviada 🚀");
   } catch (err) {
     console.error(err);
-    alert("Error al solicitar");
+  } finally {
+    loadingSolicitud.value = null;
   }
+};
+
+const tieneEquipo = ref(false);
+const loadingSolicitud = ref(null);
+
+const checkEquipo = async () => {
+  if (!storedUser) return;
+
+  const res = await axios.get(`${API}/api/equipos/jugador/${storedUser.Id}`);
+  tieneEquipo.value = res.data.data.length > 0;
 };
 
 onMounted(() => {
   fetchCatalogos();
   fetchEquipos();
+  checkEquipo();
 });
 </script>
 
