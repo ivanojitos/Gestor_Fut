@@ -26,7 +26,7 @@
       <div class="grid">
         <div v-for="eq in equipos" :key="eq.Id" class="card">
           <div class="card-top">
-            <img :src="eq.Logo || placeholder" class="logo" />
+            <img :src="getLogo(eq.Logo)" class="logo" />
 
             <div class="info">
               <h3>{{ eq.Nombre }}</h3>
@@ -177,6 +177,15 @@ const checkEquipo = async () => {
   );
 
   tieneEquipo.value = (res.data.data || []).length > 0;
+};
+
+/* =======================
+   GUARDADO DEL LOGO Y MOSTRADO
+======================= */
+
+const getLogo = (logo) => {
+  if (!logo) return placeholder;
+  return `${API}/uploads/${logo}`;
 };
 
 /* =======================
