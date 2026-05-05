@@ -64,7 +64,9 @@ import { useRouter } from "vue-router";
 const router = useRouter();
 const admins = ref([]);
 
-const API = "https://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net";
+const API =
+  "https://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net";
+  // "http://192.168.11.28:8080";
 
 // 🔥 GET ADMINISTRADORES
 const fetchAdmins = async () => {
@@ -166,7 +168,8 @@ thead {
   background: #f8fafc;
 }
 
-th, td {
+th,
+td {
   padding: 14px;
   text-align: left;
   font-size: 14px;
@@ -253,7 +256,8 @@ tbody tr:hover {
     width: 100%;
   }
 
-  th, td {
+  th,
+  td {
     font-size: 12px;
     padding: 10px;
   }

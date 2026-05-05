@@ -3,7 +3,7 @@
     <div class="container">
       <!-- 🔥 HEADER -->
       <div class="header">
-        <img :src="getImage(player.photo)" class="avatar" />
+        <img v-if="player.photo" :src="API + player.photo" class="avatar" />
         <div>
           <h1>{{ player.name }}</h1>
           <p>{{ player.position }} • #{{ player.number }}</p>
@@ -167,6 +167,7 @@ import { useRouter } from "vue-router";
 
 const API =
   "https://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net";
+  // "http://192.168.11.28:8080";
 
 const router = useRouter();
 const saving = ref(false);
@@ -225,15 +226,13 @@ const fetchData = async () => {
   const res = await axios.get(`${API}/api/jugadores/${player.Id}`);
   const user = res.data.data;
 
-  console.log(user);
+  console.log("FOTO:", user.Foto);
 
   player.name = user.NombreCompleto;
   player.age = user.Edad;
   player.number = user.Numero;
   player.position = user.Posicion;
-  player.photo = user.Foto
-    ? API + user.Foto.trim()
-    : "https://via.placeholder.com/150";
+  player.photo = user.Foto ? user.Foto.trim() : "";
 
   // 🔥 Traer catálogos
   ligas.value = (await axios.get(`${API}/api/ligas`)).data.data;
@@ -401,12 +400,6 @@ const handleFile = (event) => {
 
 const goToJoinTeam = () => {
   router.push({ name: "BuscarEquipo" }); // 👈 ajusta al nombre real de tu ruta
-};
-
-const getImage = (path) => {
-  if (!path) return "https://via.placeholder.com/150";
-
-  return `${API}/imagenes/${path.split("/").pop()}`;
 };
 </script>
 

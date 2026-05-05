@@ -57,7 +57,9 @@ import { ref, onMounted, computed } from "vue";
 import axios from "axios";
 import { useRouter } from "vue-router";
 
-const API = "https://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net";
+const API = 
+   "https://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net";
+  // "http://192.168.11.28:8080";
 
 const router = useRouter();
 
