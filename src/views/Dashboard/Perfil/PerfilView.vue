@@ -3,8 +3,12 @@
     <div class="container">
       <!-- 🔥 HEADER -->
       <div class="header">
-        <img v-if="player.photo" :src="API + player.photo" class="avatar" />
-        <p>{{ API + player.photo }}</p>
+        <img
+          v-if="player.photo"
+          :key="player.photo"
+          :src="API + player.photo"
+          class="avatar"
+        />
         <div>
           <h1>{{ player.name }}</h1>
           <p>{{ player.position }} • #{{ player.number }}</p>
@@ -168,7 +172,7 @@ import { useRouter } from "vue-router";
 
 const API =
   "https://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net";
-  // "http://192.168.11.28:8080";
+// "http://192.168.11.28:8080";
 
 const router = useRouter();
 const saving = ref(false);
