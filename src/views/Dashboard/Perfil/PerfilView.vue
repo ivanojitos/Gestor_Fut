@@ -4,8 +4,10 @@
       <!-- 🔥 HEADER -->
       <div class="header">
         <img
-          :src="API + player.photo"
-          style="width: 150px; border: 2px solid red"
+          v-if="player.photo"
+          :key="player.photo"
+          :src="encodeURI(API + player.photo.trim())"
+          class="avatar"
         />
         <div>
           <h1>{{ player.name }}</h1>
@@ -235,7 +237,7 @@ const fetchData = async () => {
   player.age = user.Edad;
   player.number = user.Numero;
   player.position = user.Posicion;
-  player.photo = user.Foto ? user.Foto.trim() : "";
+  player.photo = user.Foto ? user.Foto.replace(/\s+/g, "").trim() : "";
 
   // 🔥 Traer catálogos
   ligas.value = (await axios.get(`${API}/api/ligas`)).data.data;
