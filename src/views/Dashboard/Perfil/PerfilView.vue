@@ -443,54 +443,75 @@ const goToJoinTeam = () => {
 </script>
 
 <style scoped>
-.pendiente-list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
+/* 🌍 BASE */
 .page {
   min-height: 100vh;
-  background: #f1f5f9;
-  padding: 20px;
+  background: #ffffff;
+  padding: 30px 15px;
   font-family: "Inter", sans-serif;
 }
 
-/* CONTENEDOR */
 .container {
-  max-width: 1100px;
+  max-width: 1150px;
   margin: auto;
 }
 
-/* 🔥 HEADER */
+/* 🔥 HEADER MODERNO */
 .header {
-  background: white;
-  border-radius: 20px;
-  padding: 20px;
+  background: #fff;
+  border-radius: 25px;
+  padding: 25px;
   display: flex;
   align-items: center;
   gap: 20px;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
-  margin-bottom: 20px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.06);
+  position: relative;
+  overflow: hidden;
 }
 
+/* Glow decorativo */
+.header::before {
+  content: "";
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, #22c55e33, transparent);
+  top: -50px;
+  right: -50px;
+}
+
+/* 🧑 AVATAR PRO */
 .avatar {
-  width: 95px;
-  height: 95px;
+  width: 100px;
+  height: 100px;
   border-radius: 50%;
   object-fit: cover;
-  border: 3px solid #22c55e;
+  border: 4px solid #22c55e;
   box-shadow:
-    0 0 0 4px rgba(34, 197, 94, 0.2),
-    0 8px 25px rgba(0, 0, 0, 0.2);
+    0 0 0 6px rgba(34, 197, 94, 0.15),
+    0 10px 25px rgba(0, 0, 0, 0.15);
   transition: 0.3s;
 }
 
 .avatar:hover {
-  transform: scale(1.08) rotate(1deg);
+  transform: scale(1.05);
 }
 
+/* Placeholder */
+.placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #22c55e;
+  color: white;
+  font-size: 34px;
+  font-weight: bold;
+}
+
+/* INFO */
 .header h1 {
   margin: 0;
+  font-size: 22px;
 }
 
 .team {
@@ -498,231 +519,122 @@ const goToJoinTeam = () => {
   color: #64748b;
 }
 
-/* RATING */
+/* ⭐ RATING MODERNO */
 .rating-box {
   margin-left: auto;
-  background: #22c55e;
+  background: linear-gradient(135deg, #22c55e, #16a34a);
   color: white;
-  font-size: 28px;
+  font-size: 24px;
   font-weight: bold;
-  padding: 10px 18px;
-  border-radius: 15px;
+  padding: 12px 18px;
+  border-radius: 20px;
+  box-shadow: 0 10px 20px rgba(34, 197, 94, 0.3);
 }
 
-/* 🔥 GRID */
+/* ✏️ EDIT */
+.edit-btn {
+  background: #f1f5f9;
+  border: none;
+  font-size: 18px;
+  padding: 10px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.edit-btn:hover {
+  background: #e2e8f0;
+  transform: scale(1.1);
+}
+
+/* 🔥 GRID INTELIGENTE */
 .grid {
   display: grid;
   grid-template-columns: 2fr 1fr;
-  grid-auto-rows: minmax(150px, auto);
-  gap: 15px;
+  gap: 20px;
+  margin-top: 20px;
 }
 
-/* CARDS */
+/* 🧊 CARDS PREMIUM */
 .card {
-  background: white;
-  border-radius: 15px;
-  padding: 15px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+  background: #fff;
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  transition: 0.25s;
 }
 
-/* STATS */
-.stats {
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
+}
+
+/* 📊 RESUMEN PRO */
+.resumen {
   grid-row: span 2;
 }
 
-.stat {
-  margin-bottom: 10px;
+.resumen h3 {
+  margin-bottom: 15px;
 }
 
-.stat-top {
-  display: flex;
-  justify-content: space-between;
-  font-size: 13px;
+.resumen-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
 }
 
-.bar {
-  height: 6px;
-  background: #e5e7eb;
-  border-radius: 10px;
-  margin-top: 4px;
+.resumen-grid div {
+  background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+  border-radius: 15px;
+  padding: 18px;
+  text-align: center;
+  transition: 0.2s;
 }
 
-.fill {
-  height: 100%;
-  background: #22c55e;
-  border-radius: 10px;
+.resumen-grid div:hover {
+  transform: scale(1.05);
 }
 
-/* PERFIL */
+.resumen-grid b {
+  font-size: 24px;
+  display: block;
+  color: #22c55e;
+}
+
+.resumen-grid span {
+  font-size: 12px;
+  color: #64748b;
+}
+
+/* 👤 PERFIL */
 .info {
   display: grid;
-  gap: 10px;
+  gap: 12px;
 }
 
 .info div {
   display: flex;
   justify-content: space-between;
   font-size: 14px;
-}
-
-/* EQUIPO */
-.equipo {
-  grid-column: span 1;
-}
-
-.team-box {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-}
-
-.team-box img {
-  width: 50px;
-  border-radius: 10px;
-}
-
-/* TAGS */
-.tags {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.tags span {
-  background: #e2e8f0;
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 12px;
-}
-
-.placeholder {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #22c55e;
-  color: white;
-  font-size: 30px;
-  font-weight: bold;
-}
-
-/* BOTÓN */
-.btn-primary {
-  margin-top: 10px;
-  background: #22c55e;
-  border: none;
+  background: #f8fafc;
   padding: 10px;
   border-radius: 10px;
-  color: white;
-  cursor: pointer;
 }
 
-.btn-primary:hover {
-  background: #16a34a;
-}
-
-/* 📱 RESPONSIVE */
-@media (max-width: 768px) {
-  .header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .rating-box {
-    align-self: flex-end;
-  }
-
-  .grid {
-    grid-template-columns: 1fr;
-  }
-
-  .stats {
-    grid-row: span 1;
-  }
-}
-/* BOTÓN EDIT */
-.edit-btn {
-  margin-left: 10px;
-  background: transparent;
-  border: none;
-  font-size: 18px;
-  cursor: pointer;
-  opacity: 0.6;
-  transition: 0.2s;
-}
-
-.edit-btn:hover {
-  opacity: 1;
-  transform: scale(1.1);
-}
-
-/* MODAL */
-.modal {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.4);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.modal-box {
-  background: white;
-  padding: 20px;
-  border-radius: 15px;
-  width: 320px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.modal-box input,
-.modal-box select {
-  padding: 10px;
-  border-radius: 8px;
-  border: 1px solid #e5e7eb;
-}
-
-/* BOTONES */
-.actions {
-  display: flex;
-  gap: 10px;
-}
-
-.btn-secondary {
-  background: #e5e7eb;
-  border: none;
-  padding: 10px;
-  border-radius: 10px;
-  cursor: pointer;
-}
-.equipo-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-/* TEAM BOX MÁS LIMPIO */
+/* 🛡️ EQUIPO */
 .team-box {
   display: flex;
   gap: 12px;
   align-items: center;
-  margin: 10px 0;
+  margin-top: 10px;
 }
 
 .team-box img {
-  width: 55px;
-  height: 55px;
+  width: 60px;
+  height: 60px;
   border-radius: 12px;
   object-fit: cover;
-}
-
-/* INFO */
-.team-info {
-  display: flex;
-  flex-direction: column;
 }
 
 .team-info b {
@@ -734,100 +646,33 @@ const goToJoinTeam = () => {
   color: #64748b;
 }
 
-/* BOTÓN VER */
-.small {
-  padding: 8px;
-  font-size: 13px;
-}
-
-/* BOTÓN SALIR (SUTIL) */
-.leave-btn {
-  background: transparent;
-  border: none;
-  font-size: 12px;
-  color: #ef4444;
-  cursor: pointer;
-  opacity: 0.7;
-}
-
-.leave-btn:hover {
-  opacity: 1;
-  text-decoration: underline;
-}
-
-/* NO TEAM */
-.no-team {
-  color: #64748b;
-  font-size: 13px;
-}
-.btn-join {
-  margin-top: 10px;
-  background: #e2e8f0;
-  border: none;
-  padding: 8px;
-  border-radius: 10px;
-  font-size: 13px;
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-.btn-join:hover {
-  background: #cbd5f5;
-}
-.actividad {
-  grid-row: span 2;
-}
-
-.activity-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin-top: 10px;
-}
-
-.activity-item {
+/* 🏷️ TAGS */
+.tags {
   display: flex;
   gap: 10px;
-  align-items: center;
-  background: #f8fafc;
-  padding: 10px;
-  border-radius: 10px;
-  transition: 0.2s;
+  flex-wrap: wrap;
 }
 
-.activity-item:hover {
+.tags span {
   background: #f1f5f9;
-}
-
-.activity-item .icon {
-  font-size: 18px;
-}
-
-.resumen {
-  grid-row: span 2;
-}
-
-.resumen-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 15px;
-  text-align: center;
-  margin-top: 10px;
-}
-
-.resumen-grid div {
-  background: #f8fafc;
-  padding: 15px;
-  border-radius: 10px;
-}
-
-.resumen-grid b {
-  font-size: 20px;
-  display: block;
-}
-
-.resumen-grid span {
+  padding: 6px 12px;
+  border-radius: 20px;
   font-size: 12px;
-  color: #64748b;
+}
+
+/* 📱 RESPONSIVE REAL */
+@media (max-width: 900px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .rating-box {
+    align-self: flex-end;
+  }
 }
 </style>
