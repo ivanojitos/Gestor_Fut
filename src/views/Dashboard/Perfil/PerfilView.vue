@@ -218,7 +218,7 @@ const fetchSolicitudes = async () => {
     (s) => s.Estado === "Pendiente" || s.Estado === "Abierta",
   );
 
-  console.log(solicitudesPendientes.value,res.data.data);
+
 };
 
 const fetchData = async () => {
@@ -226,6 +226,9 @@ const fetchData = async () => {
 
   const res = await axios.get(`${API}/api/jugadores/${player.Id}`);
   const user = res.data.data;
+
+  console.log(user);
+  
 
   player.name = user.NombreCompleto;
   player.age = user.Edad;
