@@ -9,6 +9,10 @@
           :src="encodeURI(API + player.photo.trim())"
           class="avatar"
         />
+
+        <div v-else class="avatar placeholder">
+          {{ player.name.charAt(0) }}
+        </div>
         <div>
           <h1>{{ player.name }}</h1>
           <p>{{ player.position }} • #{{ player.number }}</p>
@@ -440,8 +444,19 @@ const goToJoinTeam = () => {
 }
 
 .avatar {
-  width: 80px;
-  border-radius: 15px;
+  width: 95px;
+  height: 95px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #22c55e;
+  box-shadow:
+    0 0 0 4px rgba(34, 197, 94, 0.2),
+    0 8px 25px rgba(0, 0, 0, 0.2);
+  transition: 0.3s;
+}
+
+.avatar:hover {
+  transform: scale(1.08) rotate(1deg);
 }
 
 .header h1 {
@@ -551,6 +566,16 @@ const goToJoinTeam = () => {
   padding: 6px 12px;
   border-radius: 20px;
   font-size: 12px;
+}
+
+.placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #22c55e;
+  color: white;
+  font-size: 30px;
+  font-weight: bold;
 }
 
 /* BOTÓN */
