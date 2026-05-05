@@ -75,6 +75,26 @@
             </div>
           </div>
 
+          <!-- 🔥 NUEVO: SOLICITUD PENDIENTE -->
+          <div
+            v-else-if="solicitudesPendientes.length > 0"
+            class="pendiente-list"
+          >
+            <div
+              v-for="s in solicitudesPendientes"
+              :key="s.Id"
+              class="team-box pendiente"
+            >
+              <img v-if="s.Logo" :src="s.Logo" />
+
+              <div class="team-info">
+                <b>{{ s.NombreEquipo }}</b>
+                <span class="sub">⏳ Pendiente</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- SIN NADA -->
           <div v-else class="no-team">
             <p>No tienes equipo</p>
 
@@ -82,10 +102,6 @@
               Buscar equipo
             </button>
           </div>
-
-          <button v-if="equipo" @click="goToTeam" class="btn-primary small">
-            Ver equipo
-          </button>
         </div>
 
         <!-- 🏟️ INFO EXTRA -->
@@ -189,6 +205,19 @@ const stats = [
   { label: "TIR", value: 75, icon: "🎯" },
 ];
 
+const solicitudesPendientes = ref([]);
+
+const fetchSolicitudes = async () => {
+  if (!player.Id) return;
+
+  const res = await axios.get(`${API}/api/solicitudes/jugador/${player.Id}`);
+
+  // solo pendientes o abiertas
+  solicitudesPendientes.value = (res.data.data || []).filter(
+    (s) => s.Estado === "Pendiente" || s.Estado === "Abierta",
+  );
+};
+
 const fetchData = async () => {
   if (!player.Id) return;
 
@@ -261,7 +290,14 @@ const goToTeam = () => {
   });
 };
 
-onMounted(fetchData);
+const tieneSolicitudes = () => {
+  return solicitudesPendientes.value.length > 0;
+};
+
+onMounted(() => {
+  fetchData();
+  fetchSolicitudes();
+});
 
 const showEditModal = ref(false);
 
@@ -298,15 +334,11 @@ const updatePlayer = async () => {
       formData.append("Foto", photoFile.value);
     }
 
-    const res = await axios.put(
-      `${API}/api/jugadores/${player.Id}`,
-      formData,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+    const res = await axios.put(`${API}/api/jugadores/${player.Id}`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
       },
-    );
+    });
 
     const updated = res.data.data;
 
@@ -368,6 +400,11 @@ const goToJoinTeam = () => {
 </script>
 
 <style scoped>
+.pendiente-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
 .page {
   min-height: 100vh;
   background: #f1f5f9;
