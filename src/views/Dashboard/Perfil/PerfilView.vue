@@ -4,10 +4,8 @@
       <!-- 🔥 HEADER -->
       <div class="header">
         <img
-          v-if="player.photo"
-          :key="player.photo"
           :src="API + player.photo"
-          class="avatar"
+          style="width: 150px; border: 2px solid red"
         />
         <div>
           <h1>{{ player.name }}</h1>
