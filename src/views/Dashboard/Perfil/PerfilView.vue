@@ -28,16 +28,25 @@
       <!-- 🔥 MAIN GRID -->
       <div class="grid">
         <!-- 📊 STATS GRANDES -->
-        <div class="card stats">
-          <h3>Rendimiento</h3>
+        <div class="card resumen">
+          <h3>Resumen</h3>
 
-          <div class="stat" v-for="s in stats" :key="s.label">
-            <div class="stat-top">
-              <span>{{ s.icon }} {{ s.label }}</span>
-              <b>{{ s.value }}</b>
+          <div class="resumen-grid">
+            <div>
+              <b>{{ partidos }}</b>
+              <span>Partidos</span>
             </div>
-            <div class="bar">
-              <div class="fill" :style="{ width: s.value + '%' }"></div>
+            <div>
+              <b>{{ goles }}</b>
+              <span>Goles</span>
+            </div>
+            <div>
+              <b>{{ asistencias }}</b>
+              <span>Asistencias</span>
+            </div>
+            <div>
+              <b>{{ tarjetas }}</b>
+              <span>Tarjetas</span>
             </div>
           </div>
         </div>
@@ -407,6 +416,27 @@ const handleFile = (event) => {
   photoFile.value = event.target.files[0];
 };
 
+const actividad = ref([
+  {
+    id: 1,
+    icon: "⚽",
+    titulo: "Gol anotado",
+    descripcion: "Anotaste 1 gol en el último partido",
+  },
+  {
+    id: 2,
+    icon: "👥",
+    titulo: "Nuevo equipo",
+    descripcion: "Te uniste a Los Tigres",
+  },
+  {
+    id: 3,
+    icon: "📩",
+    titulo: "Solicitud enviada",
+    descripcion: "Solicitaste unirte a otro equipo",
+  },
+]);
+
 const goToJoinTeam = () => {
   router.push({ name: "BuscarEquipo" }); // 👈 ajusta al nombre real de tu ruta
 };
@@ -743,5 +773,61 @@ const goToJoinTeam = () => {
 
 .btn-join:hover {
   background: #cbd5f5;
+}
+.actividad {
+  grid-row: span 2;
+}
+
+.activity-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.activity-item {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  background: #f8fafc;
+  padding: 10px;
+  border-radius: 10px;
+  transition: 0.2s;
+}
+
+.activity-item:hover {
+  background: #f1f5f9;
+}
+
+.activity-item .icon {
+  font-size: 18px;
+}
+
+.resumen {
+  grid-row: span 2;
+}
+
+.resumen-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+  text-align: center;
+  margin-top: 10px;
+}
+
+.resumen-grid div {
+  background: #f8fafc;
+  padding: 15px;
+  border-radius: 10px;
+}
+
+.resumen-grid b {
+  font-size: 20px;
+  display: block;
+}
+
+.resumen-grid span {
+  font-size: 12px;
+  color: #64748b;
 }
 </style>
