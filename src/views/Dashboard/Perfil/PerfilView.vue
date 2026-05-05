@@ -3,7 +3,7 @@
     <div class="container">
       <!-- 🔥 HEADER -->
       <div class="header">
-        <img :src="player.photo" class="avatar" />
+        <img :src="getImage(player.photo)" class="avatar" />
         <div>
           <h1>{{ player.name }}</h1>
           <p>{{ player.position }} • #{{ player.number }}</p>
@@ -217,8 +217,6 @@ const fetchSolicitudes = async () => {
   solicitudesPendientes.value = (res.data.data || []).filter(
     (s) => s.Estado === "Pendiente" || s.Estado === "Abierta",
   );
-
-
 };
 
 const fetchData = async () => {
@@ -228,13 +226,14 @@ const fetchData = async () => {
   const user = res.data.data;
 
   console.log(user);
-  
 
   player.name = user.NombreCompleto;
   player.age = user.Edad;
   player.number = user.Numero;
   player.position = user.Posicion;
-  player.photo = user.Foto || "https://via.placeholder.com/150";
+  player.photo = user.Foto
+    ? API + user.Foto.trim()
+    : "https://via.placeholder.com/150";
 
   // 🔥 Traer catálogos
   ligas.value = (await axios.get(`${API}/api/ligas`)).data.data;
@@ -402,6 +401,12 @@ const handleFile = (event) => {
 
 const goToJoinTeam = () => {
   router.push({ name: "BuscarEquipo" }); // 👈 ajusta al nombre real de tu ruta
+};
+
+const getImage = (path) => {
+  if (!path) return "https://via.placeholder.com/150";
+
+  return `${API}/imagenes/${path.split("/").pop()}`;
 };
 </script>
 
