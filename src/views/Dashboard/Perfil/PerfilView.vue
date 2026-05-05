@@ -4,6 +4,7 @@
       <!-- 🔥 HEADER -->
       <div class="header">
         <img v-if="player.photo" :src="API + player.photo" class="avatar" />
+        <p>{{ API + player.photo }}</p>
         <div>
           <h1>{{ player.name }}</h1>
           <p>{{ player.position }} • #{{ player.number }}</p>
