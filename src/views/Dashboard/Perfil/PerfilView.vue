@@ -65,7 +65,7 @@
 
           <!-- ✅ SI TIENE EQUIPO -->
           <div v-if="equipo" class="team-box">
-            <img v-if="equipo.Logo" :src="equipo.Logo" />
+            <img v-if="equipo.Logo" :src="API + equipo.Logo" />
 
             <div class="team-info">
               <b>{{ equipo.Nombre }}</b>
@@ -85,7 +85,7 @@
                 :key="s.Id"
                 class="team-box pendiente"
               >
-                <img v-if="s.Logo" :src="s.Logo" />
+                <img v-if="s.Logo" :src="API + s.Logo" />
 
                 <div class="team-info">
                   <b>{{ s.NombreEquipo }}</b>
@@ -217,6 +217,8 @@ const fetchSolicitudes = async () => {
   solicitudesPendientes.value = (res.data.data || []).filter(
     (s) => s.Estado === "Pendiente" || s.Estado === "Abierta",
   );
+
+  console.log(solicitudesPendientes.value,res.data.data);
 };
 
 const fetchData = async () => {
