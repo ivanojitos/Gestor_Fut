@@ -63,6 +63,7 @@
             </button>
           </div>
 
+          <!-- ✅ SI TIENE EQUIPO -->
           <div v-if="equipo" class="team-box">
             <img v-if="equipo.Logo" :src="equipo.Logo" />
 
@@ -75,32 +76,32 @@
             </div>
           </div>
 
-          <!-- 🔥 NUEVO: SOLICITUD PENDIENTE -->
-          <div
-            v-else-if="solicitudesPendientes.length > 0"
-            class="pendiente-list"
-          >
-            <div
-              v-for="s in solicitudesPendientes"
-              :key="s.Id"
-              class="team-box pendiente"
-            >
-              <img v-if="s.Logo" :src="s.Logo" />
+          <!-- ✅ SI NO TIENE EQUIPO -->
+          <div v-else>
+            <!-- 🔥 PENDIENTES (SI EXISTEN) -->
+            <div v-if="solicitudesPendientes.length > 0" class="pendiente-list">
+              <div
+                v-for="s in solicitudesPendientes"
+                :key="s.Id"
+                class="team-box pendiente"
+              >
+                <img v-if="s.Logo" :src="s.Logo" />
 
-              <div class="team-info">
-                <b>{{ s.NombreEquipo }}</b>
-                <span class="sub">⏳ Pendiente</span>
+                <div class="team-info">
+                  <b>{{ s.NombreEquipo }}</b>
+                  <span class="sub">⏳ Pendiente</span>
+                </div>
               </div>
             </div>
-          </div>
 
-          <!-- SIN NADA -->
-          <div v-else class="no-team">
-            <p>No tienes equipo</p>
+            <!-- 🔥 SIEMPRE MOSTRAR BOTÓN -->
+            <div class="no-team">
+              <p v-if="solicitudesPendientes.length === 0">No tienes equipo</p>
 
-            <button class="btn-join" @click="goToJoinTeam">
-              Buscar equipo
-            </button>
+              <button class="btn-join" @click="goToJoinTeam">
+                Buscar equipo
+              </button>
+            </div>
           </div>
         </div>
 
