@@ -49,11 +49,41 @@
 
           <!-- POSICION -->
           <div class="form-group">
-            <input v-model="form.posicion" type="text" />
-            <label>Posición</label>
+            <select v-model="form.posicion">
+              <option disabled value="">Selecciona una posición</option>
+
+              <optgroup label="Portería">
+                <option value="POR">POR - Portero</option>
+              </optgroup>
+
+              <optgroup label="Defensa">
+                <option value="DFC">DFC - Defensa Central</option>
+                <option value="LI">LI - Lateral Izquierdo</option>
+                <option value="LD">LD - Lateral Derecho</option>
+                <option value="CAI">CAI - Carrilero Izquierdo</option>
+                <option value="CAD">CAD - Carrilero Derecho</option>
+                <option value="LIB">LIB - Líbero</option>
+              </optgroup>
+
+              <optgroup label="Mediocampo">
+                <option value="MCD">MCD - Medio Defensivo</option>
+                <option value="MC">MC - Mediocentro</option>
+                <option value="MCO">MCO - Medio Ofensivo</option>
+                <option value="MI">MI - Volante Izquierdo</option>
+                <option value="MD">MD - Volante Derecho</option>
+              </optgroup>
+
+              <optgroup label="Delantera">
+                <option value="EI">EI - Extremo Izquierdo</option>
+                <option value="ED">ED - Extremo Derecho</option>
+                <option value="SD">SD - Segundo Delantero</option>
+                <option value="MP">MP - Media Punta</option>
+                <option value="DC">DC - Delantero Centro</option>
+              </optgroup>
+            </select>
           </div>
 
-          <!-- PASSWORD 🔐 -->
+          <!-- PASSWORD -->
           <div class="form-group">
             <input v-model="form.password" type="password" required />
             <label>Contraseña</label>
@@ -75,8 +105,8 @@
           <div class="form-group">
             <select v-model="form.liga">
               <option disabled value="">Liga</option>
-              <option v-for="liga in ligas" :key="liga.id" :value="liga.id">
-                {{ liga.nombre }}
+              <option v-for="liga in ligas" :key="liga.Id" :value="liga.Id">
+                {{ liga.Nombre }}
               </option>
             </select>
           </div>
@@ -85,8 +115,8 @@
           <div class="form-group full">
             <select v-model="form.categoria">
               <option disabled value="">Categoría</option>
-              <option v-for="cat in categorias" :key="cat.id" :value="cat.id">
-                {{ cat.nombre }}
+              <option v-for="cat in categorias" :key="cat.Id" :value="cat.Id">
+                {{ cat.Nombre }}
               </option>
             </select>
           </div>
@@ -99,12 +129,33 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import axios from "axios";
 
-const fileInput = ref(null);
-const preview = ref(null);
+const API = 
+  "https://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net";
+// "http://192.168.11.28:8080";
 
+// 🔥 DATA DINÁMICA
+const ligas = ref([]);
+const categorias = ref([]);
+
+// 🔥 CARGAR DESDE BACKEND
+const fetchData = async () => {
+  try {
+    const resLigas = await axios.get(`${API}/api/ligas`);
+    ligas.value = resLigas.data.data;
+
+    const resCategorias = await axios.get(`${API}/api/categorias`);
+    categorias.value = resCategorias.data.data;
+  } catch (error) {
+    console.error("Error cargando datos:", error);
+  }
+};
+
+onMounted(fetchData);
+
+// 🔥 FORM
 const form = ref({
   nombre: "",
   numero: "",
@@ -114,58 +165,58 @@ const form = ref({
   estatura: "",
   liga: "",
   categoria: "",
-  password: "", // 🔥 agregado
-  logo: null,
+  password: "",
+  Foto: null, // 🔥 IMPORTANTE
 });
 
-const ligas = ref([
-  { id: 1, nombre: "Liga MX" },
-  { id: 2, nombre: "Liga Premier" },
-]);
+const fileInput = ref(null);
+const preview = ref(null);
 
-const categorias = ref([
-  { id: 1, nombre: "Sub-18" },
-  { id: 2, nombre: "Mayor" },
-]);
-
+// 🔥 GUARDAR
 const guardarUsuario = async () => {
   try {
     const data = new FormData();
 
-    Object.keys(form.value).forEach((key) => {
-      if (form.value[key] !== null && form.value[key] !== "") {
-        data.append(key, form.value[key]);
-      }
-    });
+    data.append("nombre", form.value.nombre);
+    data.append("numero", form.value.numero);
+    data.append("edad", form.value.edad);
+    data.append("posicion", form.value.posicion);
+    data.append("correo", form.value.correo);
+    data.append("Estatura", form.value.estatura);
+    data.append("liga", form.value.liga);
+    data.append("Id_Categoria", form.value.categoria);
+    data.append("password", form.value.password);
 
-    const response = await axios.post("https://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net/api/createJugador", data);
+    if (form.value.Foto) {
+      data.append("Foto", form.value.Foto); // 🔥 CLAVE
+    }
+
+    const response = await axios.post(`${API}/api/createJugador`, data);
 
     if (response.data.ok) {
-      alert(response.data.message);
+      alert("Jugador creado correctamente");
     }
   } catch (error) {
-    if (error.response?.status === 422) {
-      alert("Errores en el formulario");
-    } else {
-      console.error(error);
-      alert("Error del servidor");
-    }
+    console.error(error);
+    alert("Error del servidor");
   }
 };
 
+// 🔥 FOTO
 const triggerFile = () => {
   fileInput.value.click();
 };
 
 const handleFile = (e) => {
   const file = e.target.files[0];
-  form.value.logo = file;
+  form.value.Foto = file;
 
   if (file) {
     preview.value = URL.createObjectURL(file);
   }
 };
 </script>
+
 
 <style scoped>
 .label-img {

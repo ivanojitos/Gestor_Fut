@@ -77,6 +77,10 @@ import { ref } from "vue";
 import { useRouter } from "vue-router";
 import axios from "axios";
 
+const API =
+  "https://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net";
+// "http://192.168.11.28:8080";
+
 const email = ref("");
 const password = ref("");
 const error = ref("");
@@ -94,13 +98,10 @@ const login = async () => {
   error.value = "";
 
   try {
-    const response = await axios.post(
-      "https://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net/api/login",
-      {
-        correo: email.value,
-        password: password.value,
-      },
-    );
+    const response = await axios.post(`${API}/api/login`, {
+      correo: email.value,
+      password: password.value,
+    });
 
     if (response.data.ok) {
       const user = response.data.user;
@@ -163,7 +164,7 @@ const validarCodigo = () => {
 const crearArbitro = async () => {
   try {
     const response = await axios.post(
-      "https://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net/api/createArbitro",
+      `${API}/api/createArbitro`,
       arbitro.value,
     );
 

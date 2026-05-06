@@ -1,74 +1,70 @@
 <template>
   <div class="club">
-    <!-- TOP HEADER -->
-    <header class="header">
-      <div class="teamInfo">
-        <img :src="team.logo" class="logo" />
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-bg"></div>
 
-        <div>
-          <h1>{{ team.name }}</h1>
-          <p class="sub">{{ team.liga }} • {{ team.categoria }}</p>
-
-          <div class="stats">
-            <span>🏆 {{ team.wins }}</span>
-            <span>❌ {{ team.losses }}</span>
-            <span>📊 #{{ team.position }}</span>
-          </div>
-        </div>
+      <div class="logo-wrapper">
+        <img v-if="team.logo" :src="encodeURI(API + team.logo)" />
       </div>
 
-      <button class="modeBtn" @click="goToGameMode">🎮 MODO JUEGO</button>
-    </header>
+      <h1>{{ team.name }}</h1>
+      <p>{{ team.liga }} • {{ team.categoria }}</p>
 
-    <!-- HIGHLIGHTS -->
-    <section class="highlights">
-      <div class="card">⚽ {{ best.st.name }}</div>
-      <div class="card">🛡️ {{ best.def.name }}</div>
-      <div class="card">🎯 {{ best.mid.name }}</div>
-      <div class="card">🧤 {{ best.gk.name }}</div>
+      <div class="hero-stats">
+        <div>
+          <b>{{ team.wins }}</b
+          ><span>Ganados</span>
+        </div>
+        <div>
+          <b>{{ team.losses }}</b
+          ><span>Perdidos</span>
+        </div>
+        <div>
+          <b>#{{ team.position }}</b
+          ><span>Posición</span>
+        </div>
+      </div>
     </section>
 
-    <!-- MAIN LAYOUT -->
+    <!-- ACTION -->
+    <div class="action-bar">
+      <button @click="goToGameMode">🎮 MODO DT</button>
+    </div>
+
+    <!-- CONTENT -->
     <section class="layout">
-      <!-- LEFT: PLAYERS -->
+      <!-- PLAYERS -->
       <div class="panel">
-        <h2>👥 Plantilla ({{ players.length }})</h2>
+        <h2>Plantilla</h2>
 
         <div class="players">
           <div v-for="p in players" :key="p.number" class="playerCard">
-            <img :src="p.photo" />
+            <img v-if="p.photo" :src="encodeURI(API + p.photo)" />
 
-            <div class="info">
+            <div>
               <b>#{{ p.number }} {{ p.name }}</b>
               <small>{{ p.position }}</small>
             </div>
 
-            <div class="stats">⚽ {{ p.goals }} | 🎯 {{ p.assists }}</div>
+            <div class="mini-stats">⚽ {{ p.goals }} | 🎯 {{ p.assists }}</div>
           </div>
         </div>
       </div>
 
-      <!-- RIGHT: MATCHES -->
+      <!-- MATCHES -->
       <div class="panel">
-        <h2>📅 Partidos</h2>
+        <h2>Partidos</h2>
 
-        <!-- NEXT MATCH -->
         <div class="match next">
-          <h3>🔜 Próximo partido</h3>
           <p>
-            <b>{{ matches?.next?.home }}</b> vs <b>{{ matches.next.away }}</b>
+            <b>{{ matches.next.home }}</b> vs <b>{{ matches.next.away }}</b>
           </p>
-          <small>🏟 {{ matches.next.stadium }}</small>
+          <small>{{ matches.next.stadium }}</small>
         </div>
 
-        <!-- LAST MATCHES -->
-        <div class="match" v-for="m in matches.last" :key="m.id">
-          <h3>{{ m.home }} {{ m.score }} {{ m.away }}</h3>
-
-          <div class="meta">
-            <small>🏟 {{ m.stadium }}</small>
-            <small>🧑‍⚖️ {{ m.ref }}</small>
-          </div>
+        <div v-for="m in matches.last" :key="m.id" class="match">
+          {{ m.home }} {{ m.score }} {{ m.away }}
         </div>
       </div>
     </section>
@@ -91,7 +87,7 @@ const matches = ref({
 
 const API =
   "https://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net";
-    // "http://192.168.11.28:8080";
+  // "http://192.168.11.28:8080";
 
 const router = useRouter();
 
@@ -133,11 +129,13 @@ const fetchData = async () => {
 
     const equipo = equipoData[0]; // ✅ ahora sí correcto
 
+    console.log(equipo);
+
     // 🔥 SET TEAM
     team.value = {
       id: equipo.Id,
       name: equipo.Nombre,
-      logo: equipo.Logo || "https://via.placeholder.com/120",
+      logo: equipo.Logo?.replace(/\s+/g, "").trim(),
       liga: equipo.Liga || "Sin liga",
       categoria: equipo.Categoria || "Sin categoría",
       wins: equipo.PG || 0,
@@ -159,9 +157,7 @@ const fetchData = async () => {
       number: p.Numero,
       goals: p.Goles || 0,
       assists: p.Asistencias || 0,
-      photo:
-        p.Foto ||
-        `https://i.pravatar.cc/100?img=${Math.floor(Math.random() * 70)}`,
+      photo: p.Foto?.replace(/\s+/g, "").trim(),
     }));
   } catch (err) {
     console.error("ERROR:", err);
@@ -190,71 +186,118 @@ const best = computed(() => ({
 
 <style scoped>
 .club {
-  font-family: "Segoe UI";
-  background: #f3f4f6;
-  color: #111;
-  padding: 16px;
+  background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+  min-height: 100vh;
+  padding: 20px;
+  font-family: "Inter", sans-serif;
 }
 
-/* HEADER */
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #b4a518;
-  padding: 14px;
-  color: white;
-  border-radius: 16px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+/* HERO */
+.hero {
+  position: relative;
+  text-align: center;
+  padding: 60px 20px 40px;
+  border-radius: 25px;
+  overflow: hidden;
+
+  background: linear-gradient(135deg, #ffffff, #f1f5f9);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
 }
 
-.teamInfo {
-  display: flex;
-  gap: 12px;
-  align-items: center;
+/* 🔥 FONDO DECORATIVO */
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at top, #22c55e33, transparent 70%);
+  z-index: 0;
 }
 
-.logo {
-  width: 60px;
+/* 🔥 LOGO PROTAGONISTA */
+.logo-wrapper {
+  position: relative;
+  z-index: 2;
+
+  width: 170px;
+  height: 170px;
+  margin: auto;
+
+  border-radius: 50%;
+  padding: 12px;
+
+  background: linear-gradient(135deg, #ffffff, #e2e8f0);
+
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.15),
+    inset 0 0 10px rgba(255, 255, 255, 0.6);
+
+  transition: 0.3s;
+}
+
+.logo-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
   border-radius: 50%;
 }
 
-.sub {
-  font-size: 12px;
-  color: #666;
+/* 🔥 EFECTO HOVER */
+.logo-wrapper:hover {
+  transform: scale(1.05);
+  box-shadow:
+    0 15px 40px rgba(0, 0, 0, 0.25),
+    0 0 25px rgba(34, 197, 94, 0.4);
 }
 
-.stats span {
-  margin-right: 10px;
-  font-weight: 600;
+/* TEXTOS */
+.hero h1 {
+  margin-top: 20px;
+  font-size: 28px;
+  font-weight: 900;
+  color: #0f172a;
 }
 
-/* BUTTON */
-.modeBtn {
-  background: linear-gradient(135deg, #0b37ff, #b5b5be);
-  color: white;
-  border: none;
-  padding: 10px 14px;
-  border-radius: 999px;
-  cursor: pointer;
+.hero p {
+  color: #64748b;
+  font-size: 14px;
+  margin-top: 5px;
 }
 
-/* HIGHLIGHTS */
-.highlights {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
-  margin-top: 15px;
+/* STATS */
+.hero-stats {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  margin-top: 25px;
 }
 
-.card {
-  background: linear-gradient(135deg, #04eb17, #251d1d);
-  padding: 12px;
-  color: white;
-  border-radius: 14px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+.hero-stats div {
   text-align: center;
-  font-weight: 600;
+}
+
+.hero-stats b {
+  font-size: 22px;
+  color: #16a34a;
+}
+
+.hero-stats span {
+  display: block;
+  font-size: 11px;
+  color: #94a3b8;
+}
+/* ACTION */
+.action-bar {
+  text-align: center;
+  margin: 20px 0;
+}
+
+.action-bar button {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  border: none;
+  padding: 12px 25px;
+  border-radius: 999px;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
 }
 
 /* LAYOUT */
@@ -262,29 +305,27 @@ const best = computed(() => ({
   display: grid;
   grid-template-columns: 2fr 1fr;
   gap: 15px;
-  margin-top: 15px;
 }
 
-/* PANELS */
 .panel {
   background: white;
-  border-radius: 14px;
-  padding: 14px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border-radius: 16px;
+  padding: 15px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
 }
 
 /* PLAYERS */
-.players {
-  display: grid;
-  gap: 10px;
-}
-
 .playerCard {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 10px;
   padding: 10px;
   border-radius: 12px;
+  transition: 0.2s;
+}
+
+.playerCard:hover {
+  background: #f1f5f9;
 }
 
 .playerCard img {
@@ -292,41 +333,33 @@ const best = computed(() => ({
   border-radius: 50%;
 }
 
-.info {
-  flex: 1;
-  margin-left: 10px;
+.mini-stats {
+  margin-left: auto;
+  font-size: 12px;
 }
 
-/* MATCHES */
+/* MATCH */
 .match {
-  background: #cfd4d8;
+  background: #f1f5f9;
   padding: 10px;
-  border-radius: 12px;
-  margin-bottom: 10px;
+  border-radius: 10px;
+  margin-top: 10px;
 }
 
 .next {
-  border-left: 5px solid #22c55e;
-  background-color: #07af39;
+  background: #22c55e;
   color: white;
 }
 
-.meta {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 5px;
-  font-size: 12px;
-  color: #666;
-}
-
 /* RESPONSIVE */
-@media (max-width: 900px) {
+@media (max-width: 768px) {
   .layout {
     grid-template-columns: 1fr;
   }
 
-  .highlights {
-    grid-template-columns: repeat(2, 1fr);
+  .logo-wrapper {
+    width: 90px;
+    height: 90px;
   }
 }
 </style>

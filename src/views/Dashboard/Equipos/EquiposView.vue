@@ -10,11 +10,11 @@
     <div class="league-nav">
       <div
         v-for="liga in ligas"
-        :key="liga"
+        :key="liga.Id"
         @click="selectLiga(liga)"
-        :class="['league-pill', selectedLiga === liga && 'active']"
+        :class="['league-pill', selectedLiga?.Id === liga.Id && 'active']"
       >
-        {{ liga }}
+        {{ liga.Nombre }}
       </div>
     </div>
 
@@ -22,18 +22,16 @@
     <div v-if="selectedLiga" class="categories">
       <div
         v-for="cat in categorias"
-        :key="cat"
+        :key="cat.Id"
         @click="selectedCategoria = cat"
-        :class="['cat-pill', selectedCategoria === cat && 'active']"
+        :class="['cat-pill', selectedCategoria?.Id === cat.Id && 'active']"
       >
-        {{ cat }}
+        {{ cat.Nombre }}
       </div>
     </div>
 
     <!-- 🔥 EMPTY -->
-    <div v-if="!currentData" class="empty">
-      ⚽ Selecciona una categoría
-    </div>
+    <div v-if="!currentData" class="empty">⚽ Selecciona una categoría</div>
 
     <template v-if="currentData">
       <!-- 🔥 PODIO TOP 3 -->
@@ -59,20 +57,23 @@
 
       <!-- 🔥 PREMIOS -->
       <div class="awards">
-        <div class="award glass">
+        <!-- MVP -->
+        <div class="award glass" v-if="currentData.mvp">
           <h3>⭐ MVP</h3>
           <img :src="currentData.mvp.photo" />
           <p>{{ currentData.mvp.name }}</p>
         </div>
 
-        <div class="award glass">
+        <!-- GOLEADOR -->
+        <div class="award glass" v-if="currentData.scorer">
           <h3>⚽ Goleador</h3>
           <img :src="currentData.scorer.photo" />
           <p>{{ currentData.scorer.name }}</p>
           <span>{{ currentData.scorer.goals }} goles</span>
         </div>
 
-        <div class="award glass">
+        <!-- PORTERO -->
+        <div class="award glass" v-if="currentData.keeper">
           <h3>🧤 Portero</h3>
           <img :src="currentData.keeper.photo" />
           <p>{{ currentData.keeper.name }}</p>
@@ -84,7 +85,8 @@
         <div
           class="row"
           v-for="(team, index) in currentData.teams"
-          :key="team.name"
+          :key="team.id"
+          @click="goToEquipo(team)"
         >
           <div class="rank">{{ index + 1 }}</div>
 
@@ -104,134 +106,262 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, watch, onMounted } from "vue";
+import { useRouter } from "vue-router";
+import axios from "axios";
 
-const selectedLiga = ref("");
-const selectedCategoria = ref("");
+const API = 
+ "https://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net";
+// "http://192.168.11.28:8080";
 
-const data = {
-  "Liga MX": {
-    Primera: {
-      teams: [
-        { name: "Tigres", logo: "https://i.pravatar.cc/40?img=1", wins: 7, losses: 1, points: 22 },
-        { name: "Chivas", logo: "https://i.pravatar.cc/40?img=2", wins: 6, losses: 2, points: 20 },
-        { name: "Puebla", logo: "https://i.pravatar.cc/40?img=3", wins: 5, losses: 3, points: 18 },
-      ],
-      mvp: { name: "Luis Díaz", photo: "https://i.pravatar.cc/80?img=10" },
-      scorer: { name: "Pedro", goals: 12, photo: "https://i.pravatar.cc/80?img=11" },
-      keeper: { name: "Andrés", photo: "https://i.pravatar.cc/80?img=12" },
-    },
-  },
+const selectedLiga = ref(null);
+const selectedCategoria = ref(null);
+const router = useRouter();
+const tabla = ref(null);
+
+const ligas = ref([]);
+
+const categorias = ref([]);
+
+const fetchLigas = async () => {
+  try {
+    const res = await axios.get(`${API}/api/ligas`);
+    ligas.value = res.data.data;
+  } catch (err) {
+    console.error(err);
+  }
 };
 
-const ligas = Object.keys(data);
+const goToEquipo = (team) => {
+  console.log(team);
 
-const categorias = computed(() =>
-  selectedLiga.value ? Object.keys(data[selectedLiga.value]) : []
-);
+  router.push({
+    name: "EquipoDetalle",
+    params: {
+      id: team.id,
+    },
+  });
+};
 
-const currentData = computed(() => {
-  if (!selectedLiga.value || !selectedCategoria.value) return null;
-  return data[selectedLiga.value][selectedCategoria.value];
-});
+const fetchCategorias = async () => {
+  try {
+    const res = await axios.get(`${API}/api/categorias`);
+
+    categorias.value = res.data.data.filter(
+      (c) => c.Id_Liga === selectedLiga.value.Id,
+    );
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+const fetchTabla = async () => {
+  try {
+    const res = await axios.get(`${API}/api/tabla`, {
+      params: {
+        Id_Liga: selectedLiga.value.Id,
+        Id_Categoria: selectedCategoria.value.Id,
+      },
+    });
+
+    const data = res.data.data;
+
+    tabla.value = {
+      teams: data.teams.map((t) => ({
+        id: Number(t.Id), // 🔥 fuerza tipo seguro
+        name: t.Nombre,
+        logo: encodeURI(API + t.Logo),
+        wins: t.PG,
+        losses: t.PP,
+        points: t.PTS,
+      })),
+
+      mvp: data.mvp
+        ? {
+            name: data.mvp.NombreCompleto,
+            photo: encodeURI(API + data.mvp.Foto),
+          }
+        : null,
+
+      scorer: data.scorer
+        ? {
+            name: data.scorer.NombreCompleto,
+            photo: encodeURI(API + data.scorer.Foto),
+            goals: data.scorer.Goles,
+          }
+        : null,
+
+      keeper: data.keeper
+        ? {
+            name: data.keeper.NombreCompleto,
+            photo: encodeURI(API + data.keeper.Foto),
+          }
+        : null,
+    };
+  } catch (err) {
+    console.error("ERROR TABLA:", err);
+  }
+};
+
+const currentData = computed(() => tabla.value);
 
 const selectLiga = (liga) => {
   selectedLiga.value = liga;
-  selectedCategoria.value = "";
 };
+
+watch(selectedLiga, async () => {
+  selectedCategoria.value = null;
+  tabla.value = null;
+
+  if (selectedLiga.value) {
+    await fetchCategorias();
+  }
+});
+
+watch(selectedCategoria, async () => {
+  if (selectedCategoria.value) {
+    await fetchTabla();
+  }
+});
+
+onMounted(fetchLigas);
 </script>
 
 <style scoped>
 .page {
   padding: 25px;
-  background: linear-gradient(135deg,#020617,#ffffff);
+  background: linear-gradient(135deg, #f8fafc, #e2e8f0);
   min-height: 100vh;
-  color: white;
+  font-family: "Inter", sans-serif;
+  color: #0f172a;
 }
 
 /* HEADER */
+.header {
+  margin-bottom: 15px;
+}
 .header h1 {
-  font-size: 24px;
+  font-size: 26px;
+  font-weight: 900;
 }
 .header p {
-  color: #94a3b8;
-  font-size: 13px;
+  color: #64748b;
 }
 
 /* LIGAS */
 .league-nav {
   display: flex;
   gap: 10px;
-  margin: 20px 0;
+  overflow-x: auto;
 }
 
 .league-pill {
   padding: 8px 16px;
   border-radius: 999px;
-  background: #1e293b;
+  background: white;
+  border: 1px solid #e2e8f0;
   cursor: pointer;
+  font-weight: 600;
+  transition: 0.2s;
+}
+
+.league-pill:hover {
+  background: #f1f5f9;
 }
 
 .league-pill.active {
-background: linear-gradient(135deg,#0b37ff,#b5b5be);
-  color: rgb(255, 254, 254);
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: white;
 }
 
 /* CATEGORÍAS */
 .categories {
   display: flex;
   gap: 10px;
+  margin-top: 10px;
 }
 
 .cat-pill {
   padding: 6px 14px;
   border-radius: 999px;
-  background: #334155;
+  background: #e2e8f0;
   cursor: pointer;
+  font-size: 13px;
 }
 
 .cat-pill.active {
-background: linear-gradient(135deg,#0b37ff,#b5b5be);
+  background: #0f172a;
+  color: white;
 }
 
-/* PODIO */
+/* PODIO PRO */
 .podium {
   display: flex;
   justify-content: center;
+  align-items: flex-end;
   gap: 20px;
-  margin: 30px 0;
+  margin: 40px 0;
 }
 
 .place {
+  background: white;
+  border-radius: 16px;
+  padding: 15px;
+  width: 110px;
   text-align: center;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  transition: 0.3s;
 }
 
 .place img {
-  width: 60px;
+  width: 55px;
   border-radius: 50%;
+  margin-bottom: 5px;
 }
 
-.first {
+.place.first {
   transform: scale(1.2);
+  background: linear-gradient(135deg, #facc15, #f59e0b);
+  color: white;
+}
+
+.place.second {
+  background: linear-gradient(135deg, #e5e7eb, #cbd5f5);
+}
+
+.place.third {
+  background: linear-gradient(135deg, #fca5a5, #ef4444);
+  color: white;
 }
 
 /* AWARDS */
 .awards {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   gap: 15px;
   margin-bottom: 25px;
 }
 
-.glass {
-  background: rgba(255,255,255,0.05);
-  backdrop-filter: blur(10px);
-  padding: 15px;
+.award {
+  background: white;
   border-radius: 16px;
+  padding: 15px;
   text-align: center;
-  flex: 1;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  transition: 0.2s;
 }
 
-/* TABLA */
+.award:hover {
+  transform: translateY(-5px);
+}
+
+.award img {
+  width: 60px;
+  border-radius: 50%;
+  margin: 8px 0;
+}
+
+/* TABLA PRO */
 .table {
   display: flex;
   flex-direction: column;
@@ -241,16 +371,22 @@ background: linear-gradient(135deg,#0b37ff,#b5b5be);
 .row {
   display: flex;
   justify-content: space-between;
-  background: #1e293b;
-  padding: 12px;
-  border-radius: 12px;
   align-items: center;
-  transition: 0.3s;
+  background: white;
+  padding: 14px;
+  border-radius: 14px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  transition: 0.2s;
 }
 
 .row:hover {
   transform: translateX(5px);
-  background: #334155;
+}
+
+.rank {
+  font-weight: 900;
+  font-size: 18px;
+  color: #22c55e;
 }
 
 .team {
@@ -260,22 +396,38 @@ background: linear-gradient(135deg,#0b37ff,#b5b5be);
 }
 
 .team img {
-  width: 30px;
+  width: 35px;
   border-radius: 50%;
-}
-
-.rank {
-  font-weight: bold;
-  font-size: 18px;
 }
 
 .stats {
   text-align: right;
 }
 
+.stats span {
+  font-weight: bold;
+}
+
+/* EMPTY */
 .empty {
   text-align: center;
   margin-top: 30px;
   color: #94a3b8;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .awards {
+    grid-template-columns: 1fr;
+  }
+
+  .podium {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .place {
+    width: 80%;
+  }
 }
 </style>

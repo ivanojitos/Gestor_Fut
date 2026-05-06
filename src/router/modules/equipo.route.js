@@ -1,18 +1,18 @@
 export default [
   {
-    path: "/equipoDetalle",
+    path: "/equipoDetalle/:id",
     name: "EquipoDetalle",
     component: () => import("@/views/Dashboard/Perfil/EquipoDetalleView.vue"),
   },
-    {
+  {
     path: "/modoJuego",
     name: "ModoJuego",
     component: () => import("@/views/Dashboard/Perfil/ModoJuegoView.vue"),
-  }
-  ,
-    {
+  },
+  {
     path: "/buscarEquipo",
     name: "BuscarEquipo",
-    component: () => import("@/views/Dashboard/Perfil//Jugadores/BuscarEquipoView.vue"),
-  }
+    component: () =>
+      import("@/views/Dashboard/Perfil//Jugadores/BuscarEquipoView.vue"),
+  },
 ];
