@@ -4,11 +4,7 @@ export default [
     name: "EquipoDetalle",
     component: () => import("@/views/Dashboard/Perfil/EquipoDetalleView.vue"),
   },
-  {
-    path: "/equipoDetalle/:id",
-    name: "EquipoDetalle",
-    component: () => import("@/views/Dashboard/Perfil/EquipoDetalleView.vue"),
-  },
+
   {
     path: "/modoJuego",
     name: "ModoJuego",
