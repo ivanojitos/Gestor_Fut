@@ -32,7 +32,7 @@
               <div class="photo-cutout">
                 <img
                   v-if="player.photo"
-                  :src="encodeURI(API + player.photo.trim())"
+                  :src="API + player.photo"
                   class="actual-img"
                 />
                 <div v-else class="img-placeholder">
@@ -62,6 +62,15 @@
                   m
                 </span>
               </div>
+              <!-- NUEVO -->
+              <div class="stat-separator"></div>
+
+              <div class="stat-item">
+                <span class="stat-label">GOLES :</span>
+                <span class="stat-value">
+                  {{ player.goles || 0 }}
+                </span>
+              </div>
             </div>
 
             <div class="team-footer">
@@ -88,7 +97,7 @@
           </button>
 
           <!-- 👇 botón separado -->
-          <div v-if="equipo" class="danger-zone">
+          <div v-if="equipo && !isOwner" class="danger-zone">
             <button
               class="btn-main danger small"
               @click="showLeaveModal = true"
@@ -131,7 +140,7 @@
         </tbody>
       </table>
 
-      <p v-else>No hay solicitudes pendientes</p>
+      <p style="color: white" v-else>No hay solicitudes pendientes</p>
     </div>
 
     <Transition name="fade">
@@ -319,9 +328,11 @@ import { reactive, ref, onMounted } from "vue";
 import axios from "axios";
 import { useRouter } from "vue-router";
 
-const API = 
+const API =
   "https://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net";
 // "http://192.168.11.28:8080";
+// "http://192.168.100.228:8080";
+
 const router = useRouter();
 const storedUser = JSON.parse(localStorage.getItem("user"));
 const showLeaveModal = ref(false);
@@ -336,6 +347,7 @@ const player = reactive({
   age: 0,
   number: 0,
   estatura: 0,
+  goles: 0,
 });
 
 const equipo = ref(null);
@@ -367,11 +379,18 @@ const teamForm = reactive({
 });
 
 const verifyPassword = () => {
+  // contraseña correcta
   if (passwordInput.value === "12345678") {
+    // limpiar error
     passwordError.value = "";
+
+    // cerrar modal contraseña
     showPasswordModal.value = false;
+
+    // abrir modal crear equipo
     showCreateTeamModal.value = true;
   } else {
+    // mostrar error
     passwordError.value = "Contraseña incorrecta";
   }
 };
@@ -448,6 +467,7 @@ const fetchData = async () => {
     player.position = user.Posicion?.trim();
     player.estatura = user.Estatura;
     player.photo = user.Foto?.replace(/\s+/g, "").trim();
+    player.goles = user.Goles;
 
     // equipo
     const resEquipo = await axios.get(
@@ -572,451 +592,523 @@ const updatePlayer = async () => {
 <style scoped>
 @import url("https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&display=swap");
 
-/* Ajustes Globales de Responsividad */
+/* =========================================
+   RESET
+========================================= */
 * {
   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
+html,
+body {
+  overflow-x: hidden;
+}
+
+/* =========================================
+   PAGE
+========================================= */
 .page {
   min-height: 50vh;
+
   padding: 20px;
+
   background-color: #8b8b8b;
+
   font-family: "Outfit", sans-serif;
 
   display: flex;
   justify-content: center;
-  align-items: flex-start; /* 👈 importante */
-  gap: 40px; /* 👈 ESTE ES EL ESPACIO ENTRE CARD Y TABLA */
+  align-items: flex-start;
 
-  flex-wrap: wrap; /* 👈 para que en móvil baje la tabla */
+  gap: 40px;
+
+  flex-wrap: wrap;
+
+  overflow-x: hidden;
 }
 
-/* 🏆 CARTA */
+/* =========================================
+   CARD CONTAINER
+========================================= */
 .fut-card-container {
-  perspective: 1000px;
   width: 100%;
-  max-width: 380px;
+  max-width: 390px;
+
+  perspective: 1200px;
 }
 
+/* =========================================
+   CARD
+========================================= */
 .fut-card {
   position: relative;
-  height: 580px;
-  background: #151921;
-  clip-path: polygon(50% 0%, 100% 10%, 100% 80%, 50% 100%, 0% 80%, 0% 10%);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  display: flex;
-  flex-direction: column;
+
+  width: 100%;
+  min-height: 620px;
+
+  background: linear-gradient(
+    145deg,
+    rgba(17, 24, 39, 0.98),
+    rgba(10, 15, 25, 0.98)
+  );
+
+  clip-path: polygon(50% 0%, 100% 8%, 100% 85%, 50% 100%, 0% 85%, 0% 8%);
+
   overflow: hidden;
-  filter: drop-shadow(0 15px 35px rgba(0, 0, 0, 0.6));
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
+  box-shadow:
+    0 25px 60px rgba(0, 0, 0, 0.55),
+    0 0 30px rgba(52, 152, 219, 0.1);
+
+  transition: 0.35s ease;
 }
 
+.fut-card:hover {
+  transform: translateY(-5px);
+}
+
+/* =========================================
+   GLOW
+========================================= */
 .bg-glow {
   position: absolute;
   inset: -50%;
+
   background: radial-gradient(
     circle at center,
-    rgba(52, 152, 219, 0.15) 0%,
+    rgba(52, 152, 219, 0.18),
     transparent 60%
   );
+
   pointer-events: none;
 }
 
-.edit-btn {
+/* =========================================
+   INNER BORDER
+========================================= */
+.card-inner-border {
   position: absolute;
-  top: 70px;
-  right: 35px;
-  z-index: 10;
-  background: #3498db;
-  border: none;
-  width: 38px;
-  height: 38px;
-  border-radius: 10px;
+  inset: 12px;
 
-  cursor: pointer;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+
+  clip-path: polygon(50% 0%, 100% 8%, 100% 85%, 50% 100%, 0% 85%, 0% 8%);
+
+  pointer-events: none;
 }
 
+/* =========================================
+   EDIT BUTTON
+========================================= */
+.edit-btn {
+  position: absolute;
+
+  top: 70px;
+  right: 28px;
+
+  width: 44px;
+  height: 44px;
+
+  border: none;
+  border-radius: 14px;
+
+  background: linear-gradient(135deg, #3498db, #2563eb);
+
+  color: white;
+
+  cursor: pointer;
+
+  z-index: 20;
+
+  transition: 0.25s ease;
+
+  box-shadow: 0 12px 24px rgba(52, 152, 219, 0.35);
+}
+
+.edit-btn:hover {
+  transform: scale(1.08) rotate(-5deg);
+}
+
+/* =========================================
+   TOP
+========================================= */
 .top-section {
-  padding: 80px 30px 10px;
+  padding: 80px 25px 10px;
+
   display: flex;
   justify-content: space-between;
   align-items: center;
+
+  gap: 15px;
+}
+
+/* =========================================
+   STATS
+========================================= */
+.main-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
 .rating-value {
-  font-size: 60px;
+  font-size: 64px;
   font-weight: 900;
-  color: #ffffff;
-  line-height: 0.8;
+
+  color: white;
+
+  line-height: 0.9;
 }
+
 .pos-badge {
   font-size: 20px;
-  font-weight: 700;
-  color: #3498db;
+  font-weight: 800;
+
+  color: #38bdf8;
 }
+
 .divider-line {
-  width: 35px;
+  width: 40px;
   height: 3px;
-  background: #ffffff;
-  margin: 10px 0;
+
+  border-radius: 999px;
+
+  background: white;
 }
+
 .club-wrapper img {
   width: 38px;
+
   filter: brightness(2);
 }
 
+/* =========================================
+   PHOTO
+========================================= */
 .player-photo-wrapper {
   flex: 1;
+
   display: flex;
   justify-content: flex-end;
 }
+
 .photo-cutout {
-  width: 160px;
-  height: 160px;
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 10px;
+  width: 170px;
+  height: 170px;
+
+  border-radius: 24px;
+
   overflow: hidden;
+
+  background: rgba(255, 255, 255, 0.05);
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
 }
+
 .actual-img {
   width: 100%;
   height: 100%;
+
   object-fit: cover;
 }
+
 .img-placeholder {
   width: 100%;
   height: 100%;
+
   display: flex;
-  align-items: center;
   justify-content: center;
-  font-size: 50px;
+  align-items: center;
+
+  font-size: 56px;
   font-weight: 900;
-  color: #333;
+
+  color: rgba(255, 255, 255, 0.35);
 }
 
+/* =========================================
+   BOTTOM
+========================================= */
 .bottom-section {
+  padding: 12px 22px 0;
+
   text-align: center;
-  padding: 0 15px;
-}
-.player-name-display {
-  font-size: clamp(20px, 7vw, 30px); /* Ajuste de texto dinámico */
-  font-weight: 900;
-  color: #ffffff;
-  text-transform: uppercase;
-  margin-bottom: 10px;
 }
 
+/* =========================================
+   NAME
+========================================= */
+.player-name-display {
+  font-size: clamp(22px, 5vw, 32px);
+
+  font-weight: 900;
+
+  color: white;
+
+  text-transform: uppercase;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  margin-bottom: 18px;
+}
+
+/* =========================================
+   STATS GRID
+========================================= */
 .stats-grid {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 15px;
-  margin-bottom: 15px;
-  background: rgba(255, 255, 255, 0.03);
-  padding: 10px;
-  border-radius: 10px;
+
+  gap: 18px;
+
+  padding: 14px;
+
+  background: rgba(255, 255, 255, 0.04);
+
+  border-radius: 18px;
+
+  border: 1px solid rgba(255, 255, 255, 0.05);
+
+  margin-bottom: 18px;
 }
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
 .stat-label {
   font-size: 10px;
-  color: #3498db;
-  font-weight: 900;
+  font-weight: 800;
+
+  color: #38bdf8;
+
+  letter-spacing: 1px;
 }
+
 .stat-value {
   font-size: 18px;
   font-weight: 900;
-  color: #ffffff;
-}
-.stat-separator {
-  width: 1px;
-  height: 25px;
-  background: rgba(255, 255, 255, 0.1);
+
+  color: white;
 }
 
+.stat-separator {
+  width: 1px;
+  height: 28px;
+
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* =========================================
+   TEAM
+========================================= */
 .team-tag {
-  font-weight: 800;
-  color: #f1c40f;
-  font-size: 16px;
-  margin-bottom: 10px;
+  font-size: 18px;
+  font-weight: 900;
+
+  color: #facc15;
+
+  margin-bottom: 12px;
+
   text-transform: uppercase;
 }
+
 .category-chips {
   display: flex;
   justify-content: center;
-  gap: 6px;
   flex-wrap: wrap;
+
+  gap: 8px;
 }
+
 .chip-premium {
-  padding: 6px 15px;
-  border-radius: 5px;
-  font-size: 12px;
+  padding: 8px 14px;
+
+  border-radius: 999px;
+
+  background: white;
+
+  color: #111827;
+
+  font-size: 11px;
   font-weight: 900;
-  background: #ffffff;
 }
+
 .chip-premium.ghost {
   background: transparent;
-  border: 1px solid #ffffff;
-  color: #ffffff;
+
+  border: 1px solid rgba(255, 255, 255, 0.18);
+
+  color: white;
 }
 
+/* =========================================
+   ACTIONS
+========================================= */
 .card-actions {
-  margin-top: 25px; /* 👈 antes estaba pegado */
-  padding: 0 40px 60px;
+  margin-top: 28px;
+
+  padding: 0 26px 35px;
+
   display: flex;
   flex-direction: column;
-  gap: 12px;
-}
-/* BASE BUTTON */
-.btn-main {
-  width: 100%;
-  padding: 13px 14px;
-  border-radius: 12px;
-  border: none;
-  font-weight: 900;
-  font-size: 13px;
-  letter-spacing: 1px;
-  cursor: pointer;
-  transition: all 0.25s ease;
-  position: relative;
-  overflow: hidden;
-}
-/* Botón pequeño (menos importante visualmente) */
-.btn-main.small {
-  padding: 5px 8px;
-  font-size: 8px;
-  width: 100%;
-  margin: 0 auto; /* centrado */
-  opacity: 0.8;
+
+  gap: 14px;
 }
 
-/* Hover más sutil */
-.btn-main.small:hover {
-  opacity: 1;
+/* =========================================
+   BUTTONS
+========================================= */
+.btn-main {
+  width: 100%;
+  height: 52px;
+
+  border: none;
+  border-radius: 16px;
+
+  font-size: 13px;
+  font-weight: 900;
+
+  letter-spacing: 1px;
+
+  cursor: pointer;
+
+  position: relative;
+
+  overflow: hidden;
+
+  transition: 0.25s ease;
 }
-/* EFECTO BRILLO */
+
 .btn-main::before {
   content: "";
+
   position: absolute;
   top: 0;
   left: -100%;
+
   width: 100%;
   height: 100%;
+
   background: linear-gradient(
     120deg,
     transparent,
-    rgba(255, 255, 255, 0.25),
+    rgba(255, 255, 255, 0.22),
     transparent
   );
-  transition: 0.5s;
+
+  transition: 0.6s;
 }
+
 .btn-main:hover::before {
   left: 100%;
 }
-.btn-main.primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 28px rgba(52, 152, 219, 0.4);
+
+.btn-main.primary {
+  background: linear-gradient(135deg, #3498db, #2563eb);
+
+  color: white;
+
+  box-shadow: 0 14px 28px rgba(52, 152, 219, 0.35);
 }
 
-/* VER EQUIPO (PRINCIPAL) */
-.btn-main.primary {
-  background: linear-gradient(135deg, #3498db, #2d7dd2);
-  color: white;
-  box-shadow: 0 8px 20px rgba(52, 152, 219, 0.25);
+.btn-main.primary:hover {
+  transform: translateY(-3px);
 }
-/* Botón más discreto (menos protagonista) */
+
 .btn-main.danger {
   background: transparent;
-  border: 1px solid #e74c3c;
-  color: #e74c3c;
-  box-shadow: none;
+
+  border: 1px solid rgba(239, 68, 68, 0.5);
+
+  color: #ff6b6b;
 }
+
 .btn-main.danger:hover {
-  background: #e74c3c;
+  background: #ef4444;
+
   color: white;
-  transform: translateY(-2px);
-  box-shadow: 0 10px 25px rgba(231, 76, 60, 0.3);
-}
-/* CLICK FEEL */
-.btn-main:active {
-  transform: scale(0.97);
-}
-/* 📱 MODAL RESPONSIVO */
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.9);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-  padding: 15px; /* Evita que el modal toque los bordes del móvil */
 }
 
-.modal-content {
-  background: #1c222d;
-  width: 100%;
-  max-width: 420px;
-  max-height: 95vh; /* Evita que se salga de la pantalla */
-  padding: 25px;
-  border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  display: flex;
-  flex-direction: column;
-}
+.btn-main.small {
+  height: 44px;
 
-.modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-  flex-shrink: 0;
-}
-.modal-header h3 {
-  color: #ffffff;
-}
-
-.modal-body {
-  overflow-y: auto; /* Permite scroll si hay muchos campos en pantallas pequeñas */
-  padding-right: 5px;
-}
-
-.input-group {
-  margin-bottom: 15px;
-  display: flex;
-  flex-direction: column;
-}
-.input-group label {
-  color: #3498db;
   font-size: 11px;
-  font-weight: 900;
-  margin-bottom: 5px;
 }
-.input-group input,
-.input-group select {
-  background: #0f1218;
-  border: 1px solid #333;
-  padding: 12px;
-  border-radius: 10px;
-  color: white;
+
+/* =========================================
+   DANGER ZONE
+========================================= */
+.danger-zone {
+  margin-top: 8px;
+
+  padding-top: 14px;
+
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* =========================================
+   REQUEST PANEL
+========================================= */
+.requests-panel {
   width: 100%;
-}
+  max-width: 760px;
 
-.input-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 15px;
-}
+  background: rgba(17, 24, 39, 0.95);
 
-.modal-footer {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin-top: 20px;
-  flex-shrink: 0;
-}
+  border-radius: 24px;
 
-.btn-save {
-  background: #3498db;
-  color: white;
-  border: none;
-  border-radius: 10px;
-  font-weight: 700;
-  cursor: pointer;
-  padding: 12px;
-}
-.btn-cancel {
-  background: #333;
-  color: white;
-  border: none;
-  border-radius: 10px;
-  padding: 12px;
-  cursor: pointer;
-}
+  padding: 24px;
 
-/* ANIMATION */
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.3s;
-}
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-}
+  border: 1px solid rgba(255, 255, 255, 0.06);
 
-/* MEDIA QUERIES ESPECÍFICAS */
-@media (max-width: 480px) {
-  .fut-card {
-    height: 530px;
-  }
-  .top-section {
-    padding: 60px 20px 10px;
-  }
-  .rating-value {
-    font-size: 45px;
-  }
-  .photo-cutout {
-    width: 130px;
-    height: 130px;
-  }
-  .card-actions {
-    padding: 0 30px 50px;
-  }
-  .modal-content {
-    padding: 15px;
-  }
-}
-
-@media (max-width: 350px) {
-  .input-row {
-    grid-template-columns: 1fr;
-  }
-}
-.requests-panel {
-  margin-top: 20px;
-  padding: 15px;
-  background: rgba(0, 0, 0, 0.3);
-  border-radius: 10px;
-  color: white;
-}
-
-.request-card {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 10px;
-  padding: 8px;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 8px;
-}
-
-.request-actions {
-  display: flex;
-  gap: 5px;
-}
-
-.requests-panel {
-  margin-top: 20px;
-  padding: 15px;
-  background: rgba(0, 0, 0, 0.35);
-  border-radius: 12px;
-  color: white;
+  overflow-x: auto;
 }
 
 .requests-panel h3 {
-  margin-bottom: 10px;
-  font-size: 14px;
-  text-transform: uppercase;
-  color: #3498db;
+  color: white;
+
+  font-size: 18px;
+  font-weight: 900;
+
+  margin-bottom: 18px;
 }
 
 .requests-table {
   width: 100%;
+
   border-collapse: collapse;
+
+  min-width: 500px;
+}
+
+.requests-table th {
+  padding: 14px 10px;
+
+  color: #38bdf8;
+
+  text-align: left;
+
   font-size: 12px;
 }
 
-.requests-table th,
 .requests-table td {
-  padding: 8px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  text-align: left;
+  padding: 14px 10px;
+
+  color: white;
+
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .actions {
@@ -1024,32 +1116,523 @@ const updatePlayer = async () => {
   gap: 8px;
 }
 
-.btn-accept {
-  background: #2ecc71;
+.btn-accept,
+.btn-reject {
   border: none;
-  padding: 5px 10px;
+
+  padding: 8px 14px;
+
+  border-radius: 10px;
+
+  font-size: 11px;
+  font-weight: 800;
+
   color: white;
-  border-radius: 6px;
+
   cursor: pointer;
+}
+
+.btn-accept {
+  background: #22c55e;
 }
 
 .btn-reject {
-  background: #e74c3c;
-  border: none;
-  padding: 5px 10px;
-  color: white;
-  border-radius: 6px;
-  cursor: pointer;
+  background: #ef4444;
 }
 
-.empty-msg {
-  font-size: 12px;
-  opacity: 0.7;
+/* =========================================
+   MODAL OVERLAY
+========================================= */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+
+  z-index: 9999;
+
+  background: rgba(5, 10, 20, 0.82);
+
+  backdrop-filter: blur(10px);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  padding: 16px;
+
+  overflow-y: auto;
 }
-/* Zona separada para acciones peligrosas */
-.danger-zone {
-  margin-top: 20px;
-  padding-top: 15px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+
+/* =========================================
+   MODAL
+========================================= */
+.modal-content {
+  position: relative;
+
+  width: 100%;
+  max-width: 520px;
+
+  background: linear-gradient(
+    145deg,
+    rgba(22, 28, 40, 0.98),
+    rgba(12, 18, 30, 0.98)
+  );
+
+  border-radius: 28px;
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.55),
+    0 0 40px rgba(52, 152, 219, 0.08);
+
+  overflow: hidden;
+
+  animation: modalShow 0.35s ease;
+
+  max-height: 95vh;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-content::before {
+  content: "";
+
+  position: absolute;
+  top: -120px;
+  right: -120px;
+
+  width: 250px;
+  height: 250px;
+
+  border-radius: 50%;
+
+  background: rgba(52, 152, 219, 0.12);
+
+  filter: blur(80px);
+}
+
+/* =========================================
+   MODAL HEADER
+========================================= */
+.modal-header {
+  position: relative;
+
+  padding: 22px 22px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+
+  flex-shrink: 0;
+}
+
+.modal-header h3 {
+  color: white;
+
+  font-size: 22px;
+  font-weight: 900;
+}
+
+.modal-header button {
+  width: 38px;
+  height: 38px;
+
+  border: none;
+  border-radius: 12px;
+
+  background: rgba(255, 255, 255, 0.06);
+
+  color: white;
+
+  cursor: pointer;
+
+  transition: 0.25s;
+}
+
+.modal-header button:hover {
+  background: #ef4444;
+
+  transform: rotate(90deg);
+}
+
+/* =========================================
+   MODAL BODY
+========================================= */
+.modal-body {
+  padding: 22px;
+
+  overflow-y: auto;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 18px;
+
+  min-height: 0;
+}
+
+/* =========================================
+   INPUT GROUP
+========================================= */
+.input-group {
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 8px;
+}
+
+.input-group label {
+  color: #8ecfff;
+
+  font-size: 12px;
+  font-weight: 800;
+
+  letter-spacing: 1px;
+
+  text-transform: uppercase;
+}
+
+/* =========================================
+   INPUTS
+========================================= */
+.input-group input,
+.input-group select {
+  width: 100%;
+  min-width: 0;
+
+  height: 54px;
+
+  border-radius: 16px;
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
+  background: rgba(255, 255, 255, 0.04);
+
+  color: white;
+
+  padding: 0 16px;
+
+  outline: none;
+
+  transition: 0.25s;
+}
+
+.input-group select option {
+  background: #111827;
+  color: white;
+}
+
+.input-group input:focus,
+.input-group select:focus {
+  border-color: #3498db;
+
+  background: rgba(255, 255, 255, 0.07);
+
+  box-shadow: 0 0 0 4px rgba(52, 152, 219, 0.12);
+}
+
+/* =========================================
+   FILE INPUT
+========================================= */
+input[type="file"] {
+  padding: 12px !important;
+
+  height: auto !important;
+
+  background: rgba(52, 152, 219, 0.06) !important;
+
+  border: 1px dashed rgba(52, 152, 219, 0.35) !important;
+}
+
+input[type="file"]::file-selector-button {
+  border: none;
+
+  background: linear-gradient(135deg, #3498db, #2563eb);
+
+  color: white;
+
+  padding: 10px 14px;
+
+  border-radius: 10px;
+
+  margin-right: 12px;
+
+  cursor: pointer;
+
+  font-weight: 700;
+}
+
+/* =========================================
+   MODAL FOOTER
+========================================= */
+.modal-footer {
+  padding: 20px 22px;
+
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+
+  gap: 14px;
+
+  flex-shrink: 0;
+}
+
+/* =========================================
+   SAVE / CANCEL
+========================================= */
+.btn-save,
+.btn-cancel {
+  width: 100%;
+  height: 52px;
+
+  border: none;
+  border-radius: 16px;
+
+  font-size: 13px;
+  font-weight: 900;
+
+  cursor: pointer;
+
+  transition: 0.25s;
+}
+
+.btn-save {
+  background: linear-gradient(135deg, #3498db, #2563eb);
+
+  color: white;
+}
+
+.btn-save:hover {
+  transform: translateY(-2px);
+}
+
+.btn-cancel {
+  background: rgba(255, 255, 255, 0.08);
+
+  color: white;
+}
+
+.btn-cancel:hover {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+/* =========================================
+   ANIMATION
+========================================= */
+@keyframes modalShow {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.25s;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+/* =========================================
+   TABLET
+========================================= */
+@media (max-width: 1024px) {
+  .page {
+    gap: 24px;
+  }
+
+  .requests-panel {
+    max-width: 100%;
+  }
+}
+
+/* =========================================
+   MOBILE
+========================================= */
+@media (max-width: 768px) {
+  .page {
+    flex-direction: column;
+    align-items: center;
+
+    padding: 16px;
+  }
+
+  .fut-card {
+    min-height: auto;
+  }
+
+  .top-section {
+    padding: 70px 18px 10px;
+  }
+
+  .photo-cutout {
+    width: 135px;
+    height: 135px;
+  }
+
+  .rating-value {
+    font-size: 48px;
+  }
+
+  .modal-content {
+    max-width: 100%;
+
+    border-radius: 24px;
+  }
+
+  .modal-body {
+    padding: 18px;
+  }
+
+  .modal-footer {
+    padding: 18px;
+  }
+}
+
+/* =========================================
+   SMALL MOBILE
+========================================= */
+@media (max-width: 480px) {
+  .page {
+    padding: 12px;
+  }
+
+  .fut-card-container {
+    max-width: 100%;
+  }
+
+  .fut-card {
+    width: 100%;
+  }
+
+  .top-section {
+    padding: 60px 14px 10px;
+
+    gap: 10px;
+  }
+
+  .rating-value {
+    font-size: 38px;
+  }
+
+  .pos-badge {
+    font-size: 16px;
+  }
+
+  .photo-cutout {
+    width: 110px;
+    height: 110px;
+
+    border-radius: 18px;
+  }
+
+  .player-name-display {
+    font-size: 20px;
+  }
+
+  .stats-grid {
+    flex-direction: column;
+
+    gap: 10px;
+  }
+
+  .stat-separator {
+    display: none;
+  }
+
+  .card-actions {
+    padding: 0 16px 24px;
+  }
+
+  .modal-overlay {
+    padding: 10px;
+    align-items: flex-start;
+  }
+
+  .modal-content {
+    margin-top: 20px;
+
+    max-height: unset;
+
+    border-radius: 22px;
+  }
+
+  .modal-header {
+    padding: 18px;
+  }
+
+  .modal-header h3 {
+    font-size: 18px;
+  }
+
+  .modal-body {
+    padding: 16px;
+    gap: 14px;
+  }
+
+  .input-group input,
+  .input-group select {
+    height: 50px;
+
+    font-size: 14px;
+  }
+
+  .modal-footer {
+    grid-template-columns: 1fr;
+
+    padding: 16px;
+  }
+
+  .btn-save,
+  .btn-cancel {
+    height: 50px;
+  }
+}
+
+/* =========================================
+   EXTRA SMALL
+========================================= */
+@media (max-width: 360px) {
+  .top-section {
+    flex-direction: column;
+    align-items: center;
+
+    text-align: center;
+  }
+
+  .player-photo-wrapper {
+    justify-content: center;
+  }
+
+  .photo-cutout {
+    width: 100px;
+    height: 100px;
+  }
+
+  .rating-value {
+    font-size: 34px;
+  }
+
+  .player-name-display {
+    font-size: 18px;
+  }
+
+  .modal-content {
+    border-radius: 18px;
+  }
 }
 </style>

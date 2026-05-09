@@ -1,6 +1,11 @@
 <template>
   <div class="page">
     <div class="overlay"></div>
+    <!-- LOADING -->
+    <div v-if="loading" class="loading-overlay">
+      <div class="loader"></div>
+      <p>Creando jugador...</p>
+    </div>
 
     <div class="card">
       <h2>Crear Usuario ⚽</h2>
@@ -43,7 +48,7 @@
 
           <!-- EDAD -->
           <div class="form-group">
-            <input v-model="form.edad" type="number" required />
+            <input v-model="form.edad" type="number" required placeholder=" " />
             <label>Edad</label>
           </div>
 
@@ -85,7 +90,13 @@
 
           <!-- PASSWORD -->
           <div class="form-group">
-            <input v-model="form.password" type="password" required />
+            <input
+              v-model="form.password"
+              type="password"
+              required
+              placeholder=" "
+              autocomplete="new-password"
+            />
             <label>Contraseña</label>
           </div>
 
@@ -131,14 +142,18 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import axios from "axios";
+import { useRouter } from "vue-router";
 
-const API = 
+const loading = ref(false);
+const API =
   "https://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net";
 // "http://192.168.11.28:8080";
+// "http://192.168.100.228:8080";
 
 // 🔥 DATA DINÁMICA
 const ligas = ref([]);
 const categorias = ref([]);
+const router = useRouter();
 
 // 🔥 CARGAR DESDE BACKEND
 const fetchData = async () => {
@@ -175,6 +190,8 @@ const preview = ref(null);
 // 🔥 GUARDAR
 const guardarUsuario = async () => {
   try {
+    loading.value = true;
+
     const data = new FormData();
 
     data.append("nombre", form.value.nombre);
@@ -182,23 +199,49 @@ const guardarUsuario = async () => {
     data.append("edad", form.value.edad);
     data.append("posicion", form.value.posicion);
     data.append("correo", form.value.correo);
-    data.append("Estatura", form.value.estatura);
+    data.append("estatura", form.value.estatura);
     data.append("liga", form.value.liga);
     data.append("Id_Categoria", form.value.categoria);
     data.append("password", form.value.password);
 
     if (form.value.Foto) {
-      data.append("Foto", form.value.Foto); // 🔥 CLAVE
+      data.append("Foto", form.value.Foto);
     }
 
     const response = await axios.post(`${API}/api/createJugador`, data);
 
     if (response.data.ok) {
       alert("Jugador creado correctamente");
+
+      // 🔥 LIMPIAR FORMULARIO
+      limpiarFormulario();
     }
   } catch (error) {
     console.error(error);
     alert("Error del servidor");
+  } finally {
+    loading.value = false;
+  }
+};
+
+const limpiarFormulario = () => {
+  form.value = {
+    nombre: "",
+    numero: "",
+    edad: "",
+    posicion: "",
+    correo: "",
+    estatura: "",
+    liga: "",
+    categoria: "",
+    password: "",
+    Foto: null,
+  };
+
+  preview.value = null;
+
+  if (fileInput.value) {
+    fileInput.value.value = "";
   }
 };
 
@@ -217,31 +260,205 @@ const handleFile = (e) => {
 };
 </script>
 
-
 <style scoped>
-.label-img {
-  margin-bottom: 10px;
-  display: block;
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap");
+
+/* RESET */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-/* CONTENEDOR */
-.image-upload {
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.1);
-  border: 2px dashed rgba(255, 255, 255, 0.3);
+/* 🌌 PAGE */
+.page {
+  min-height: 100vh;
+  background:
+    linear-gradient(rgba(15, 23, 42, 0.75), rgba(15, 23, 42, 0.88)),
+    url("https://images.unsplash.com/photo-1518091043644-c1d4457512c6")
+      no-repeat center/cover;
+
   display: flex;
   justify-content: center;
   align-items: center;
-  cursor: pointer;
+
+  padding: 25px;
+
+  position: relative;
   overflow: hidden;
-  transition: 0.3s;
+
+  font-family: "Inter", sans-serif;
+}
+
+/* 🔥 EFECTOS FONDO */
+.page::before {
+  content: "";
+  position: absolute;
+  width: 450px;
+  height: 450px;
+  background: rgba(99, 102, 241, 0.35);
+  filter: blur(120px);
+  border-radius: 50%;
+  top: -120px;
+  left: -120px;
+}
+
+.page::after {
+  content: "";
+  position: absolute;
+  width: 350px;
+  height: 350px;
+  background: rgba(34, 197, 94, 0.25);
+  filter: blur(120px);
+  border-radius: 50%;
+  bottom: -120px;
+  right: -120px;
+}
+
+/* OVERLAY */
+.overlay {
+  position: absolute;
+  inset: 0;
+  backdrop-filter: blur(2px);
+}
+
+/* LOADING */
+.loading-overlay {
+  position: fixed;
+  inset: 0;
+
+  background: rgba(15, 23, 42, 0.75);
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  z-index: 9999;
+
+  backdrop-filter: blur(6px);
+}
+
+.loading-overlay p {
+  margin-top: 18px;
+
+  color: white;
+
+  font-size: 16px;
+  font-weight: 700;
+}
+
+/* SPINNER */
+.loader {
+  width: 70px;
+  height: 70px;
+
+  border: 6px solid rgba(255, 255, 255, 0.2);
+  border-top: 6px solid #22c55e;
+
+  border-radius: 50%;
+
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* 🧊 CARD */
+.card {
+  position: relative;
+  z-index: 10;
+
+  width: 100%;
+  max-width: 820px;
+
+  padding: 38px;
+
+  border-radius: 28px;
+
+  background: rgba(255, 255, 255, 0.08);
+
+  backdrop-filter: blur(24px);
+
+  border: 1px solid rgba(255, 255, 255, 0.12);
+
+  box-shadow:
+    0 15px 40px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+
+  animation: fadeUp 0.5s ease;
+}
+
+/* ✨ TITLES */
+h2 {
+  text-align: center;
+  font-size: clamp(26px, 4vw, 34px);
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 8px;
+}
+
+.subtitle {
+  text-align: center;
+  color: #cbd5e1;
+  margin-bottom: 32px;
+  font-size: 14px;
+}
+
+/* GRID */
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.full {
+  grid-column: span 2;
+}
+
+/* FOTO */
+.label-img {
+  display: block;
+  margin-bottom: 14px;
+  color: #cbd5e1;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* UPLOAD */
+.image-upload {
+  width: 140px;
+  height: 140px;
+
+  margin: auto;
+
+  border-radius: 50%;
+
+  background: rgba(255, 255, 255, 0.08);
+
+  border: 2px dashed rgba(255, 255, 255, 0.25);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  overflow: hidden;
+  cursor: pointer;
+
+  transition: all 0.3s ease;
 }
 
 .image-upload:hover {
+  transform: translateY(-4px) scale(1.03);
+
   border-color: #818cf8;
-  transform: scale(1.05);
+
+  box-shadow:
+    0 0 25px rgba(129, 140, 248, 0.4),
+    0 10px 25px rgba(0, 0, 0, 0.25);
 }
 
 /* PLACEHOLDER */
@@ -251,8 +468,15 @@ const handleFile = (e) => {
 }
 
 .placeholder span {
-  font-size: 28px;
+  font-size: 38px;
+  font-weight: bold;
   display: block;
+  line-height: 1;
+}
+
+.placeholder p {
+  font-size: 13px;
+  margin-top: 6px;
 }
 
 /* PREVIEW */
@@ -261,125 +485,199 @@ const handleFile = (e) => {
   height: 100%;
   object-fit: cover;
 }
-/* 🌌 FONDO */
-.page {
-  min-height: 100vh;
-  background: url("https://images.unsplash.com/photo-1518091043644-c1d4457512c6")
-    no-repeat center/cover;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: relative;
-}
-
-/* 🎨 OVERLAY */
-.overlay {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(135deg, #0f172a, #4f46e5);
-  opacity: 0.85;
-}
-
-/* 🧊 CARD */
-.card {
-  position: relative;
-  width: 95%;
-  max-width: 700px;
-  padding: 35px;
-  border-radius: 20px;
-  backdrop-filter: blur(20px);
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 0 40px rgba(99, 102, 241, 0.4);
-  color: white;
-}
-
-/* TITULO */
-h2 {
-  text-align: center;
-  font-size: 26px;
-  color: #c7d2fe;
-}
-
-.subtitle {
-  text-align: center;
-  margin-bottom: 25px;
-  color: #a5b4fc;
-}
-
-/* GRID */
-.grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 15px;
-}
-
-.full {
-  grid-column: span 2;
-}
 
 /* INPUT GROUP */
 .form-group {
   position: relative;
 }
 
-/* INPUTS */
+/* INPUTS Y SELECTS */
 input,
 select {
   width: 100%;
-  padding: 12px;
-  border-radius: 10px;
-  border: none;
+
+  padding: 16px 14px;
+
+  border-radius: 14px;
+
+  border: 1px solid rgba(255, 255, 255, 0.12);
+
   outline: none;
-  background: rgba(255, 255, 255, 0.1);
+
+  background: rgba(255, 255, 255, 0.08);
+
   color: white;
+
   font-size: 14px;
+
+  transition: all 0.25s ease;
+
+  backdrop-filter: blur(10px);
 }
 
-/* LABEL FLOAT */
+/* SELECT OPTIONS */
+select option {
+  background: #111827;
+  color: white;
+}
+
+/* FOCUS */
+input:focus,
+select:focus {
+  border-color: #818cf8;
+
+  background: rgba(255, 255, 255, 0.12);
+
+  box-shadow: 0 0 0 4px rgba(129, 140, 248, 0.15);
+}
+
+/* LABELS */
 .form-group label {
   position: absolute;
-  top: 12px;
-  left: 12px;
+
+  top: 50%;
+  left: 14px;
+
+  transform: translateY(-50%);
+
   font-size: 13px;
+
   color: #c7d2fe;
+
   pointer-events: none;
-  transition: 0.3s;
+
+  transition: all 0.25s ease;
+
+  padding: 0 6px;
 }
 
+/* FLOATING LABEL */
 input:focus + label,
-input:valid + label {
-  top: -8px;
+input:not(:placeholder-shown) + label,
+select:focus + label,
+select:valid + label {
+  top: 0;
+
+  transform: translateY(-50%);
+
   font-size: 11px;
+
   color: #818cf8;
+
+  background: #1e1b4b;
+
+  border-radius: 20px;
 }
 
-/* SELECT */
-select {
-  color: #cbd5f5;
+/* PLACEHOLDER */
+input::placeholder {
+  color: transparent;
 }
 
-/* BOTON */
+/* BUTTON */
 .btn {
-  margin-top: 20px;
+  margin-top: 28px;
+
   width: 100%;
-  padding: 14px;
-  border-radius: 12px;
+
+  padding: 16px;
+
   border: none;
+
+  border-radius: 16px;
+
   background: linear-gradient(135deg, #22c55e, #16a34a);
-  font-weight: bold;
+
+  color: white;
+
+  font-size: 15px;
+  font-weight: 700;
+
   cursor: pointer;
-  transition: 0.3s;
+
+  transition: all 0.3s ease;
+
+  box-shadow:
+    0 10px 25px rgba(34, 197, 94, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+
+  position: relative;
+  overflow: hidden;
 }
 
+/* SHINE */
+.btn::before {
+  content: "";
+
+  position: absolute;
+  top: 0;
+  left: -100%;
+
+  width: 100%;
+  height: 100%;
+
+  background: linear-gradient(
+    120deg,
+    transparent,
+    rgba(255, 255, 255, 0.25),
+    transparent
+  );
+
+  transition: 0.5s;
+}
+
+.btn:hover::before {
+  left: 100%;
+}
+
+/* HOVER */
 .btn:hover {
-  transform: scale(1.05);
-  box-shadow: 0 0 20px rgba(34, 197, 94, 0.6);
+  transform: translateY(-3px);
+
+  box-shadow:
+    0 15px 30px rgba(34, 197, 94, 0.45),
+    0 0 20px rgba(34, 197, 94, 0.25);
 }
 
-/* 📱 RESPONSIVE */
-@media (max-width: 600px) {
+.btn:active {
+  transform: scale(0.98);
+}
+
+/* ANIMATION */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(25px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 📱 TABLET */
+@media (max-width: 900px) {
+  .card {
+    padding: 30px;
+  }
+
+  .grid {
+    gap: 16px;
+  }
+}
+
+/* 📱 MOBILE */
+@media (max-width: 640px) {
+  .page {
+    padding: 15px;
+  }
+
+  .card {
+    padding: 22px;
+    border-radius: 22px;
+  }
+
   .grid {
     grid-template-columns: 1fr;
   }
@@ -388,8 +686,48 @@ select {
     grid-column: span 1;
   }
 
+  .image-upload {
+    width: 115px;
+    height: 115px;
+  }
+
+  h2 {
+    font-size: 24px;
+  }
+
+  .subtitle {
+    font-size: 13px;
+  }
+
+  input,
+  select {
+    padding: 15px 13px;
+    font-size: 13px;
+  }
+
+  .btn {
+    padding: 15px;
+    font-size: 14px;
+  }
+}
+
+/* 📱 SMALL DEVICES */
+@media (max-width: 400px) {
   .card {
-    padding: 20px;
+    padding: 18px;
+  }
+
+  .image-upload {
+    width: 100px;
+    height: 100px;
+  }
+
+  .placeholder span {
+    font-size: 30px;
+  }
+
+  .placeholder p {
+    font-size: 11px;
   }
 }
 </style>

@@ -4,19 +4,12 @@
     <div class="top-bar">
       <h1>⚽ Categorías por Liga</h1>
 
-      <button @click="goToCreate">
-        ➕ Nueva Categoría
-      </button>
-      <button @click="goToHome">
-        ➕ Casa
-      </button>
-      
+      <button @click="goToCreate">➕ Nueva Categoría</button>
+      <button @click="goToHome">Inicio</button>
     </div>
 
     <!-- LOADING -->
-    <div v-if="loading" class="loading">
-      Cargando categorías...
-    </div>
+    <div v-if="loading" class="loading">Cargando categorías...</div>
 
     <!-- CONTENIDO -->
     <div v-else class="grid">
@@ -33,11 +26,7 @@
 
         <!-- CATEGORIAS -->
         <div class="categorias">
-          <div
-            v-for="cat in categorias"
-            :key="cat.Id"
-            class="categoria"
-          >
+          <div v-for="cat in categorias" :key="cat.Id" class="categoria">
             <h3>{{ cat.Nombre }}</h3>
             <p :class="cat.Estatus">
               {{ cat.Estatus }}
@@ -57,9 +46,10 @@ import { ref, onMounted, computed } from "vue";
 import axios from "axios";
 import { useRouter } from "vue-router";
 
-const API = 
-   "https://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net";
-  // "http://192.168.11.28:8080";
+const API =
+  "https://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net";
+// "http://192.168.11.28:8080";
+// "http://192.168.100.228:8080";
 
 const router = useRouter();
 
@@ -101,91 +91,101 @@ const goToCreate = () => {
 };
 
 const goToHome = () => {
-  router.push({ name: "dashAdministrador" });
+  router.push({ name: "DashAdministrador" });
 };
 
 onMounted(fetchCategorias);
 </script>
 
 <style scoped>
-/* 🌌 PAGE */
+/* 🌍 FONDO BLANCO PREMIUM */
 .page {
   min-height: 100vh;
   padding: 30px;
-  background: linear-gradient(135deg, #0f172a, #1e293b);
-  color: white;
+  background: #f8fafc;
   font-family: "Segoe UI", sans-serif;
+  color: #0f172a;
 }
 
-/* 🔝 HEADER */
+/* 🔝 TOP BAR MODERNA */
 .top-bar {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
   margin-bottom: 25px;
 }
 
 .top-bar h1 {
-  font-size: 28px;
-  font-weight: bold;
+  font-size: 24px;
+  font-weight: 900;
+  color: #0f172a;
 }
 
+/* BOTONES HEADER */
 .top-bar button {
-  background: linear-gradient(135deg, #3b82f6, #6366f1);
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
   border: none;
-  padding: 12px 18px;
+  padding: 10px 14px;
   border-radius: 12px;
   color: white;
   cursor: pointer;
-  font-weight: bold;
-  transition: 0.3s;
+  font-weight: 700;
+  transition: 0.25s;
+  box-shadow: 0 10px 20px rgba(37, 99, 235, 0.15);
 }
 
 .top-bar button:hover {
-  transform: scale(1.05);
-  box-shadow: 0 0 20px rgba(99, 102, 241, 0.6);
+  transform: translateY(-2px);
 }
 
-/* 📦 GRID */
+/* 📦 GRID RESPONSIVE */
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 18px;
 }
 
-/* 🧊 CARD LIGA */
+/* 💎 CARD LIGA MODERNA */
 .liga-card {
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(20px);
-  border-radius: 20px;
-  padding: 20px;
-  border: 1px solid rgba(255,255,255,0.1);
-  transition: 0.3s;
+  background: white;
+  border-radius: 18px;
+  padding: 18px;
+  border: 1px solid #eef2f7;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+  transition: 0.25s;
 }
 
 .liga-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 0 25px rgba(99, 102, 241, 0.3);
+  transform: translateY(-4px);
+  box-shadow: 0 18px 35px rgba(0, 0, 0, 0.08);
 }
 
 /* 🧠 HEADER LIGA */
 .liga-header {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 15px;
+  align-items: center;
+  margin-bottom: 14px;
 }
 
 .liga-header h2 {
-  font-size: 18px;
-  color: #c7d2fe;
+  font-size: 16px;
+  font-weight: 800;
+  color: #1e293b;
 }
 
 .liga-header span {
   font-size: 12px;
-  opacity: 0.7;
+  background: #eff6ff;
+  color: #2563eb;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-weight: 600;
 }
 
-/* 📊 CATEGORIAS */
+/* 📊 LISTA CATEGORÍAS */
 .categorias {
   display: flex;
   flex-direction: column;
@@ -194,50 +194,105 @@ onMounted(fetchCategorias);
 
 /* 🔹 ITEM */
 .categoria {
-  background: #1e293b;
+  background: #f8fafc;
   padding: 12px;
   border-radius: 12px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   transition: 0.2s;
+  border: 1px solid #eef2f7;
 }
 
 .categoria:hover {
-  background: #334155;
+  background: #f1f5f9;
+  transform: scale(1.02);
+}
+
+.categoria h3 {
+  font-size: 14px;
+  font-weight: 700;
 }
 
 /* 🏷️ STATUS */
 .activo {
-  color: #22c55e;
+  color: #16a34a;
+  font-weight: 700;
+  font-size: 12px;
+  background: #dcfce7;
+  padding: 4px 10px;
+  border-radius: 999px;
 }
 
 .inactivo {
   color: #ef4444;
+  font-weight: 700;
+  font-size: 12px;
+  background: #fee2e2;
+  padding: 4px 10px;
+  border-radius: 999px;
 }
 
 /* ⏳ LOADING */
 .loading {
   text-align: center;
-  margin-top: 40px;
+  margin-top: 50px;
+  color: #64748b;
+  font-weight: 600;
 }
 
 /* ❌ ERROR */
 .error {
   margin-top: 20px;
-  color: #f87171;
+  color: #ef4444;
   text-align: center;
+  font-weight: 600;
 }
 
-/* 📱 RESPONSIVE */
-@media (max-width: 600px) {
+/* ✨ ANIMACIÓN */
+.liga-card {
+  animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 📱 TABLET */
+@media (max-width: 768px) {
   .top-bar {
     flex-direction: column;
-    gap: 10px;
+    align-items: flex-start;
   }
 
   .top-bar h1 {
-    font-size: 22px;
+    font-size: 20px;
+  }
+
+  .grid {
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  }
+}
+
+/* 📱 CELULAR */
+@media (max-width: 480px) {
+  .page {
+    padding: 15px;
+  }
+
+  .liga-header h2 {
+    font-size: 14px;
+  }
+
+  .categoria h3 {
+    font-size: 13px;
   }
 }
 </style>

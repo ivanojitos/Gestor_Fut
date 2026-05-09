@@ -2,7 +2,7 @@
   <div class="layout">
     <!-- SIDEBAR -->
     <aside class="sidebar">
-      <h2 class="logo">⚽ FutManager</h2>
+      <h2 class="logo">⚽ GestorFut</h2>
 
       <nav>
         <!-- JUGADOR -->
@@ -11,37 +11,37 @@
         </router-link>
 
         <router-link v-if="role === 'jugador'" :to="{ name: 'Posiciones' }">
-          <Users /> <span>Posiciones</span>
+          <Trophy /> <span>Posiciones</span>
         </router-link>
 
         <router-link v-if="role === 'jugador'" :to="{ name: 'Roles' }">
-          <Users /> <span>Rol juego</span>
+          <Shield /> <span>Rol juego</span>
         </router-link>
-
+<!-- 
         <router-link v-if="role === 'jugador'" :to="{ name: 'Ligas' }">
-          <Users /> <span>Ligas</span>
-        </router-link>
+          <Medal /> <span>Ligas</span>
+        </router-link> -->
 
         <!-- MASTER -->
         <router-link v-if="role === 'master'" :to="{ name: 'CrearLiga' }">
-          <Users /> <span>Crear Ligas</span>
+          <PlusCircle /> <span>Crear Ligas</span>
         </router-link>
 
         <router-link
           v-if="role === 'master'"
           :to="{ name: 'DashboardMasterAdmin' }"
         >
-          <Users /> <span>Administrador</span>
+          <UserCog /> <span>Administrador</span>
         </router-link>
 
         <!-- ADMIN -->
         <router-link v-if="role === 'admin'" :to="{ name: 'Categorias' }">
-          <Users /> <span>Categorias</span>
+          <Layers /> <span>Categorias</span>
         </router-link>
 
-        <router-link v-if="role === 'admin'" :to="{ name: 'Equipos' }">
-          <Users /> <span>Equipos</span>
-        </router-link>
+        <!-- <router-link v-if="role === 'admin'" :to="{ name: 'Equipos' }">
+          <Flag /> <span>Equipos</span>
+        </router-link> -->
       </nav>
     </aside>
 
@@ -62,8 +62,19 @@
 
 <script setup>
 import { useRouter } from "vue-router";
-import { Home, Users } from "lucide-vue-next";
 import { ref, onMounted } from "vue";
+import {
+  Home,
+  Table,
+  Users,
+  Trophy,
+  Shield,
+  Medal,
+  PlusCircle,
+  UserCog,
+  Layers,
+  Flag,
+} from "lucide-vue-next";
 
 const router = useRouter();
 const role = ref("");
@@ -74,7 +85,7 @@ const logout = () => {
 };
 
 onMounted(() => {
-role.value = localStorage.getItem("role"); // 👈 🔥 ESTA ES LA CLAVE
+  role.value = localStorage.getItem("role"); // 👈 🔥 ESTA ES LA CLAVE
 });
 </script>
 

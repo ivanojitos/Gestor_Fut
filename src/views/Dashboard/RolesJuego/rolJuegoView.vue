@@ -1,305 +1,459 @@
 <template>
   <div class="container">
-    <!-- 🔹 HEADER -->
-    <div class="header">
-      <h1>📅 Rol de Juegos</h1>
-      <p>Selecciona liga y categoría</p>
-    </div>
-
-    <!-- 🔹 SELECTORES -->
-    <div class="selectors">
-      <div class="tabs">
-        <button
-          v-for="liga in ligas"
-          :key="liga"
-          @click="selectedLiga = liga; selectedCategoria = ''"
-          :class="['tab', selectedLiga === liga && 'active']"
-        >
-          {{ liga }}
-        </button>
+    <!-- HEADER -->
+    <div class="header glass">
+      <div>
+        <span class="badge">⚽ Mi Equipo</span>
+        <h1>Mis Partidos</h1>
+        <p>Consulta tus próximos encuentros y tu historial reciente.</p>
       </div>
 
-      <div class="categories" v-if="categorias.length">
-        <button
-          v-for="cat in categorias"
-          :key="cat"
-          @click="selectedCategoria = cat"
-          :class="['category', selectedCategoria === cat && 'active']"
-        >
-          {{ cat }}
-        </button>
+      <div class="header-icon">🏆</div>
+    </div>
+
+    <!-- 🔥 PROXIMO PARTIDO -->
+    <div v-if="proximo" class="next-match">
+      <div class="next-header">
+        <span>PRÓXIMO PARTIDO</span>
       </div>
-    </div>
 
-    <!-- 🔹 EMPTY -->
-    <div v-if="!currentGames" class="empty">
-      ⚽ Selecciona liga y categoría
-    </div>
+      <div class="next-content">
+        <div class="team-block">
+          <img :src="proximo.local.logo" />
+          <h3>{{ proximo.local.nombre }}</h3>
+        </div>
 
-    <!-- 🔹 CANCHAS -->
-    <div v-if="currentGames" class="fields">
-      <div class="field" v-for="field in currentGames" :key="field.name">
-        <h2>🏟️ {{ field.name }}</h2>
-         <p class="day">{{ field.day }}</p>
-
-        <div class="match" v-for="game in field.games" :key="game.time">
-          <div class="time">{{ game.time }}</div>
-
-          <div class="teams">
-            <div class="team">
-              <img :src="game.home.logo" />
-              <span>{{ game.home.name }}</span>
-            </div>
-
-            <span class="vs">vs</span>
-
-            <div class="team">
-              <img :src="game.away.logo" />
-              <span>{{ game.away.name }}</span>
-            </div>
+        <div class="center-info">
+          <div class="time">
+            {{ proximo.hora }}
           </div>
+
+          <div class="vs">VS</div>
+
+          <div class="date">
+            {{ formatearFecha(proximo.fecha) }}
+          </div>
+
+          <div class="field">🏟️ {{ proximo.cancha }}</div>
+        </div>
+
+        <div class="team-block">
+          <img :src="proximo.visitante.logo" />
+          <h3>{{ proximo.visitante.nombre }}</h3>
         </div>
       </div>
+    </div>
+
+    <!-- 🔥 HISTORIAL -->
+    <div class="history">
+      <div class="history-title">Historial de Partidos</div>
+
+      <div class="match-card" v-for="match in anteriores" :key="match.id">
+        <div class="match-date">
+          {{ formatearFecha(match.fecha) }}
+        </div>
+
+        <div class="match-teams">
+          <div class="team">
+            <img :src="match.local.logo" />
+            <span>{{ match.local.nombre }}</span>
+          </div>
+
+          <div class="result">
+            {{ match.marcador || "VS" }}
+          </div>
+
+          <div class="team">
+            <img :src="match.visitante.logo" />
+            <span>{{ match.visitante.nombre }}</span>
+          </div>
+        </div>
+
+        <div class="match-footer">🏟️ {{ match.cancha }}</div>
+      </div>
+    </div>
+
+    <div class="load-more-wrapper">
+      <button
+        v-if="!noMore"
+        class="load-more"
+        @click="cargarMas"
+        :disabled="loading"
+      >
+        {{ loading ? "Cargando..." : "Cargar más" }}
+      </button>
+
+      <p v-else class="end-text">⚽ No hay más partidos</p>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, onMounted } from "vue";
+import axios from "axios";
 
-const selectedLiga = ref("");
-const selectedCategoria = ref("");
+const API =
+  "https://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net";
+// "http://192.168.11.28:8080";
+// "http://192.168.100.228:8080";
 
-// 🔥 DATA DEMO
-const data = {
-  "Liga MX": {
-    Primera: [
-      {
-        name: "Cancha 1",
-        day: "Sábado 20 Abril", // 🔥 NUEVO
-        games: [
-          {
-            time: "10:00 AM",
-            home: { name: "Tigres", logo: "https://i.pravatar.cc/40?img=1" },
-            away: { name: "Chivas", logo: "https://i.pravatar.cc/40?img=2" },
-          },
-        ],
-      },
-      {
-        name: "Cancha 2",
-        day: "Domingo 21 Abril", // 🔥 NUEVO
-        games: [
-          {
-            time: "11:00 AM",
-            home: { name: "Puebla", logo: "https://i.pravatar.cc/40?img=3" },
-            away: { name: "América", logo: "https://i.pravatar.cc/40?img=4" },
-          },
-        ],
-      },
-    ],
-  },
-};
+const proximo = ref(null);
+const anteriores = ref([]);
+const page = ref(1);
+const loading = ref(false);
+const noMore = ref(false);
 
-const ligas = Object.keys(data);
+const storedUser = JSON.parse(localStorage.getItem("user"));
 
-const categorias = computed(() => {
-  return selectedLiga.value ? Object.keys(data[selectedLiga.value]) : [];
+const idEquipo = ref(null);
+
+onMounted(async () => {
+  obtenerPartidos();
 });
 
-const currentGames = computed(() => {
-  if (!selectedLiga.value || !selectedCategoria.value) return null;
-  return data[selectedLiga.value][selectedCategoria.value];
+const obtenerEquipoJugador = async () => {
+  try {
+    if (!storedUser?.Id) return;
+
+    const { data } = await axios.get(
+      `${API}/api/equipos/jugador/${storedUser.Id}`,
+    );
+
+    const equipo = data.data?.[0];
+
+    if (!equipo) {
+      console.log("Jugador sin equipo");
+      return;
+    }
+
+    idEquipo.value = equipo.Id;
+
+    await obtenerPartidos();
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+const obtenerPartidos = async () => {
+  try {
+    // 🔥 VALIDAR
+    if (!idEquipo.value) return;
+
+    loading.value = true;
+
+    const { data } = await axios.get(
+      `${API}/api/partidos-equipo/${idEquipo.value}`,
+      {
+        params: {
+          page: page.value,
+          limit: 10,
+        },
+      },
+    );
+
+    if (data.data.length < 10) {
+      noMore.value = true;
+    }
+
+    const nuevos = data.data.map((m) => ({
+      id: m.Id,
+
+      fecha: m.Fecha_Juego,
+
+      cancha: m.cancha,
+
+      marcador:
+        m.Goles_Local != null && m.Goles_Visitante != null
+          ? `${m.Goles_Local} - ${m.Goles_Visitante}`
+          : null,
+
+      local: {
+        nombre: m.local_nombre,
+        logo: API + m.local_logo,
+      },
+
+      visitante: {
+        nombre: m.visitante_nombre,
+        logo: API + m.visitante_logo,
+      },
+    }));
+
+    anteriores.value = [...anteriores.value, ...nuevos];
+  } catch (error) {
+    console.error(error);
+  } finally {
+    loading.value = false;
+  }
+};
+
+const cargarMas = async () => {
+  page.value++;
+
+  await obtenerPartidos();
+};
+
+const formatearFecha = (fecha) => {
+  if (!fecha) return "";
+
+  const date = new Date(fecha);
+
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const year = date.getFullYear();
+
+  return `${day}/${month}/${year}`;
+};
+
+onMounted(async () => {
+  await obtenerEquipoJugador();
 });
 </script>
 
 <style scoped>
-/* 🔥 HEADER CANCHA */
-.field-header {
+.load-more-wrapper {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
+  justify-content: center;
+  margin-top: 30px;
 }
 
-.field-header h2 {
-  font-size: 16px;
-  color: #0f172a;
-}
-
-/* 🔥 DÍA */
-.day {
-  font-size: 12px;
-  color: #64748b;
-  font-weight: 500;
-}
-
-/* 🔥 MEJORA VISUAL EXTRA */
-.field {
-  background: white;
-  padding: 15px;
-  border-radius: 18px;
-  border: 1px solid #e5e7eb;
+.load-more {
+  border: none;
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: white;
+  padding: 14px 24px;
+  border-radius: 14px;
+  font-weight: 700;
+  cursor: pointer;
   transition: 0.3s;
 }
 
-.field:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+.load-more:hover {
+  transform: translateY(-3px);
 }
 
-/* 🔥 HORA MÁS PRO */
-.time {
-  font-size: 12px;
-  color: #3b82f6;
+.end-text {
+  color: #64748b;
   font-weight: 600;
 }
-/* 🔥 CONTENEDOR */
 .container {
+  min-height: 100vh;
   padding: 20px;
   background: #f1f5f9;
 }
 
-/* 🔹 HEADER */
+/* HEADER */
+
+.glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.header {
+  padding: 30px;
+  border-radius: 28px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.badge {
+  background: #dcfce7;
+  color: #16a34a;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
 .header h1 {
-  font-size: 22px;
+  font-size: 38px;
+  margin: 12px 0;
   color: #0f172a;
 }
 
 .header p {
   color: #64748b;
-  margin-bottom: 20px;
 }
 
-/* 🔥 SELECTORES */
-.selectors {
-  background: white;
-  padding: 15px;
-  border-radius: 16px;
-  border: 1px solid #e5e7eb;
-  margin-bottom: 20px;
-}
-
-/* 🔹 TABS */
-.tabs {
+.header-icon {
+  width: 90px;
+  height: 90px;
+  border-radius: 24px;
+  background: linear-gradient(135deg, #22c55e, #3b82f6);
   display: flex;
-  gap: 10px;
-  margin-bottom: 10px;
-}
-
-.tab {
-  flex: 1;
-  padding: 10px;
-  border-radius: 10px;
-  background: #f1f5f9;
-  cursor: pointer;
-  color: #475569;
-  transition: 0.3s;
-}
-
-.tab.active {
-  background: #22c55e;
-  color: white;
-  font-weight: bold;
-}
-
-/* 🔹 CATEGORIAS */
-.categories {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.category {
-  padding: 8px 14px;
-  border-radius: 999px;
-  background: #e2e8f0;
-  cursor: pointer;
-  font-size: 13px;
-  color: #0f172a;
-}
-
-.category.active {
-  background: #3b82f6;
+  justify-content: center;
+  align-items: center;
+  font-size: 42px;
   color: white;
 }
 
-/* 🔥 EMPTY */
-.empty {
-  text-align: center;
-  padding: 20px;
-  color: #64748b;
+/* 🔥 NEXT MATCH */
+
+.next-match {
+  background: linear-gradient(135deg, #0f172a, #1e293b);
+  color: white;
+  border-radius: 30px;
+  padding: 30px;
+  margin-bottom: 30px;
+  overflow: hidden;
+  position: relative;
 }
 
-/* 🔥 CANCHAS */
-.fields {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+.next-header span {
+  color: #94a3b8;
+  font-size: 12px;
+  letter-spacing: 1px;
+  font-weight: 700;
+}
+
+.next-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 25px;
   gap: 20px;
 }
 
-/* 🔹 CARD CANCHA */
-.field {
-  background: white;
-  padding: 15px;
-  border-radius: 18px;
-  border: 1px solid #e5e7eb;
+.team-block {
+  flex: 1;
+  text-align: center;
 }
 
-.field h2 {
-  margin-bottom: 10px;
-  color: #0f172a;
+.team-block img {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  border: 4px solid rgba(255, 255, 255, 0.1);
 }
 
-/* 🔥 PARTIDO */
-.match {
-  background: #f8fafc;
-  padding: 10px;
-  border-radius: 12px;
-  margin-bottom: 10px;
+.team-block h3 {
+  margin-top: 14px;
+  font-size: 22px;
 }
 
-/* 🔹 HORA */
+.center-info {
+  text-align: center;
+}
+
 .time {
-  font-size: 12px;
-  color: #64748b;
-  margin-bottom: 5px;
+  font-size: 30px;
+  font-weight: 800;
 }
 
-/* 🔹 EQUIPOS */
-.teams {
+.vs {
+  margin: 14px 0;
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #22c55e, #3b82f6);
   display: flex;
+  justify-content: center;
   align-items: center;
-  justify-content: space-between;
+  margin-inline: auto;
+  font-weight: bold;
 }
 
-/* 🔹 TEAM */
+.date {
+  margin-top: 10px;
+  color: #cbd5e1;
+}
+
+.field {
+  margin-top: 8px;
+  color: #94a3b8;
+}
+
+/* 🔥 HISTORY */
+
+.history-title {
+  font-size: 24px;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 20px;
+}
+
+.match-card {
+  background: white;
+  border-radius: 24px;
+  padding: 20px;
+  margin-bottom: 18px;
+  border: 1px solid #e2e8f0;
+  transition: 0.3s;
+}
+
+.match-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.06);
+}
+
+.match-date {
+  color: #64748b;
+  margin-bottom: 16px;
+  font-weight: 600;
+}
+
+.match-teams {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .team {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 6px;
-  color: #0f172a;
+  gap: 10px;
+  flex: 1;
 }
 
 .team img {
-  width: 24px;
-  height: 24px;
+  width: 60px;
+  height: 60px;
   border-radius: 50%;
 }
 
-/* VS */
-.vs {
-  font-size: 12px;
-  color: #64748b;
+.result {
+  font-size: 28px;
+  font-weight: 800;
+  color: #0f172a;
 }
 
-/* 📱 RESPONSIVE */
+.match-footer {
+  margin-top: 20px;
+  color: #64748b;
+  text-align: center;
+}
+
+/* 📱 MOBILE */
+
 @media (max-width: 768px) {
-  .tabs {
+  .header {
+    flex-direction: column;
+    gap: 20px;
+    align-items: flex-start;
+  }
+
+  .next-content {
     flex-direction: column;
   }
 
-  .fields {
-    grid-template-columns: 1fr;
+  .match-teams {
+    gap: 10px;
+  }
+
+  .header h1 {
+    font-size: 28px;
+  }
+
+  .team-block img {
+    width: 70px;
+    height: 70px;
+  }
+
+  .time {
+    font-size: 24px;
   }
 }
 </style>
