@@ -27,7 +27,7 @@
         <div v-for="eq in equipos" :key="eq.Id" class="card">
           <div class="card-top">
             <div class="logo-container">
-              <img v-if="eq.Logo" :src="getLogo(eq.Logo)" class="logo" />
+              <img v-if="eq.Logo" :src="API + eq.Logo" class="logo" />
             </div>
 
             <div class="info">
@@ -205,36 +205,22 @@ onMounted(() => {
 
 <style scoped>
 .logo-container {
-  width: 75px;
-  height: 75px;
-
-  min-width: 75px;
-  min-height: 75px;
-
-  border-radius: 16px;
-
+  width: 70px;
+  height: 70px;
+  border-radius: 14px;
+  overflow: hidden;
   background: #f1f5f9;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
-  overflow: hidden;
-
   border: 1px solid #e2e8f0;
-
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
 }
 
 .logo {
   width: 100%;
   height: 100%;
-
-  object-fit: contain; /* 👈 clave para escudos */
-
+  object-fit: contain; /* mejor para escudos */
   padding: 6px;
-
-  transition: transform 0.25s ease;
 }
 
 .card:hover .logo {
