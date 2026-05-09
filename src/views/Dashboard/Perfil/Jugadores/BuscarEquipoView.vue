@@ -27,6 +27,11 @@
         <div v-for="eq in equipos" :key="eq.Id" class="card">
           <div class="card-top">
             <img :src="getLogo(eq.Logo)" class="logo" />
+            <img
+                  v-if="eq.Logo"
+                  :src="API + eq.Logo"
+                  class="actual-img"
+                />
 
             <div class="info">
               <h3>{{ eq.Nombre }}</h3>
@@ -116,6 +121,8 @@ const fetchEquipos = async () => {
     });
 
     equipos.value = res.data.data || [];
+    console.log(equipos.value);
+    
   } catch (err) {
     console.error(err);
     equipos.value = [];
