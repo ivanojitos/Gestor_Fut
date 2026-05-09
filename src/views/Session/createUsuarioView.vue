@@ -102,7 +102,12 @@
 
           <!-- CORREO -->
           <div class="form-group full">
-            <input v-model="form.correo" type="email" required />
+            <input
+              v-model="form.correo"
+              type="email"
+              required
+              pattern="^[^\s@]+@[^\s@]+\.[^\s@]+$"
+            />
             <label>Correo</label>
           </div>
 
