@@ -26,11 +26,9 @@
       <div class="grid">
         <div v-for="eq in equipos" :key="eq.Id" class="card">
           <div class="card-top">
-            <img
-                  v-if="eq.Logo"
-                  :src="API + eq.Logo"
-                  class="actual-img"
-                />
+            <div class="logo-container">
+              <img v-if="eq.Logo" :src="getLogo(eq.Logo)" class="logo" />
+            </div>
 
             <div class="info">
               <h3>{{ eq.Nombre }}</h3>
@@ -120,8 +118,6 @@ const fetchEquipos = async () => {
     });
 
     equipos.value = res.data.data || [];
-    console.log(equipos.value);
-    
   } catch (err) {
     console.error(err);
     equipos.value = [];
@@ -208,6 +204,42 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.logo-container {
+  width: 75px;
+  height: 75px;
+
+  min-width: 75px;
+  min-height: 75px;
+
+  border-radius: 16px;
+
+  background: #f1f5f9;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  overflow: hidden;
+
+  border: 1px solid #e2e8f0;
+
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+}
+
+.logo {
+  width: 100%;
+  height: 100%;
+
+  object-fit: contain; /* 👈 clave para escudos */
+
+  padding: 6px;
+
+  transition: transform 0.25s ease;
+}
+
+.card:hover .logo {
+  transform: scale(1.05);
+}
 .page {
   min-height: 100vh;
   background: #f8fafc; /* blanco suave tipo dashboard */
@@ -289,12 +321,18 @@ onMounted(() => {
 }
 
 .logo {
-  width: 100%;
-  height: 100%;
+  width: 70px;
+  height: 70px;
 
   object-fit: cover;
+
   border-radius: 12px;
+
   border: 1px solid #e2e8f0;
+
+  background: #fff;
+
+  flex-shrink: 0;
 }
 
 .info h3 {
