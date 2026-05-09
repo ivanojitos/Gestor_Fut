@@ -26,7 +26,6 @@
       <div class="grid">
         <div v-for="eq in equipos" :key="eq.Id" class="card">
           <div class="card-top">
-            <img :src="getLogo(eq.Logo)" class="logo" />
             <img
                   v-if="eq.Logo"
                   :src="API + eq.Logo"
@@ -290,10 +289,11 @@ onMounted(() => {
 }
 
 .logo {
-  width: 60px;
-  height: 60px;
-  border-radius: 12px;
+  width: 100%;
+  height: 100%;
+
   object-fit: cover;
+  border-radius: 12px;
   border: 1px solid #e2e8f0;
 }
 
