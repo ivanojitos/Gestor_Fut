@@ -87,6 +87,7 @@
         <div class="table-header">
           <span>#</span>
           <span>Equipo</span>
+          <span>PJ</span>
           <span>PG</span>
           <span>PP</span>
           <span>GF</span>
@@ -100,7 +101,8 @@
           class="row"
           v-for="(team, index) in currentData.teams"
           :key="team.id"
-          @click="goToEquipo(team)"
+          @click="goToEquipo(team, index)"
+          :data-pj="team.played"
           :data-pg="team.wins"
           :data-pp="team.losses"
           :data-gf="team.gf"
@@ -116,7 +118,9 @@
             <img :src="team.logo" />
             <span>{{ team.name }}</span>
           </div>
-
+          <div class="stat">
+            {{ team.played }}
+          </div>
           <div class="stat">
             {{ team.wins }}
           </div>
@@ -159,20 +163,21 @@ import axios from "axios";
 
 const API =
   "https://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net";
-// "http://192.168.11.28:8080";
+  // "http://192.168.11.28:8080";
 // "http://192.168.100.228:8080";
 
 const router = useRouter();
 const tabla = ref(null);
 const user = JSON.parse(localStorage.getItem("user"));
 
-const goToEquipo = (team) => {
-  console.log(team);
-
+const goToEquipo = (team, index) => {
   router.push({
     name: "EquipoDetalle",
     params: {
       id: team.id,
+    },
+    query: {
+      position: index + 1,
     },
   });
 };
@@ -192,56 +197,78 @@ const fetchTabla = async () => {
 
     const data = res.data.data;
 
-    tabla.value = {
-      teams: data.teams.map((t) => ({
+    // 🔥 ordenar equipos
+    const teamsSorted = data.teams
+      .map((t) => ({
         id: Number(t.Id),
         name: t.Nombre,
         logo: encodeURI(API + t.Logo),
 
-        wins: t.PG || 0,
-        losses: t.PP || 0,
+        wins: Number(t.PG) || 0,
+        losses: Number(t.PP) || 0,
 
-        gf: t.GF || 0,
-        gc: t.GC || 0,
+        played: (Number(t.PG) || 0) + (Number(t.PP) || 0),
 
-        difference: t.Diferencia || 0,
+        gf: Number(t.GF) || 0,
+        gc: Number(t.GC) || 0,
 
-        points: t.PTS || 0,
-      })),
+        difference: Number(t.Diferencia) || 0,
 
-      mvp: data.mvp
-        ? {
-            name: data.mvp.NombreCompleto,
-            photo: encodeURI(API + data.mvp.Foto),
-          }
-        : null,
+        points: Number(t.PTS) || 0,
+      }))
+      .sort((a, b) => {
+        if (b.points !== a.points) {
+          return b.points - a.points;
+        }
 
-      scorer: data.scorer
-        ? {
-            name: data.scorer.NombreCompleto,
-            photo: encodeURI(API + data.scorer.Foto),
-            goals: data.scorer.Goles,
-          }
-        : null,
+        if (b.difference !== a.difference) {
+          return b.difference - a.difference;
+        }
 
-      keeper: data.keeper
-        ? {
-            name: data.keeper.NombreCompleto,
-            photo: encodeURI(API + data.keeper.Foto),
-          }
-        : null,
+        if (b.gf !== a.gf) {
+          return b.gf - a.gf;
+        }
+
+        if (a.played !== b.played) {
+          return a.played - b.played;
+        }
+
+        return a.losses - b.losses;
+      });
+
+    // 🔥 ACTUALIZAR POSICIONES EN DB
+    for (let i = 0; i < teamsSorted.length; i++) {
+      const team = teamsSorted[i];
+
+      await axios.put(`${API}/api/equipos/${team.id}/posicion`, {
+        Posicion: i + 1,
+      });
+    }
+
+    // 🔥 guardar tabla
+    tabla.value = {
+      teams: teamsSorted,
     };
   } catch (err) {
     console.error("ERROR TABLA:", err);
   }
 };
-
 const currentData = computed(() => tabla.value);
 
 onMounted(fetchTabla);
 </script>
 
 <style scoped>
+.table {
+  width: 100%;
+  max-width: 1200px;
+
+  margin: 0 auto;
+
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
 /* =========================
    TABLE HEADER
 ========================= */
@@ -250,7 +277,7 @@ onMounted(fetchTabla);
   grid-template-columns:
     70px
     minmax(220px, 1fr)
-    repeat(5, 70px)
+    repeat(7, 70px)
     90px;
 
   align-items: center;
@@ -280,10 +307,10 @@ onMounted(fetchTabla);
   display: grid;
 
   grid-template-columns:
-    70px
-    minmax(220px, 1fr)
-    repeat(5, 70px)
-    90px;
+    60px
+    minmax(180px, 1fr)
+    repeat(7, 70px)
+    70px;
 
   align-items: center;
 
@@ -416,10 +443,10 @@ onMounted(fetchTabla);
   .table-header,
   .row {
     grid-template-columns:
-      60px
-      minmax(180px, 1fr)
-      repeat(5, 60px)
-      70px;
+      70px
+      minmax(220px, 1fr)
+      repeat(7, 70px)
+      90px;
   }
 
   .team img {
@@ -477,9 +504,9 @@ onMounted(fetchTabla);
 
   /* MOBILE EXTRA INFO */
   .row::after {
-    content: "PG: " attr(data-pg) " | PP: " attr(data-pp) " | GF: "
-      attr(data-gf) " | GC: " attr(data-gc) " | DIF: " attr(data-dif) " | PTS: "
-      attr(data-pts);
+    content: "PJ: " attr(data-pj) " | PG: " attr(data-pg) " | PP: "
+      attr(data-pp) " | GF: " attr(data-gf) " | GC: " attr(data-gc) " | DIF: "
+      attr(data-dif) " | PTS: " attr(data-pts);
 
     grid-column: span 3;
 
@@ -884,8 +911,11 @@ onMounted(fetchTabla);
   }
 
   .row {
-    grid-template-columns: 60px 1fr auto;
-    padding: 16px;
+    grid-template-columns:
+      60px
+      minmax(180px, 1fr)
+      repeat(5, 60px)
+      70px;
   }
 
   .team img {

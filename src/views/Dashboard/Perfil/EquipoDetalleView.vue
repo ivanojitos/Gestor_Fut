@@ -97,15 +97,16 @@
 <script setup>
 import { ref, onMounted, computed } from "vue";
 import axios from "axios";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 
 const API =
   "https://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net";
-// "http://192.168.11.28:8080";
+  // "http://192.168.11.28:8080";
 // "http://192.168.100.228:8080";
 
 const router = useRouter();
-
+const route = useRoute();
+const idEquipo = route.params.id;
 const storedUser = JSON.parse(localStorage.getItem("user"));
 
 const team = ref({
@@ -121,6 +122,7 @@ const team = ref({
 
 const players = ref([]);
 const matches = ref([]);
+let position = route.query.position;
 
 const goToGameMode = () => {
   router.push({
@@ -206,16 +208,30 @@ const lastMatches = computed(() => {
 ========================= */
 const fetchData = async () => {
   try {
-    if (!storedUser) return;
+    // 🔥 obtener todos los equipos
+    const resEquipos = await axios.get(`${API}/api/equipos`);
+    let equipo = null;
 
-    const resEquipo = await axios.get(
-      `${API}/api/equipos/jugador/${storedUser.Id}`,
-    );
+    //  si viene por params
+    if (idEquipo) {
+      equipo = resEquipos.data.data.find(
+        (e) => Number(e.Id) === Number(idEquipo),
+      );
+    }
 
-    const equipo = resEquipo.data.data?.[0];
+    //  fallback desde usuario
+    if (!equipo && storedUser?.Id_Equipo) {
+      equipo = resEquipos.data.data.find(
+        (e) => Number(e.Id) === Number(storedUser.Id_Equipo),
+      );
+    }
+
+    position = equipo.Posicion;
+
 
     if (!equipo) return;
 
+    // 🔥 llenar info
     team.value = {
       id: equipo.Id,
       name: equipo.Nombre,
@@ -224,9 +240,11 @@ const fetchData = async () => {
       categoria: equipo.Categoria || "Sin categoría",
       wins: equipo.PG || 0,
       losses: equipo.PP || 0,
-      position: 1,
+      // 🔥 posición real desde tabla
+      position: Number(position) || 0,
     };
 
+    // 🔥 jugadores
     const resJugadores = await axios.get(
       `${API}/api/equipos/${equipo.Id}/jugadores`,
     );

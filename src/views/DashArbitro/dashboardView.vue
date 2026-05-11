@@ -35,7 +35,10 @@
 
         <!-- TEAMS -->
         <div class="matchTeams">
-          <div class="teamName">
+          <div
+            class="teamName clickableTeam"
+            @click.stop="goToTeam(m.Id_Equipo_local, m.position)"
+          >
             {{ m.home }}
           </div>
 
@@ -47,7 +50,10 @@
           <!-- 🔥 SI NO -->
           <div v-else class="vsBadge">VS</div>
 
-          <div class="teamName">
+          <div
+            class="teamName clickableTeam"
+            @click.stop="goToTeam(m.Id_Equipo_visitante, m.positionAway)"
+          >
             {{ m.away }}
           </div>
         </div>
@@ -280,13 +286,17 @@
 <script setup>
 import { ref, computed, onMounted } from "vue";
 import axios from "axios";
+import { useRouter, useRoute } from "vue-router";
 
 const API =
   "https://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net";
-// "http://192.168.11.28:8080";
+  // "http://192.168.11.28:8080";
 // "http://192.168.100.228:8080";
 
 window.API = API;
+const router = useRouter();
+const route = useRoute();
+const position = route.query.position;
 
 defineExpose({
   API,
@@ -306,6 +316,18 @@ const openModal = ({ title, message, type = "success" }) => {
     message,
     type,
   };
+};
+
+
+
+
+const goToTeam = (id, position) => {
+  router.push({
+    path: `/dashboard/equipo/${id}`,
+    query: {
+      position,
+    },
+  });
 };
 
 const referee = ref({
@@ -392,6 +414,10 @@ const fetchMatches = async () => {
       Id_Equipo_local: m.Id_Equipo_local,
       Id_Equipo_visitante: m.Id_Equipo_visitante,
 
+      // 🔥 POSICIONES
+      position: m.Posicion_Local,
+      positionAway: m.Posicion_Visitante,
+
       home: m.local,
       away: m.visitante,
 
@@ -410,6 +436,9 @@ const fetchMatches = async () => {
       playersHome: [],
       playersAway: [],
     }));
+
+
+    
   } catch (error) {
     openModal({
       title: "Ups",
@@ -460,8 +489,6 @@ const selectMatch = async (m) => {
     }));
 
     selectedMatch.value = m;
-
-    console.log(selectedMatch.value);
   } catch (error) {
     openModal({
       title: "Ups",
@@ -833,6 +860,15 @@ onMounted(async () => {
 </script>
 
 <style scoped>
+.clickableTeam {
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.clickableTeam:hover {
+  color: #22c55e;
+  transform: scale(1.03);
+}
 .globalModal {
   position: fixed;
   inset: 0;
