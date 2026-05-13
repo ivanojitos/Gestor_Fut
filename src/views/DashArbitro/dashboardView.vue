@@ -60,7 +60,7 @@
 
         <!-- BOTTOM -->
         <div class="matchBottom">
-          <span class="stadium"> 🏟 {{ m.stadium }} </span>
+          <span class="stadium"> Cancha {{ m.stadium }} </span>
         </div>
 
         <div class="extraInfo">
@@ -289,9 +289,9 @@ import axios from "axios";
 import { useRouter, useRoute } from "vue-router";
 
 const API =
-  "https://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net";
+   "https://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net";
   // "http://192.168.11.28:8080";
-// "http://192.168.100.228:8080";
+  // "http://192.168.100.228:8080";
 
 window.API = API;
 const router = useRouter();
@@ -317,9 +317,6 @@ const openModal = ({ title, message, type = "success" }) => {
     type,
   };
 };
-
-
-
 
 const goToTeam = (id, position) => {
   router.push({
@@ -403,6 +400,8 @@ const fetchMatches = async () => {
 
     const res = await axios.get(`${API}/api/partidos/arbitro/${user.Id}`);
 
+    console.log(res.data.data);
+    
     matches.value = res.data.data.map((m) => ({
       id: m.Id,
 
@@ -427,7 +426,7 @@ const fetchMatches = async () => {
       date: formatDate(m.Fecha_Juego),
       time: formatTime(m.Hora_Juego),
 
-      stadium: m.Cancha || "Sin cancha",
+      stadium: m.Id_Cancha || "Sin cancha",
 
       referee: m.Arbitro,
 

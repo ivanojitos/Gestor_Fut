@@ -5,6 +5,11 @@ export default [
     component: () => import("@/views/Dashboard/Perfil/EquipoDetalleView.vue"),
   },
   {
+    path: "/equipo/:id",
+    name: "EquipoDetalle1",
+     component: () => import("@/views/Dashboard/Perfil/EquipoDetalleView.vue"),
+  },
+  {
     path: "/modoJuego",
     name: "ModoJuego",
     component: () => import("@/views/Dashboard/Perfil/ModoJuegoView.vue"),

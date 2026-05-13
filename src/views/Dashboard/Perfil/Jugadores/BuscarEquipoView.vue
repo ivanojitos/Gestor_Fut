@@ -36,6 +36,16 @@
               <span class="players">
                 👥 {{ eq.TotalJugadores }} jugadores
               </span>
+              <div
+                class="position-badge"
+                :class="{
+                  first: eq.Posicion === 1,
+                  second: eq.Posicion === 2,
+                  third: eq.Posicion === 3,
+                }"
+              >
+                🏆 Lugar #{{ eq.Posicion }}
+              </div>
             </div>
           </div>
 
@@ -67,9 +77,9 @@ import { ref, onMounted } from "vue";
 import axios from "axios";
 
 const API =
-  "https://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net";
-// "http://192.168.11.28:8080";
-// "http://192.168.100.228:8080";
+   "https://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net";
+  // "http://192.168.11.28:8080";
+  // "http://192.168.100.228:8080";
 
 /* =======================
    ESTADO
@@ -116,6 +126,8 @@ const fetchEquipos = async () => {
         Id_Categoria: selectedCategoria.value,
       },
     });
+
+    console.log(res.data.data);
 
     equipos.value = res.data.data || [];
   } catch (err) {
@@ -204,6 +216,36 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.position-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  margin-top: 8px;
+  padding: 6px 12px;
+
+  background: linear-gradient(135deg, #facc15, #eab308);
+  color: #78350f;
+
+  border-radius: 999px;
+
+  font-size: 13px;
+  font-weight: 800;
+
+  box-shadow: 0 4px 10px rgba(234, 179, 8, 0.2);
+}
+.position-badge.first {
+  background: linear-gradient(135deg, #facc15, #eab308);
+}
+
+.position-badge.second {
+  background: linear-gradient(135deg, #cbd5e1, #94a3b8);
+  color: #0f172a;
+}
+
+.position-badge.third {
+  background: linear-gradient(135deg, #d97706, #b45309);
+}
 .logo-container {
   width: 70px;
   height: 70px;

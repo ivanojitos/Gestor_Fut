@@ -162,9 +162,9 @@ import { useRouter } from "vue-router";
 import axios from "axios";
 
 const API =
-  "https://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net";
+   "https://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net";
   // "http://192.168.11.28:8080";
-// "http://192.168.100.228:8080";
+  // "http://192.168.100.228:8080";
 
 const router = useRouter();
 const tabla = ref(null);
@@ -172,7 +172,7 @@ const user = JSON.parse(localStorage.getItem("user"));
 
 const goToEquipo = (team, index) => {
   router.push({
-    name: "EquipoDetalle",
+    name: "EquipoDetalle1",
     params: {
       id: team.id,
     },

@@ -100,13 +100,15 @@ import axios from "axios";
 import { useRouter, useRoute } from "vue-router";
 
 const API =
-  "https://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net";
+   "https://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net";
   // "http://192.168.11.28:8080";
-// "http://192.168.100.228:8080";
+  // "http://192.168.100.228:8080";
 
 const router = useRouter();
 const route = useRoute();
+
 const idEquipo = route.params.id;
+
 const storedUser = JSON.parse(localStorage.getItem("user"));
 
 const team = ref({
@@ -225,9 +227,7 @@ const fetchData = async () => {
         (e) => Number(e.Id) === Number(storedUser.Id_Equipo),
       );
     }
-
     position = equipo.Posicion;
-
 
     if (!equipo) return;
 
