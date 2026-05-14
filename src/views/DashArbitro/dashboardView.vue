@@ -2,7 +2,7 @@
   <div class="referee">
     <!-- PERFIL -->
     <section class="profile">
-      <img :src="referee.photo" class="avatar" />
+      <!-- <img :src="referee.photo" class="avatar" /> -->
 
       <div class="info">
         <h1>{{ referee.Nombre }}</h1>
@@ -289,9 +289,9 @@ import axios from "axios";
 import { useRouter, useRoute } from "vue-router";
 
 const API =
-   "https://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net";
-  // "http://192.168.11.28:8080";
-  // "http://192.168.100.228:8080";
+  "https://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net";
+// "http://192.168.11.28:8080";
+// "http://192.168.100.228:8080";
 
 window.API = API;
 const router = useRouter();
@@ -401,7 +401,7 @@ const fetchMatches = async () => {
     const res = await axios.get(`${API}/api/partidos/arbitro/${user.Id}`);
 
     console.log(res.data.data);
-    
+
     matches.value = res.data.data.map((m) => ({
       id: m.Id,
 
@@ -435,9 +435,6 @@ const fetchMatches = async () => {
       playersHome: [],
       playersAway: [],
     }));
-
-
-    
   } catch (error) {
     openModal({
       title: "Ups",
@@ -859,610 +856,516 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-.clickableTeam {
+/* =========================================================
+BASE
+========================================================= */
+
+* {
+  box-sizing: border-box;
+}
+
+.referee {
+  min-height: 100vh;
+  padding: 24px;
+  background:
+    radial-gradient(
+      circle at top left,
+      rgba(34, 197, 94, 0.08),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at bottom right,
+      rgba(59, 130, 246, 0.08),
+      transparent 30%
+    ),
+    linear-gradient(180deg, #f1f5f9, #e2e8f0);
+
+  font-family: "Inter", sans-serif;
+  color: #0f172a;
+}
+
+/* =========================================================
+PROFILE
+========================================================= */
+
+.profile {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  gap: 20px;
+
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(14px);
+
+  border: 1px solid rgba(255, 255, 255, 0.6);
+
+  border-radius: 28px;
+
+  padding: 24px;
+
+  box-shadow:
+    0 10px 30px rgba(15, 23, 42, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+
+  margin-bottom: 30px;
+}
+
+.avatar {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  object-fit: cover;
+
+  border: 4px solid #22c55e;
+
+  box-shadow: 0 10px 25px rgba(34, 197, 94, 0.25);
+}
+
+.info h1 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+.info p {
+  margin-top: 6px;
+  color: #64748b;
+  font-size: 14px;
+}
+
+.badge {
+  margin-left: auto;
+
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+
+  color: white;
+
+  padding: 10px 18px;
+
+  border-radius: 999px;
+
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 1px;
+
+  box-shadow: 0 10px 25px rgba(34, 197, 94, 0.25);
+}
+
+.editBtn {
+  width: 44px;
+  height: 44px;
+
+  border-radius: 14px;
+  border: none;
+
+  background: white;
+
   cursor: pointer;
-  transition: 0.2s;
+
+  font-size: 16px;
+
+  transition: 0.25s ease;
+
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+.editBtn:hover {
+  transform: translateY(-3px) rotate(8deg);
+  background: #0f172a;
+  color: white;
+}
+
+/* =========================================================
+SECTION TITLE
+========================================================= */
+
+.sectionTitle {
+  font-size: 22px;
+  font-weight: 800;
+
+  margin-bottom: 20px;
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* =========================================================
+MATCH CARD
+========================================================= */
+
+.matchCardPro {
+  position: relative;
+
+  overflow: hidden;
+
+  background: rgba(255, 255, 255, 0.78);
+
+  backdrop-filter: blur(10px);
+
+  border: 1px solid rgba(255, 255, 255, 0.5);
+
+  border-radius: 28px;
+
+  padding: 22px;
+
+  margin-bottom: 18px;
+
+  transition: 0.35s ease;
+
+  cursor: pointer;
+
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
+}
+
+.matchCardPro::before {
+  content: "";
+
+  position: absolute;
+
+  top: 0;
+  left: 0;
+
+  width: 100%;
+  height: 5px;
+
+  background: linear-gradient(90deg, #22c55e, #16a34a, #3b82f6);
+}
+
+.matchCardPro:hover {
+  transform: translateY(-6px);
+
+  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.12);
+}
+
+/* =========================================================
+TOP INFO
+========================================================= */
+
+.matchTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  margin-bottom: 20px;
+
+  color: #64748b;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+/* =========================================================
+TEAMS
+========================================================= */
+
+.matchTeams {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+
+  align-items: center;
+
+  gap: 15px;
+}
+
+.teamName {
+  font-size: 20px;
+  font-weight: 800;
+
+  text-align: center;
+
+  transition: 0.25s ease;
 }
 
 .clickableTeam:hover {
   color: #22c55e;
-  transform: scale(1.03);
+  transform: scale(1.04);
 }
-.globalModal {
-  position: fixed;
-  inset: 0;
-  background: rgba(15, 23, 42, 0.6);
+
+.vsBadge,
+.scorePlayed {
+  min-width: 85px;
+
   display: flex;
   align-items: center;
   justify-content: center;
-  backdrop-filter: blur(6px);
-  z-index: 9999;
-}
 
-.globalModalCard {
-  width: 320px;
-  background: white;
-  border-radius: 16px;
-  padding: 18px;
-  text-align: center;
-  animation: pop 0.25s ease;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
-}
-
-.globalModalCard.success {
-  border-top: 5px solid #22c55e;
-}
-
-.globalModalCard.error {
-  border-top: 5px solid #ef4444;
-}
-
-.globalModalCard.info {
-  border-top: 5px solid #3b82f6;
-}
-
-.globalModalCard button {
-  margin-top: 12px;
-  padding: 10px 14px;
-  border-radius: 10px;
-  border: none;
-  background: #0f172a;
-  color: white;
-  cursor: pointer;
-}
-
-@keyframes pop {
-  from {
-    transform: scale(0.9);
-    opacity: 0;
-  }
-  to {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-/* =========================================
-🔥 MARCADOR PARTIDO JUGADO
-========================================= */
-
-.scorePlayed {
-  background: #334155;
-
-  color: white;
-
-  padding: 8px 14px;
+  padding: 12px 18px;
 
   border-radius: 999px;
 
-  font-weight: bold;
-
   font-size: 14px;
+  font-weight: 900;
 
-  min-width: 70px;
-
-  text-align: center;
+  letter-spacing: 1px;
 }
 
-/* =========================================
-🔥 PARTIDO YA JUGADO
-========================================= */
-
-.playedCard {
-  background: #d1d5db !important;
-  opacity: 0.75;
-  cursor: not-allowed;
-  filter: grayscale(0.4);
-}
-
-.playedCard:hover {
-  transform: none !important;
-  box-shadow: none !important;
-}
-
-.playedBadge {
-  margin-top: 12px;
-
-  background: #475569;
-
-  color: white;
-
-  text-align: center;
-
-  padding: 8px;
-
-  border-radius: 10px;
-
-  font-size: 12px;
-
-  font-weight: bold;
-}
-
-.scorersGrid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-
-  margin: 14px 0;
-}
-
-.scorersCard {
-  background: #f8fafc;
-  padding: 12px;
-  border-radius: 12px;
-  border: 1px solid #e2e8f0;
-}
-
-.scorersCard h3 {
-  margin-bottom: 10px;
-  font-size: 14px;
-}
-
-.scorerItem {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-
-  padding: 8px;
-  margin-bottom: 6px;
-
-  background: white;
-  border-radius: 8px;
-}
-
-.emptyScorer {
-  color: #64748b;
-  font-size: 13px;
-}
-
-@media (max-width: 768px) {
-  .scorersGrid {
-    grid-template-columns: 1fr;
-  }
-}
-.eventCard {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-
-  padding: 10px;
-  margin-bottom: 8px;
-
-  background: white;
-  border-radius: 10px;
-
-  border: 1px solid #e2e8f0;
-}
-
-.eventInfo {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-
-  flex-wrap: wrap;
-}
-
-.eventMinute {
-  font-weight: bold;
-  color: #0f172a;
-  min-width: 35px;
-}
-
-.eventIcon {
-  font-size: 18px;
-}
-
-.eventPlayer {
-  font-size: 14px;
-  font-weight: 600;
-  color: #334155;
-}
-
-/* MOBILE */
-@media (max-width: 600px) {
-  .eventCard {
-    padding: 8px;
-  }
-
-  .eventPlayer {
-    font-size: 12px;
-  }
-
-  .eventIcon {
-    font-size: 15px;
-  }
-}
-.playerInfo {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.playerAvatar {
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid #22c55e;
-}
-.extraInfo {
-  margin-top: 10px;
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  font-size: 13px;
-  color: #475569;
-  font-weight: 600;
-}
-/* BOTÓN EDITAR */
-.editBtn {
-  margin-left: auto;
-  background: #e0f2fe;
-  border: none;
-  padding: 8px 10px;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: 0.2s;
-  font-size: 14px;
-}
-
-.editBtn:hover {
-  background: #0284c7;
-  color: white;
-  transform: scale(1.1);
-}
-
-/* MODAL EDIT */
-.editCard {
-  max-width: 400px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.editCard input {
-  padding: 10px;
-  border-radius: 8px;
-  border: 1px solid #e5e7eb;
-}
-
-/* BOTONES */
-.editActions {
-  display: flex;
-  gap: 10px;
-  margin-top: 10px;
-}
-
-.cancelBtn {
-  flex: 1;
-  background: #ef4444;
-  color: white;
-  border: none;
-  border-radius: 10px;
-}
-
-.cancelBtn:hover {
-  background: #dc2626;
-}
-/* SECTION TITLE */
-.sectionTitle {
-  font-size: 18px;
-  font-weight: 700;
-  margin-bottom: 15px;
-  color: #0f172a;
-}
-
-/* CARD PRO */
-.matchCardPro {
-  background: linear-gradient(135deg, #ffffff, #f8fafc);
-  border-radius: 18px;
-  padding: 16px;
-  margin-bottom: 14px;
-  cursor: pointer;
-  border: 1px solid #e2e8f0;
-  transition: all 0.25s ease;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
-}
-
-.matchCardPro:hover {
-  transform: translateY(-5px) scale(1.01);
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
-}
-
-/* TOP */
-.matchTop {
-  display: flex;
-  justify-content: space-between;
-  font-size: 12px;
-  color: #64748b;
-  margin-bottom: 10px;
-}
-
-/* TEAMS */
-.matchTeams {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  margin: 10px 0;
-}
-
-.teamName {
-  flex: 1;
-  text-align: center;
-  font-size: 15px;
-  font-weight: 700;
-  color: #0f172a;
-}
-
-/* VS BADGE */
 .vsBadge {
   background: linear-gradient(135deg, #22c55e, #16a34a);
   color: white;
-  font-size: 12px;
-  font-weight: 700;
-  padding: 6px 10px;
-  border-radius: 999px;
-  box-shadow: 0 4px 10px rgba(34, 197, 94, 0.3);
+
+  box-shadow: 0 10px 25px rgba(34, 197, 94, 0.3);
 }
 
-/* BOTTOM */
+.scorePlayed {
+  background: #0f172a;
+  color: white;
+}
+
+/* =========================================================
+BOTTOM
+========================================================= */
+
 .matchBottom {
+  margin-top: 22px;
+
   display: flex;
   justify-content: center;
-  margin-top: 10px;
-  font-size: 12px;
-  color: #475569;
 }
 
 .stadium {
-  background: #f1f5f9;
-  padding: 6px 10px;
-  border-radius: 8px;
+  background: #f8fafc;
+
+  padding: 10px 14px;
+
+  border-radius: 14px;
+
+  font-size: 13px;
+  font-weight: 700;
+
+  border: 1px solid #e2e8f0;
 }
 
-/* 📱 RESPONSIVE */
-@media (max-width: 600px) {
-  .teamName {
-    font-size: 13px;
-  }
+.extraInfo {
+  margin-top: 16px;
 
-  .vsBadge {
-    font-size: 10px;
-    padding: 5px 8px;
-  }
-
-  .matchCardPro {
-    padding: 14px;
-  }
-}
-/* BOTÓN CERRAR MODAL PRO */
-.closeBtn {
-  background: rgba(239, 68, 68, 0.1);
-  color: #ef4444;
-  border: none;
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
-  font-size: 16px;
-  cursor: pointer;
   display: flex;
-  align-items: center;
   justify-content: center;
-  transition: all 0.25s ease;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.extraInfo span {
+  background: white;
+
+  border: 1px solid #e2e8f0;
+
+  padding: 8px 12px;
+
+  border-radius: 999px;
+
+  font-size: 12px;
+  font-weight: 700;
+
+  color: #475569;
+}
+
+/* =========================================================
+PLAYED
+========================================================= */
+
+.playedCard {
+  opacity: 0.82;
+  filter: grayscale(0.25);
+}
+
+.playedBadge {
+  margin-top: 16px;
+
+  text-align: center;
+
+  background: #0f172a;
+  color: white;
+
+  padding: 12px;
+
+  border-radius: 14px;
+
+  font-size: 12px;
+  font-weight: 800;
+}
+
+/* =========================================================
+MODAL
+========================================================= */
+
+.modal {
+  position: fixed;
+  inset: 0;
+
+  z-index: 9999;
+
+  background: rgba(15, 23, 42, 0.6);
+
+  backdrop-filter: blur(10px);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  padding: 20px;
+}
+
+.modalCard {
+  width: 100%;
+  max-width: 1200px;
+
+  max-height: 92vh;
+
+  overflow-y: auto;
+
+  border-radius: 30px;
+
+  padding: 24px;
+
+  background: rgba(255, 255, 255, 0.95);
+
+  backdrop-filter: blur(20px);
+
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.2);
+
+  animation: modalIn 0.35s ease;
+}
+
+/* =========================================================
+MODAL HEADER
+========================================================= */
+
+.matchHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  margin-bottom: 20px;
+}
+
+.matchHeader h2 {
+  font-size: 24px;
+  font-weight: 800;
+}
+
+.closeBtn {
+  width: 42px;
+  height: 42px;
+
+  border: none;
+  border-radius: 14px;
+
+  background: #fee2e2;
+
+  cursor: pointer;
+
+  transition: 0.25s ease;
 }
 
 .closeBtn:hover {
   background: #ef4444;
   color: white;
-  transform: rotate(90deg) scale(1.1);
+
+  transform: rotate(90deg);
 }
 
-.closeBtn:active {
-  transform: scale(0.9);
-}
+/* =========================================================
+SCOREBOARD
+========================================================= */
 
-/* GENERAL */
-.referee {
-  background: linear-gradient(180deg, #f1f5f9, #e2e8f0);
-  padding: 25px;
-  font-family: "Inter", sans-serif;
-  min-height: 100vh;
-}
-
-/* PROFILE */
-.profile {
-  display: flex;
-  align-items: center;
-  gap: 18px;
-  background: white;
-  padding: 18px;
-  border-radius: 18px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
-  margin-bottom: 25px;
-  flex-wrap: wrap;
-}
-
-.avatar {
-  width: 75px;
-  height: 75px;
-  border-radius: 50%;
-  border: 3px solid #22c55e;
-}
-
-.info h1 {
-  margin: 0;
-  font-size: 20px;
-  font-weight: 600;
-}
-
-.info p {
-  margin: 2px 0 0;
-  font-size: 13px;
-  color: #64748b;
-}
-
-.badge {
-  margin-left: auto;
-  background: linear-gradient(135deg, #22c55e, #16a34a);
-  color: white;
-  padding: 8px 12px;
-  border-radius: 999px;
-  font-size: 12px;
-  font-weight: 600;
-}
-
-/* MATCH */
-.matchCard {
-  background: white;
-  padding: 16px;
-  border-radius: 16px;
-  margin-bottom: 12px;
-  cursor: pointer;
-  border: 1px solid #e2e8f0;
-  transition: all 0.25s ease;
-  position: relative;
-  overflow: hidden;
-}
-
-.matchCard:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
-}
-
-.matches h2 {
-  margin-bottom: 12px;
-  font-size: 16px;
-  font-weight: 600;
-  color: #0f172a;
-}
-
-.teams {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-weight: 600;
-  font-size: 15px;
-  margin-bottom: 8px;
-}
-
-.teams b {
-  color: #22c55e;
-  font-size: 13px;
-}
-
-/* META */
-.meta {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-  font-size: 12px;
-  color: #64748b;
-}
-
-.meta span {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-/* MODAL */
-.modal {
-  position: fixed;
-  inset: 0;
-  background: rgba(15, 23, 42, 0.6);
-  backdrop-filter: blur(6px);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-/* MODAL CARD */
-.modalCard {
-  background: white;
-  width: 95%;
-  max-width: 1100px;
-  border-radius: 16px;
-  padding: 15px;
-  max-height: 90vh;
-  overflow-y: auto;
-}
-
-/* HEADER */
-.matchHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 10px;
-}
-
-.matchHeader h2 {
-  font-size: 18px;
-  margin: 0;
-}
-
-/* SCORE */
 .scoreboard {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+
+  color: white;
+
+  border-radius: 24px;
+
+  padding: 24px;
+
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: linear-gradient(90deg, #22c55e, #16a34a);
-  color: white;
-  padding: 15px;
-  border-radius: 12px;
-  margin-top: 10px;
+
+  margin-bottom: 15px;
+
+  box-shadow: 0 20px 40px rgba(34, 197, 94, 0.25);
 }
 
 .score {
-  font-size: 36px;
-  font-weight: bold;
+  font-size: 58px;
+  font-weight: 900;
 }
 
 .minute {
   text-align: center;
-  margin: 8px 0;
-  font-size: 14px;
+
+  font-size: 15px;
+  font-weight: 700;
+
   color: #64748b;
+
+  margin-bottom: 20px;
 }
 
-/* GRID */
-.teamsGrid {
+/* =========================================================
+GRID
+========================================================= */
+
+.teamsGrid,
+.timelineGrid,
+.scorersGrid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+
+  margin-top: 18px;
 }
 
-/* TEAM CARD */
-.teamCard {
-  background: white;
-  border-radius: 14px;
-  padding: 12px;
+/* =========================================================
+CARDS
+========================================================= */
+
+.teamCard,
+.timeline,
+.scorersCard {
+  background: #ffffff;
+
+  border-radius: 24px;
+
+  padding: 18px;
+
   border: 1px solid #e2e8f0;
+
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.04);
 }
 
-/* HEADER TEAM */
 .teamHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 10px;
+
+  margin-bottom: 16px;
 }
 
 .teamHeader h3 {
-  font-size: 14px;
   margin: 0;
+
+  font-size: 16px;
+  font-weight: 800;
 }
 
 .teamStats {
-  font-size: 11px;
+  font-size: 12px;
   color: #64748b;
 }
 
-/* PLAYERS */
+/* =========================================================
+PLAYERS
+========================================================= */
+
 .playersList {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  max-height: 280px;
+  gap: 10px;
+
+  max-height: 320px;
   overflow-y: auto;
 }
 
@@ -1470,103 +1373,127 @@ onMounted(async () => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 10px;
-  border-radius: 10px;
+
+  padding: 10px;
+
+  border-radius: 16px;
+
   background: #f8fafc;
-  transition: 0.2s;
+
+  transition: 0.25s ease;
 }
 
 .playerRow:hover {
-  background: #eef2f7;
-  transform: scale(1.01);
+  transform: scale(1.015);
+  background: #eef2ff;
+}
+
+.playerInfo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.playerAvatar {
+  width: 42px;
+  height: 42px;
+
+  border-radius: 50%;
+
+  object-fit: cover;
+
+  border: 3px solid #22c55e;
 }
 
 .playerName {
-  font-size: 13px;
-  font-weight: 500;
+  font-size: 14px;
+  font-weight: 700;
 }
 
-/* BOTONES */
+/* =========================================================
+BUTTONS
+========================================================= */
+
 .actionsPro {
   display: flex;
-  gap: 5px;
+  gap: 8px;
 }
 
 .btn {
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
+
   border: none;
-  border-radius: 8px;
+  border-radius: 12px;
+
   cursor: pointer;
-  font-size: 13px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: 0.2s;
+
+  transition: 0.2s ease;
+
+  font-size: 14px;
 }
 
-.btn.goal {
+.btn:hover {
+  transform: scale(1.15);
+}
+
+.goal {
   background: #dcfce7;
 }
-.btn.goal:hover {
-  background: #22c55e;
-  color: white;
-  transform: scale(1.15);
-}
 
-.btn.yellow {
+.yellow {
   background: #fef9c3;
 }
-.btn.yellow:hover {
-  background: #eab308;
-  color: white;
-  transform: scale(1.15);
-}
 
-.btn.red {
+.red {
   background: #fee2e2;
 }
-.btn.red:hover {
-  background: #ef4444;
-  color: white;
-  transform: scale(1.15);
-}
 
-/* TIMELINE */
-.timelineGrid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin-top: 10px;
-}
+/* =========================================================
+EVENTS
+========================================================= */
 
-.timeline {
-  background: #f8fafc;
-  padding: 10px;
-  border-radius: 10px;
-}
-
-.event {
+.eventCard {
   display: flex;
-  gap: 8px;
-  font-size: 13px;
+  justify-content: space-between;
   align-items: center;
+
+  padding: 12px;
+
+  margin-bottom: 10px;
+
+  border-radius: 16px;
+
+  background: #f8fafc;
 }
 
-.min {
-  font-weight: bold;
+.eventInfo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
-/* DELETE */
+.eventIcon {
+  font-size: 20px;
+}
+
+.eventPlayer {
+  font-weight: 700;
+}
+
 .deleteBtn {
-  margin-left: auto;
   border: none;
+
   background: #fee2e2;
-  color: #b91c1c;
-  border-radius: 6px;
-  padding: 4px 6px;
+
+  width: 30px;
+  height: 30px;
+
+  border-radius: 10px;
+
   cursor: pointer;
-  font-size: 12px;
+
+  transition: 0.2s ease;
 }
 
 .deleteBtn:hover {
@@ -1574,434 +1501,189 @@ onMounted(async () => {
   color: white;
 }
 
-/* SAVE */
-.saveBtn {
+/* =========================================================
+SAVE BTN
+========================================================= */
+
+.saveBtn,
+.cancelBtn {
   width: 100%;
-  padding: 12px;
-  margin-top: 10px;
-  background: #22c55e;
-  color: white;
+
   border: none;
-  border-radius: 10px;
-  font-weight: 600;
+
+  padding: 16px;
+
+  border-radius: 16px;
+
+  font-size: 15px;
+  font-weight: 800;
+
   cursor: pointer;
+
+  transition: 0.25s ease;
+}
+
+.saveBtn {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: white;
+
+  box-shadow: 0 12px 25px rgba(34, 197, 94, 0.25);
 }
 
 .saveBtn:hover {
-  background: #16a34a;
+  transform: translateY(-2px);
 }
 
-/* ========================= */
-/* 📱 RESPONSIVE */
-/* ========================= */
-
-@media (max-width: 768px) {
-  .teamsGrid,
-  .timelineGrid {
-    grid-template-columns: 1fr;
-  }
-
-  .profile {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .badge {
-    margin-left: 0;
-  }
+.cancelBtn {
+  background: #ef4444;
+  color: white;
 }
 
-@media (max-width: 600px) {
-  .modal {
-    align-items: flex-end;
-  }
+/* =========================================================
+SCROLL
+========================================================= */
 
-  .modalCard {
-    width: 100%;
-    border-radius: 20px 20px 0 0;
-    animation: slideUp 0.3s ease;
-  }
-
-  .matchHeader h2 {
-    font-size: 14px;
-  }
-
-  .scoreboard {
-    flex-direction: column;
-    text-align: center;
-    gap: 8px;
-  }
-
-  .score {
-    font-size: 28px;
-  }
-
-  .playerRow {
-    padding: 6px;
-  }
-
-  .playerName {
-    font-size: 12px;
-  }
-
-  .btn {
-    width: 28px;
-    height: 28px;
-    font-size: 12px;
-  }
-
-  .event {
-    font-size: 12px;
-    flex-wrap: wrap;
-  }
-
-  .saveBtn {
-    padding: 14px;
-    font-size: 14px;
-    border-radius: 12px;
-  }
+::-webkit-scrollbar {
+  width: 8px;
 }
 
-/* ANIMACIÓN */
-@keyframes slideUp {
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 999px;
+}
+
+/* =========================================================
+ANIMATIONS
+========================================================= */
+
+@keyframes modalIn {
   from {
-    transform: translateY(100%);
+    opacity: 0;
+    transform: scale(0.94) translateY(20px);
   }
+
   to {
-    transform: translateY(0);
+    opacity: 1;
+    transform: scale(1) translateY(0);
   }
 }
 
 /* =========================================================
-   RESPONSIVE PRO TOTAL
+TABLET
 ========================================================= */
 
-/* ---------- DESKTOP GRANDE ---------- */
-.referee {
-  width: 100%;
-  max-width: 1600px;
-  margin: auto;
-}
-
-/* GRID AUTOMÁTICO */
-.teamsGrid,
-.timelineGrid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-}
-
-/* MODAL RESPONSIVE */
-.modalCard {
-  width: 95%;
-  max-width: 1200px;
-  max-height: 92vh;
-  overflow-y: auto;
-  border-radius: 20px;
-}
-
-/* PLAYERS */
-.playersList {
-  max-height: 320px;
-  overflow-y: auto;
-}
-
-/* =========================================================
-   TABLET
-========================================================= */
 @media (max-width: 1024px) {
-  .referee {
-    padding: 18px;
-  }
-
-  .profile {
-    gap: 14px;
-    padding: 16px;
-  }
-
-  .avatar {
-    width: 65px;
-    height: 65px;
-  }
-
-  .info h1 {
-    font-size: 18px;
-  }
-
-  .teamsGrid,
-  .timelineGrid {
-    grid-template-columns: 1fr;
-  }
-
-  .modalCard {
-    width: 96%;
-    padding: 14px;
+  .teamName {
+    font-size: 17px;
   }
 
   .score {
-    font-size: 30px;
+    font-size: 44px;
   }
 
-  .teamName {
-    font-size: 14px;
-  }
-
-  .playerName {
-    font-size: 12px;
-  }
-
-  .btn {
-    width: 30px;
-    height: 30px;
-  }
-
-  .matchCardPro {
-    padding: 14px;
+  .teamsGrid,
+  .timelineGrid,
+  .scorersGrid {
+    grid-template-columns: 1fr;
   }
 }
 
 /* =========================================================
-   CELULAR
+MOBILE
 ========================================================= */
+
 @media (max-width: 768px) {
   .referee {
-    padding: 12px;
+    padding: 14px;
   }
 
-  /* PERFIL */
   .profile {
     flex-direction: column;
-    align-items: center;
     text-align: center;
-    gap: 12px;
+    align-items: center;
   }
 
   .badge {
     margin-left: 0;
-  }
-
-  .editBtn {
-    margin-left: 0;
-  }
-
-  .avatar {
-    width: 75px;
-    height: 75px;
-  }
-
-  .info h1 {
-    font-size: 18px;
-  }
-
-  .info p {
-    font-size: 12px;
-  }
-
-  /* MATCH CARD */
-  .matchCardPro {
-    padding: 14px;
-    border-radius: 16px;
-  }
-
-  .matchTop {
-    flex-direction: column;
-    gap: 4px;
-    align-items: center;
-    text-align: center;
   }
 
   .matchTeams {
-    flex-direction: column;
-    gap: 10px;
+    grid-template-columns: 1fr;
+  }
+
+  .vsBadge,
+  .scorePlayed {
+    margin: auto;
   }
 
   .teamName {
-    font-size: 15px;
+    font-size: 16px;
   }
 
-  .vsBadge {
-    font-size: 11px;
-  }
-
-  .matchBottom {
-    margin-top: 12px;
-  }
-
-  .extraInfo {
-    justify-content: center;
-    text-align: center;
-    font-size: 12px;
-  }
-
-  /* MODAL */
-  .modal {
-    align-items: flex-end;
-  }
-
-  .modalCard {
-    width: 100%;
-    height: 95vh;
-    max-height: 95vh;
-    border-radius: 22px 22px 0 0;
-    padding: 14px;
-    animation: slideUp 0.25s ease;
-  }
-
-  .matchHeader {
-    align-items: center;
-  }
-
-  .matchHeader h2 {
-    font-size: 15px;
-    line-height: 1.4;
-  }
-
-  /* SCOREBOARD */
   .scoreboard {
     flex-direction: column;
     gap: 10px;
+
     text-align: center;
-    padding: 14px;
   }
 
   .score {
-    font-size: 30px;
+    font-size: 42px;
   }
 
-  .minute {
-    font-size: 13px;
+  .matchHeader h2 {
+    font-size: 18px;
   }
 
-  /* GRID */
-  .teamsGrid,
-  .timelineGrid {
-    grid-template-columns: 1fr;
-    gap: 12px;
+  .modal {
+    align-items: flex-end;
+    padding: 0;
   }
 
-  /* TEAM CARD */
-  .teamCard {
-    padding: 10px;
-  }
+  .modalCard {
+    border-radius: 28px 28px 0 0;
 
-  .teamHeader {
-    flex-direction: column;
-    gap: 6px;
-    align-items: flex-start;
-  }
+    max-height: 95vh;
 
-  .teamHeader h3 {
-    font-size: 14px;
-  }
-
-  .teamStats {
-    font-size: 11px;
-  }
-
-  /* PLAYERS */
-  .playersList {
-    max-height: 240px;
-  }
-
-  .playerRow {
-    padding: 8px;
-    gap: 8px;
-  }
-
-  .playerName {
-    font-size: 12px;
-  }
-
-  .actionsPro {
-    gap: 4px;
-  }
-
-  .btn {
-    width: 28px;
-    height: 28px;
-    font-size: 11px;
-  }
-
-  /* TIMELINE */
-  .timeline {
-    padding: 10px;
-  }
-
-  .event {
-    font-size: 12px;
-    flex-wrap: wrap;
-    gap: 6px;
-  }
-
-  .deleteBtn {
-    margin-left: auto;
-  }
-
-  /* BOTONES */
-  .saveBtn,
-  .cancelBtn {
-    padding: 14px;
-    font-size: 14px;
-  }
-
-  /* EDIT */
-  .editCard {
-    width: 100%;
-  }
-
-  .editCard input {
-    font-size: 14px;
+    animation: slideUp 0.3s ease;
   }
 }
 
 /* =========================================================
-   CELULAR PEQUEÑO
+SMALL MOBILE
 ========================================================= */
+
 @media (max-width: 480px) {
-  .referee {
-    padding: 8px;
-  }
-
   .profile {
-    padding: 14px;
-  }
-
-  .sectionTitle {
-    font-size: 16px;
+    padding: 18px;
   }
 
   .matchCardPro {
-    padding: 12px;
-  }
-
-  .teamName {
-    font-size: 14px;
-  }
-
-  .score {
-    font-size: 26px;
+    padding: 18px;
   }
 
   .playerName {
     max-width: 120px;
+
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
 
-  .btn {
-    width: 26px;
-    height: 26px;
+  .score {
+    font-size: 36px;
   }
 
-  .modalCard {
-    padding: 12px;
+  .btn {
+    width: 32px;
+    height: 32px;
   }
 }
 
 /* =========================================================
-   ANIMACIÓN MOBILE
+SLIDE MOBILE
 ========================================================= */
+
 @keyframes slideUp {
   from {
     transform: translateY(100%);
