@@ -147,6 +147,8 @@ const fetchMatches = async () => {
       },
     });
 
+    console.log(res.data.data);
+    
     matches.value = res.data.data.map((m) => ({
       id: m.Id,
       home: m.local,
