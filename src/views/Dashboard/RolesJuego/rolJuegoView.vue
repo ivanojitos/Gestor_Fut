@@ -44,10 +44,12 @@
         </div>
 
         <div class="team-block">
-           <img
+          <img
             :src="
               proximo.visitante.logo
-                ? encodeURI(API + proximo.visitante.logo.replace(/\s+/g, '').trim())
+                ? encodeURI(
+                    API + proximo.visitante.logo.replace(/\s+/g, '').trim(),
+                  )
                 : placeholder
             "
           />

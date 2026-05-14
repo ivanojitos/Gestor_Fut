@@ -138,7 +138,13 @@
           </div>
         </div>
 
-        <button class="btn">Guardar Usuario</button>
+        <div class="actions">
+          <button type="submit" class="btn">Guardar Usuario</button>
+
+          <button type="button" class="btn-cancel" @click="cancelar">
+            ← Cancelar
+          </button>
+        </div>
       </form>
     </div>
   </div>
@@ -151,14 +157,18 @@ import { useRouter } from "vue-router";
 
 const loading = ref(false);
 const API =
-   "https://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net";
-  // "http://192.168.11.28:8080";
-  // "http://192.168.100.228:8080";
+  "https://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net";
+// "http://192.168.11.28:8080";
+// "http://192.168.100.228:8080";
 
 // 🔥 DATA DINÁMICA
 const ligas = ref([]);
 const categorias = ref([]);
 const router = useRouter();
+
+const cancelar = () => {
+  router.back();
+};
 
 // 🔥 CARGAR DESDE BACKEND
 const fetchData = async () => {
@@ -733,6 +743,70 @@ input::placeholder {
 
   .placeholder p {
     font-size: 11px;
+  }
+}
+/* ACTIONS */
+.actions {
+  display: flex;
+  gap: 14px;
+  margin-top: 28px;
+}
+
+/* BOTÓN CANCELAR */
+.btn-cancel {
+  flex: 1;
+
+  padding: 16px;
+
+  border-radius: 16px;
+
+  border: 1px solid rgba(255, 255, 255, 0.12);
+
+  background: rgba(255, 255, 255, 0.06);
+
+  color: #e2e8f0;
+
+  font-size: 15px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition: all 0.3s ease;
+
+  backdrop-filter: blur(10px);
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.btn-cancel:hover {
+  transform: translateY(-3px);
+
+  background: rgba(239, 68, 68, 0.12);
+
+  border-color: rgba(239, 68, 68, 0.35);
+
+  color: white;
+
+  box-shadow:
+    0 15px 30px rgba(239, 68, 68, 0.2),
+    0 0 15px rgba(239, 68, 68, 0.15);
+}
+
+.btn-cancel:active {
+  transform: scale(0.98);
+}
+
+/* RESPONSIVE */
+@media (max-width: 640px) {
+  .actions {
+    flex-direction: column;
+  }
+
+  .btn-cancel,
+  .btn {
+    width: 100%;
   }
 }
 </style>
