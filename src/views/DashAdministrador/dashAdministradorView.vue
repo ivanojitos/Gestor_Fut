@@ -106,7 +106,7 @@
           </div>
 
           <div class="footer">
-            <span>🏟 {{ p.Cancha }}</span>
+            <span>🏟 {{ p.Id_Cancha }}</span>
             <span>👨‍⚖ {{ p.Arbitro }}</span>
           </div>
         </div>
