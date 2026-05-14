@@ -147,7 +147,6 @@ const fetchMatches = async () => {
       },
     });
 
-    console.log(res.data.data);
     
     matches.value = res.data.data.map((m) => ({
       id: m.Id,
@@ -259,6 +258,9 @@ const fetchData = async () => {
       assists: p.Asistencias || 0,
       photo: p.Foto?.replace(/\s+/g, "").trim(),
     }));
+
+    console.log(players.value);
+    
   } catch (err) {
     console.error(err);
   }
