@@ -73,10 +73,10 @@
           </small>
         </div>
 
-        <p v-else>No hay próximo partido</p>
+        <!-- <p v-else>No hay próximo partido</p>
 
-        <!-- HISTORIAL -->
-        <h3 style="margin-top: 20px">📅 Historial</h3>
+         HISTORIAL 
+        <h3 style="margin-top: 20px"> Historial</h3>
 
         <div v-if="lastMatches.length">
           <div v-for="m in lastMatches" :key="m.id" class="match">
@@ -88,7 +88,7 @@
               {{ formatDateTime(m.date, m.time) }}
             </small>
           </div>
-        </div>
+        </div> -->
       </div>
     </section>
   </div>
@@ -100,9 +100,9 @@ import axios from "axios";
 import { useRouter, useRoute } from "vue-router";
 
 const API =
-   "https://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net";
-  // "http://192.168.11.28:8080";
-  // "http://192.168.100.228:8080";
+  "https://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net";
+// "http://192.168.11.28:8080";
+// "http://192.168.100.228:8080";
 
 const router = useRouter();
 const route = useRoute();
@@ -147,7 +147,6 @@ const fetchMatches = async () => {
       },
     });
 
-    
     matches.value = res.data.data.map((m) => ({
       id: m.Id,
       home: m.local,
@@ -258,9 +257,6 @@ const fetchData = async () => {
       assists: p.Asistencias || 0,
       photo: p.Foto?.replace(/\s+/g, "").trim(),
     }));
-
-    console.log(players.value);
-    
   } catch (err) {
     console.error(err);
   }
