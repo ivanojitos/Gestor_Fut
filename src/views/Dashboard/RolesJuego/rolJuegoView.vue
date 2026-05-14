@@ -19,7 +19,13 @@
 
       <div class="next-content">
         <div class="team-block">
-          <img :src="proximo.local.logo" />
+          <img
+            :src="
+              proximo.local.logo
+                ? encodeURI(API + proximo.local.logo.replace(/\s+/g, '').trim())
+                : placeholder
+            "
+          />
           <h3>{{ proximo.local.nombre }}</h3>
         </div>
 
@@ -38,7 +44,14 @@
         </div>
 
         <div class="team-block">
-          <img :src="proximo.visitante.logo" />
+           <img
+            :src="
+              proximo.visitante.logo
+                ? encodeURI(API + proximo.visitante.logo.replace(/\s+/g, '').trim())
+                : placeholder
+            "
+          />
+
           <h3>{{ proximo.visitante.nombre }}</h3>
         </div>
       </div>
@@ -93,9 +106,9 @@ import { ref, onMounted } from "vue";
 import axios from "axios";
 
 const API =
-   "https://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net";
-  // "http://192.168.11.28:8080";
-  // "http://192.168.100.228:8080";
+  "https://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net";
+// "http://192.168.11.28:8080";
+// "http://192.168.100.228:8080";
 
 const proximo = ref(null);
 const anteriores = ref([]);
@@ -156,7 +169,7 @@ const obtenerPartidos = async () => {
     }
 
     console.log(data.data);
-    
+
     const nuevos = data.data.map((m) => ({
       id: m.Id,
 
@@ -277,7 +290,7 @@ onMounted(async () => {
   overflow: hidden;
   box-shadow:
     0 10px 40px rgba(15, 23, 42, 0.06),
-    inset 0 1px 0 rgba(255,255,255,0.7);
+    inset 0 1px 0 rgba(255, 255, 255, 0.7);
 }
 
 .header::before {
@@ -332,7 +345,7 @@ onMounted(async () => {
   color: white;
   box-shadow:
     0 25px 50px rgba(34, 197, 94, 0.28),
-    inset 0 1px 0 rgba(255,255,255,0.25);
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
   animation: float 4s ease-in-out infinite;
 }
 
@@ -341,20 +354,18 @@ onMounted(async () => {
 ========================================================= */
 
 .next-match {
-  background:
-    linear-gradient(
-      135deg,
-      rgba(15, 23, 42, 0.98),
-      rgba(30, 41, 59, 0.96)
-    );
+  background: linear-gradient(
+    135deg,
+    rgba(15, 23, 42, 0.98),
+    rgba(30, 41, 59, 0.96)
+  );
   color: white;
   border-radius: 36px;
   padding: 40px;
   margin-bottom: 34px;
   overflow: hidden;
   position: relative;
-  box-shadow:
-    0 25px 60px rgba(15, 23, 42, 0.24);
+  box-shadow: 0 25px 60px rgba(15, 23, 42, 0.24);
 }
 
 .next-match::before {
@@ -385,8 +396,8 @@ onMounted(async () => {
 }
 
 .next-header span {
-  background: rgba(255,255,255,0.08);
-  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   padding: 10px 18px;
   border-radius: 999px;
   font-size: 12px;
@@ -418,10 +429,10 @@ onMounted(async () => {
   border-radius: 50%;
   object-fit: cover;
   padding: 10px;
-  background: rgba(255,255,255,0.08);
-  border: 4px solid rgba(255,255,255,0.08);
+  background: rgba(255, 255, 255, 0.08);
+  border: 4px solid rgba(255, 255, 255, 0.08);
   transition: 0.4s;
-  box-shadow: 0 15px 35px rgba(0,0,0,0.25);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
 }
 
 .team-block img:hover {
@@ -458,8 +469,7 @@ onMounted(async () => {
   align-items: center;
   font-size: 24px;
   font-weight: 900;
-  box-shadow:
-    0 15px 35px rgba(34, 197, 94, 0.35);
+  box-shadow: 0 15px 35px rgba(34, 197, 94, 0.35);
   animation: pulse 2s infinite;
 }
 
@@ -509,29 +519,27 @@ onMounted(async () => {
 ========================================================= */
 
 .match-card {
-  background: rgba(255,255,255,0.76);
+  background: rgba(255, 255, 255, 0.76);
   backdrop-filter: blur(14px);
   border-radius: 30px;
   padding: 24px;
   margin-bottom: 22px;
-  border: 1px solid rgba(255,255,255,0.7);
+  border: 1px solid rgba(255, 255, 255, 0.7);
   transition: all 0.35s ease;
   position: relative;
   overflow: hidden;
-  box-shadow:
-    0 10px 30px rgba(15, 23, 42, 0.05);
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
 }
 
 .match-card::before {
   content: "";
   position: absolute;
   inset: 0;
-  background:
-    linear-gradient(
-      135deg,
-      rgba(34,197,94,0.03),
-      rgba(59,130,246,0.03)
-    );
+  background: linear-gradient(
+    135deg,
+    rgba(34, 197, 94, 0.03),
+    rgba(59, 130, 246, 0.03)
+  );
   opacity: 0;
   transition: 0.35s;
 }
@@ -542,8 +550,7 @@ onMounted(async () => {
 
 .match-card:hover {
   transform: translateY(-6px);
-  box-shadow:
-    0 20px 50px rgba(15, 23, 42, 0.1);
+  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.1);
 }
 
 .match-date {
@@ -585,7 +592,7 @@ onMounted(async () => {
   background: white;
   border: 3px solid #f1f5f9;
   transition: 0.35s;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
 }
 
 .team img:hover {
@@ -608,10 +615,9 @@ onMounted(async () => {
   color: #0f172a;
   padding: 16px 20px;
   border-radius: 24px;
-  background:
-    linear-gradient(135deg, #f8fafc, #ffffff);
+  background: linear-gradient(135deg, #f8fafc, #ffffff);
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.8),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8),
     0 10px 25px rgba(15, 23, 42, 0.05);
 }
 
@@ -645,8 +651,7 @@ onMounted(async () => {
   font-size: 15px;
   cursor: pointer;
   transition: 0.35s;
-  box-shadow:
-    0 15px 35px rgba(34, 197, 94, 0.25);
+  box-shadow: 0 15px 35px rgba(34, 197, 94, 0.25);
 }
 
 .load-more:hover {
@@ -669,7 +674,6 @@ onMounted(async () => {
 ========================================================= */
 
 @media (max-width: 1024px) {
-
   .container {
     padding: 20px;
   }
@@ -707,7 +711,6 @@ onMounted(async () => {
 ========================================================= */
 
 @media (max-width: 768px) {
-
   .container {
     padding: 14px;
   }
@@ -820,7 +823,6 @@ onMounted(async () => {
 ========================================================= */
 
 @media (max-width: 480px) {
-
   .header {
     padding: 20px;
   }
@@ -898,20 +900,17 @@ onMounted(async () => {
 @keyframes pulse {
   0% {
     transform: scale(1);
-    box-shadow:
-      0 15px 35px rgba(34, 197, 94, 0.35);
+    box-shadow: 0 15px 35px rgba(34, 197, 94, 0.35);
   }
 
   50% {
     transform: scale(1.06);
-    box-shadow:
-      0 20px 45px rgba(34, 197, 94, 0.45);
+    box-shadow: 0 20px 45px rgba(34, 197, 94, 0.45);
   }
 
   100% {
     transform: scale(1);
-    box-shadow:
-      0 15px 35px rgba(34, 197, 94, 0.35);
+    box-shadow: 0 15px 35px rgba(34, 197, 94, 0.35);
   }
 }
 </style>
