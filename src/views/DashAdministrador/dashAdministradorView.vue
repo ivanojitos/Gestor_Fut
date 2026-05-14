@@ -180,6 +180,8 @@ const loadData = async () => {
       axios.get(`${API}/api/categorias`),
     ]);
 
+    console.log(p.data?.data);
+    
     matches.value = p.data?.data || [];
     leagues.value = l.data?.data || [];
     categories.value = c.data?.data || [];
