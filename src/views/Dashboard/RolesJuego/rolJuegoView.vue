@@ -69,7 +69,7 @@
           </div>
         </div>
 
-        <div class="match-footer">🏟️ {{ match.cancha }}</div>
+        <div class="match-footer">Cancha :🏟️ {{ match.Id_Cancha }}</div>
       </div>
     </div>
 
@@ -155,12 +155,14 @@ const obtenerPartidos = async () => {
       noMore.value = true;
     }
 
+    console.log(data.data);
+    
     const nuevos = data.data.map((m) => ({
       id: m.Id,
 
       fecha: m.Fecha_Juego,
 
-      cancha: m.cancha,
+      cancha: m.Id_Cancha,
 
       marcador:
         m.Goles_Local != null && m.Goles_Visitante != null
