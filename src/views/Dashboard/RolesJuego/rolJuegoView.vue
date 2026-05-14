@@ -69,7 +69,7 @@
           </div>
         </div>
 
-        <div class="match-footer">Cancha :🏟️ {{ match.Id_Cancha }}</div>
+        <div class="match-footer">Cancha :🏟️ {{ match.cancha }}</div>
       </div>
     </div>
 
