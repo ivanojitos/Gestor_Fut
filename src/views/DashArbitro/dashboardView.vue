@@ -255,20 +255,69 @@
   </div>
   <!-- ✏️ MODAL EDITAR PERFIL -->
   <div v-if="showEdit" class="modal">
-    <div class="modalCard editCard">
-      <h2>Editar Perfil</h2>
+    <div class="modalCard editProfileModal">
+      <!-- HEADER -->
+      <div class="editHeader">
+        <div>
+          <h2>⚙️ Editar Perfil</h2>
+          <p>Actualiza la información del árbitro</p>
+        </div>
 
-      <input v-model="editForm.Nombre" placeholder="Nombre" />
-      <input v-model="editForm.Edad" type="number" placeholder="Edad" />
-      <input v-model="editForm.Estudios" placeholder="Estudios" />
-      <input v-model="editForm.Direccion" placeholder="Dirección" />
-      <input v-model="editForm.Celular" placeholder="Celular" />
-      <input v-model="editForm.Correo" placeholder="Correo" />
+        <button class="closeEdit" @click="showEdit = false">✕</button>
+      </div>
 
+      <!-- AVATAR -->
+      <div class="profilePreview">
+        <div class="avatarPreview">
+          {{ editForm.Nombre?.charAt(0) || "A" }}
+        </div>
+
+        <div>
+          <h3>{{ editForm.Nombre || "Árbitro" }}</h3>
+          <span>Perfil profesional</span>
+        </div>
+      </div>
+
+      <!-- FORM -->
+      <div class="formGrid">
+        <div class="inputGroup">
+          <label>Nombre completo</label>
+          <input v-model="editForm.Nombre" type="text" />
+        </div>
+
+        <div class="inputGroup">
+          <label>Edad</label>
+          <input v-model="editForm.Edad" type="number" />
+        </div>
+
+        <div class="inputGroup full">
+          <label>Estudios</label>
+          <input v-model="editForm.Estudios" type="text" />
+        </div>
+
+        <div class="inputGroup full">
+          <label>Dirección</label>
+          <input v-model="editForm.Direccion" type="text" />
+        </div>
+
+        <div class="inputGroup">
+          <label>Celular</label>
+          <input v-model="editForm.Celular" type="text" />
+        </div>
+
+        <div class="inputGroup">
+          <label>Correo</label>
+          <input v-model="editForm.Correo" type="email" />
+        </div>
+      </div>
+
+      <!-- ACTIONS -->
       <div class="editActions">
-        <button class="saveBtn" @click="saveProfile">Guardar cambios</button>
-
         <button class="cancelBtn" @click="showEdit = false">Cancelar</button>
+
+        <button class="saveProfileBtn" @click="saveProfile">
+          💾 Guardar cambios
+        </button>
       </div>
     </div>
   </div>
@@ -1691,6 +1740,306 @@ SLIDE MOBILE
 
   to {
     transform: translateY(0);
+  }
+}
+/* =========================================================
+EDIT PROFILE MODAL
+========================================================= */
+
+.editProfileModal {
+  max-width: 720px;
+
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.96),
+    rgba(248, 250, 252, 0.96)
+  );
+
+  backdrop-filter: blur(20px);
+
+  border-radius: 30px;
+
+  padding: 28px;
+
+  border: 1px solid rgba(255, 255, 255, 0.6);
+
+  box-shadow: 0 25px 60px rgba(15, 23, 42, 0.15);
+}
+
+/* HEADER */
+
+.editHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+
+  margin-bottom: 25px;
+}
+
+.editHeader h2 {
+  margin: 0;
+
+  font-size: 28px;
+  font-weight: 800;
+
+  color: #0f172a;
+}
+
+.editHeader p {
+  margin-top: 6px;
+
+  color: #64748b;
+
+  font-size: 14px;
+}
+
+.closeEdit {
+  width: 42px;
+  height: 42px;
+
+  border: none;
+
+  border-radius: 14px;
+
+  background: #fee2e2;
+
+  color: #ef4444;
+
+  cursor: pointer;
+
+  transition: 0.25s ease;
+
+  font-size: 15px;
+}
+
+.closeEdit:hover {
+  background: #ef4444;
+  color: white;
+
+  transform: rotate(90deg);
+}
+
+/* PROFILE PREVIEW */
+
+.profilePreview {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  background: rgba(255, 255, 255, 0.7);
+
+  border: 1px solid #e2e8f0;
+
+  border-radius: 24px;
+
+  padding: 18px;
+
+  margin-bottom: 25px;
+}
+
+.avatarPreview {
+  width: 72px;
+  height: 72px;
+
+  border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+
+  color: white;
+
+  font-size: 28px;
+  font-weight: 800;
+
+  box-shadow: 0 10px 30px rgba(34, 197, 94, 0.25);
+}
+
+.profilePreview h3 {
+  margin: 0;
+
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.profilePreview span {
+  color: #64748b;
+  font-size: 13px;
+}
+
+/* GRID */
+
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.inputGroup.full {
+  grid-column: span 2;
+}
+
+/* LABEL */
+
+.inputGroup label {
+  font-size: 13px;
+  font-weight: 700;
+  color: #334155;
+}
+
+/* INPUT */
+
+.inputGroup input {
+  height: 54px;
+
+  border-radius: 18px;
+
+  border: 1px solid #dbe4ee;
+
+  background: rgba(255, 255, 255, 0.85);
+
+  padding: 0 16px;
+
+  font-size: 14px;
+
+  transition: 0.25s ease;
+
+  outline: none;
+}
+
+.inputGroup input:focus {
+  border-color: #22c55e;
+
+  background: white;
+
+  box-shadow: 0 0 0 5px rgba(34, 197, 94, 0.12);
+}
+
+/* ACTIONS */
+
+.editActions {
+  margin-top: 28px;
+
+  display: flex;
+  gap: 14px;
+}
+
+.saveProfileBtn {
+  flex: 1;
+
+  height: 56px;
+
+  border: none;
+
+  border-radius: 18px;
+
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+
+  color: white;
+
+  font-size: 15px;
+  font-weight: 800;
+
+  cursor: pointer;
+
+  transition: 0.25s ease;
+
+  box-shadow: 0 12px 30px rgba(34, 197, 94, 0.25);
+}
+
+.saveProfileBtn:hover {
+  transform: translateY(-3px);
+
+  box-shadow: 0 20px 40px rgba(34, 197, 94, 0.3);
+}
+
+.cancelBtn {
+  width: 180px;
+
+  height: 56px;
+
+  border-radius: 18px;
+
+  border: none;
+
+  background: #ef4444;
+
+  color: white;
+
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition: 0.25s ease;
+}
+
+.cancelBtn:hover {
+  transform: translateY(-2px);
+}
+
+/* =========================================================
+TABLET
+========================================================= */
+
+@media (max-width: 768px) {
+  .editProfileModal {
+    padding: 22px;
+  }
+
+  .formGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .inputGroup.full {
+    grid-column: span 1;
+  }
+
+  .editActions {
+    flex-direction: column;
+  }
+
+  .cancelBtn {
+    width: 100%;
+  }
+}
+
+/* =========================================================
+MOBILE
+========================================================= */
+
+@media (max-width: 480px) {
+  .editProfileModal {
+    border-radius: 28px 28px 0 0;
+
+    padding: 18px;
+  }
+
+  .editHeader h2 {
+    font-size: 22px;
+  }
+
+  .profilePreview {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .avatarPreview {
+    width: 64px;
+    height: 64px;
+
+    font-size: 24px;
+  }
+
+  .inputGroup input {
+    height: 50px;
   }
 }
 </style>
