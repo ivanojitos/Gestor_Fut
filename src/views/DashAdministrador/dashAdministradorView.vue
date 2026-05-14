@@ -87,7 +87,13 @@
 
           <div class="match">
             <div class="team home">
-              <img :src="p.local_logo" />
+              <img
+                :src="
+                  p.local_logo
+                    ? encodeURI(API + p.local_logo.replace(/\s+/g, '').trim())
+                    : placeholder
+                "
+              />
               <span>{{ p.local }}</span>
             </div>
 
@@ -100,13 +106,21 @@
             </div>
 
             <div class="team away">
-              <img :src="p.visitante_logo" />
+              <img
+                :src="
+                  p.visitante_logo
+                    ? encodeURI(
+                        API + p.visitante_logo.replace(/\s+/g, '').trim(),
+                      )
+                    : placeholder
+                "
+              />
               <span>{{ p.visitante }}</span>
             </div>
           </div>
 
           <div class="footer">
-            <span>🏟 {{ p.Id_Cancha }}</span>
+            <span>Cancha : {{ p.Id_Cancha }}</span>
             <span>👨‍⚖ {{ p.Arbitro }}</span>
           </div>
         </div>
@@ -128,9 +142,9 @@ const router = useRouter();
 const showCalendar = ref(false);
 
 const API =
-   "https://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net";
-  // "http://192.168.11.28:8080";
-  // "http://192.168.100.228:8080";
+  "https://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net";
+// "http://192.168.11.28:8080";
+// "http://192.168.100.228:8080";
 
 /* DATA */
 const matches = ref([]);
@@ -181,7 +195,7 @@ const loadData = async () => {
     ]);
 
     console.log(p.data?.data);
-    
+
     matches.value = p.data?.data || [];
     leagues.value = l.data?.data || [];
     categories.value = c.data?.data || [];
