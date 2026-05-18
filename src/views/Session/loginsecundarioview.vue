@@ -8,7 +8,7 @@
 
       <!-- Header -->
       <div class="header">
-        <img src="" alt="logo" />
+        <img src="/logos/logo completo.png" alt="logo" />
         <h1>Inicia sesión</h1>
         <p>para ingresar a la aplicación de Viáticos</p>
       </div>

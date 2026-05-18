@@ -3,8 +3,9 @@
     <div class="overlay"></div>
 
     <div class="login-card">
-      <h1>⚽ Gestor Fut</h1>
-      <p class="subtitle">Sistema de Torneos</p>
+      <div class="logo-wrapper">
+        <img src="/logos/logo completo.png" alt="PlayNexus Logo" class="logo" />
+      </div>
 
       <form @submit.prevent="login">
         <div class="input-group">
@@ -80,7 +81,7 @@ import axios from "axios";
 const API =
    "https://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net";
   // "http://192.168.11.28:8080";
-  // "http://192.168.100.228:8080";
+// "http://192.168.100.228:8080";
 
 const email = ref("");
 const password = ref("");
@@ -373,5 +374,56 @@ button:hover {
   margin-top: 12px;
   color: #f87171;
   font-size: 14px;
+}
+/* LOGO */
+.logo-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.logo {
+  width: 220px;
+  max-width: 100%;
+  object-fit: contain;
+
+  filter:
+    drop-shadow(0 8px 20px rgba(0, 0, 0, 0.35))
+    drop-shadow(0 0 20px rgba(99, 102, 241, 0.25));
+
+  transition: all 0.35s ease;
+}
+
+/* HOVER */
+.logo:hover {
+  transform: scale(1.03) translateY(-2px);
+}
+
+/* SUBTITLE */
+.subtitle {
+  margin-bottom: 28px;
+  font-size: 14px;
+  color: #cbd5f5;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+/* 📱 TABLET */
+@media (max-width: 768px) {
+  .logo {
+    width: 190px;
+  }
+}
+
+/* 📱 MOBILE */
+@media (max-width: 500px) {
+  .logo {
+    width: 160px;
+  }
+
+  .subtitle {
+    font-size: 12px;
+  }
 }
 </style>
