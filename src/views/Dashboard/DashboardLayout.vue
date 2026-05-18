@@ -2,7 +2,9 @@
   <div class="layout">
     <!-- SIDEBAR -->
     <aside class="sidebar">
-      <h2 class="logo">⚽ GestorFut</h2>
+      <div class="logo-wrapper">
+        <img src="/logos/logo completo.png" alt="PlayNexus Logo" class="logo" />
+      </div>
 
       <nav>
         <!-- JUGADOR -->
@@ -17,7 +19,7 @@
         <router-link v-if="role === 'jugador'" :to="{ name: 'Roles' }">
           <Shield /> <span>Rol juego</span>
         </router-link>
-<!-- 
+        <!-- 
         <router-link v-if="role === 'jugador'" :to="{ name: 'Ligas' }">
           <Medal /> <span>Ligas</span>
         </router-link> -->
@@ -239,6 +241,57 @@ nav a:hover {
 
   .content {
     padding: 15px;
+  }
+
+  /* LOGO */
+  .logo-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  .logo {
+    width: 220px;
+    max-width: 100%;
+    object-fit: contain;
+
+    filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.35))
+      drop-shadow(0 0 20px rgba(99, 102, 241, 0.25));
+
+    transition: all 0.35s ease;
+  }
+
+  /* HOVER */
+  .logo:hover {
+    transform: scale(1.03) translateY(-2px);
+  }
+
+  /* SUBTITLE */
+  .subtitle {
+    margin-bottom: 28px;
+    font-size: 14px;
+    color: #cbd5f5;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  /* 📱 TABLET */
+  @media (max-width: 768px) {
+    .logo {
+      width: 190px;
+    }
+  }
+
+  /* 📱 MOBILE */
+  @media (max-width: 500px) {
+    .logo {
+      width: 160px;
+    }
+
+    .subtitle {
+      font-size: 12px;
+    }
   }
 }
 </style>
