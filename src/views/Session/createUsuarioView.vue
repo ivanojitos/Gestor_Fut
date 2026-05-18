@@ -15,7 +15,19 @@
         <div class="grid">
           <!-- FOTO -->
           <!-- CATEGORIA -->
-         
+          <div class="form-group full" v-if="form.liga">
+            <select v-model="form.categoria">
+              <option disabled value="">Categoría</option>
+
+              <option
+                v-for="cat in categoriasFiltradas"
+                :key="cat.Id"
+                :value="cat.Id"
+              >
+                {{ cat.Nombre }}
+              </option>
+            </select>
+          </div>
 
           <!-- NOMBRE -->
           <div class="form-group">
@@ -100,19 +112,10 @@
             <label>Estatura (cm)</label>
           </div>
 
-          <!-- CHECK SIN TORNEO -->
-          <div class="form-group full checkbox-group">
-            <label class="check-label">
-              <input type="checkbox" v-model="sinTorneo" />
-              Sin torneo
-            </label>
-          </div>
-
           <!-- LIGA -->
           <div class="form-group">
-            <select v-model="form.liga" :disabled="sinTorneo">
+            <select v-model="form.liga">
               <option disabled value="">Liga</option>
-
               <option v-for="liga in ligas" :key="liga.Id" :value="liga.Id">
                 {{ liga.Nombre }}
               </option>
@@ -120,15 +123,10 @@
           </div>
 
           <!-- CATEGORIA -->
-          <div class="form-group full" v-if="form.liga && !sinTorneo">
-            <select v-model="form.categoria" :disabled="sinTorneo">
+          <div class="form-group full">
+            <select v-model="form.categoria">
               <option disabled value="">Categoría</option>
-
-              <option
-                v-for="cat in categoriasFiltradas"
-                :key="cat.Id"
-                :value="cat.Id"
-              >
+              <option v-for="cat in categorias" :key="cat.Id" :value="cat.Id">
                 {{ cat.Nombre }}
               </option>
             </select>
@@ -148,7 +146,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from "vue";
+import { ref, onMounted } from "vue";
 import axios from "axios";
 import { useRouter } from "vue-router";
 
@@ -163,7 +161,6 @@ const ligas = ref([]);
 const categorias = ref([]);
 const categoriasFiltradas = ref([]);
 const router = useRouter();
-const sinTorneo = ref(false);
 
 const cancelar = () => {
   router.back();
@@ -182,35 +179,7 @@ const fetchData = async () => {
   }
 };
 
-const filtrarCategorias = () => {
-  if (sinTorneo.value) {
-    categoriasFiltradas.value = [];
-    return;
-  }
-
-  categoriasFiltradas.value = categorias.value.filter(
-    (cat) => cat.Id_Liga == form.value.liga,
-  );
-
-  form.value.categoria = "";
-};
-
 onMounted(fetchData);
-
-watch(
-  () => form.value.liga,
-  filtrarCategorias,
-);
-
-watch(sinTorneo, (valor) => {
-  if (valor) {
-    form.value.liga = 0;
-    form.value.categoria = 0;
-  } else {
-    form.value.liga = "";
-    form.value.categoria = "";
-  }
-});
 
 // 🔥 FORM
 const form = ref({
@@ -242,10 +211,8 @@ const guardarUsuario = async () => {
     data.append("posicion", form.value.posicion);
     data.append("correo", form.value.correo);
     data.append("estatura", form.value.estatura);
-    data.append("liga", sinTorneo.value ? 0 : form.value.liga);
-    data.append("Id_Categoria", sinTorneo.value ? 0 : form.value.categoria);
-    // data.append("liga", form.value.liga);
-    // data.append("Id_Categoria", form.value.categoria);
+    data.append("liga", form.value.liga);
+    data.append("Id_Categoria", form.value.categoria);
     data.append("password", form.value.password);
 
     if (form.value.Foto) {
@@ -317,7 +284,6 @@ const handleFile = (e) => {
 /* 🌌 PAGE */
 .page {
   min-height: 100vh;
-
   background:
     linear-gradient(rgba(15, 23, 42, 0.75), rgba(15, 23, 42, 0.88)),
     url("https://images.unsplash.com/photo-1518091043644-c1d4457512c6")
@@ -338,36 +304,24 @@ const handleFile = (e) => {
 /* 🔥 EFECTOS FONDO */
 .page::before {
   content: "";
-
   position: absolute;
-
   width: 450px;
   height: 450px;
-
   background: rgba(99, 102, 241, 0.35);
-
   filter: blur(120px);
-
   border-radius: 50%;
-
   top: -120px;
   left: -120px;
 }
 
 .page::after {
   content: "";
-
   position: absolute;
-
   width: 350px;
   height: 350px;
-
   background: rgba(34, 197, 94, 0.25);
-
   filter: blur(120px);
-
   border-radius: 50%;
-
   bottom: -120px;
   right: -120px;
 }
@@ -376,7 +330,6 @@ const handleFile = (e) => {
 .overlay {
   position: absolute;
   inset: 0;
-
   backdrop-filter: blur(2px);
 }
 
@@ -389,7 +342,6 @@ const handleFile = (e) => {
 
   display: flex;
   flex-direction: column;
-
   justify-content: center;
   align-items: center;
 
@@ -454,36 +406,95 @@ const handleFile = (e) => {
 /* ✨ TITLES */
 h2 {
   text-align: center;
-
   font-size: clamp(26px, 4vw, 34px);
   font-weight: 800;
-
   color: #fff;
-
   margin-bottom: 8px;
 }
 
 .subtitle {
   text-align: center;
-
   color: #cbd5e1;
-
   margin-bottom: 32px;
-
   font-size: 14px;
 }
 
 /* GRID */
 .grid {
   display: grid;
-
   grid-template-columns: 1fr 1fr;
-
   gap: 20px;
 }
 
 .full {
   grid-column: span 2;
+}
+
+/* FOTO */
+.label-img {
+  display: block;
+  margin-bottom: 14px;
+  color: #cbd5e1;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* UPLOAD */
+.image-upload {
+  width: 140px;
+  height: 140px;
+
+  margin: auto;
+
+  border-radius: 50%;
+
+  background: rgba(255, 255, 255, 0.08);
+
+  border: 2px dashed rgba(255, 255, 255, 0.25);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  overflow: hidden;
+  cursor: pointer;
+
+  transition: all 0.3s ease;
+}
+
+.image-upload:hover {
+  transform: translateY(-4px) scale(1.03);
+
+  border-color: #818cf8;
+
+  box-shadow:
+    0 0 25px rgba(129, 140, 248, 0.4),
+    0 10px 25px rgba(0, 0, 0, 0.25);
+}
+
+/* PLACEHOLDER */
+.placeholder {
+  text-align: center;
+  color: #c7d2fe;
+}
+
+.placeholder span {
+  font-size: 38px;
+  font-weight: bold;
+  display: block;
+  line-height: 1;
+}
+
+.placeholder p {
+  font-size: 13px;
+  margin-top: 6px;
+}
+
+/* PREVIEW */
+.preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 /* INPUT GROUP */
@@ -574,131 +585,11 @@ input::placeholder {
   color: transparent;
 }
 
-/* CHECKBOX GROUP */
-.checkbox-group {
-  display: flex;
-  align-items: center;
-
-  margin-top: 5px;
-}
-
-/* LABEL CHECK */
-.check-label {
-  display: flex;
-  align-items: center;
-
-  gap: 14px;
-
-  width: fit-content;
-
-  padding: 14px 18px;
-
-  border-radius: 18px;
-
-  background: rgba(255, 255, 255, 0.06);
-
-  border: 1px solid rgba(255, 255, 255, 0.12);
-
-  color: #e2e8f0;
-
-  font-size: 14px;
-  font-weight: 600;
-
-  cursor: pointer;
-
-  transition: all 0.3s ease;
-
-  backdrop-filter: blur(10px);
-
-  user-select: none;
-
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.05),
-    0 8px 20px rgba(0, 0, 0, 0.15);
-}
-
-/* HOVER CHECK */
-.check-label:hover {
-  transform: translateY(-2px);
-
-  border-color: rgba(34, 197, 94, 0.4);
-
-  box-shadow:
-    0 10px 25px rgba(34, 197, 94, 0.15),
-    0 0 15px rgba(34, 197, 94, 0.1);
-}
-
-/* INPUT CHECK */
-.check-label input[type="checkbox"] {
-  appearance: none;
-
-  width: 24px;
-  height: 24px;
-
-  border-radius: 8px;
-
-  border: 2px solid rgba(255, 255, 255, 0.3);
-
-  background: rgba(255, 255, 255, 0.08);
-
-  cursor: pointer;
-
-  position: relative;
-
-  transition: all 0.25s ease;
-}
-
-/* CHECKED */
-.check-label input[type="checkbox"]:checked {
-  background: linear-gradient(135deg, #22c55e, #16a34a);
-
-  border-color: #22c55e;
-
-  box-shadow:
-    0 0 15px rgba(34, 197, 94, 0.45),
-    0 0 25px rgba(34, 197, 94, 0.2);
-}
-
-/* ICONO CHECK */
-.check-label input[type="checkbox"]:checked::before {
-  content: "✓";
-
-  position: absolute;
-
-  top: 50%;
-  left: 50%;
-
-  transform: translate(-50%, -50%);
-
-  color: white;
-
-  font-size: 14px;
-  font-weight: bold;
-}
-
-/* DISABLED */
-select:disabled {
-  opacity: 0.5;
-
-  cursor: not-allowed;
-
-  background: rgba(255, 255, 255, 0.03);
-
-  border-color: rgba(255, 255, 255, 0.08);
-}
-
-/* BUTTONS */
-.actions {
-  display: flex;
-
-  gap: 14px;
-
-  margin-top: 28px;
-}
-
-/* BOTÓN GUARDAR */
+/* BUTTON */
 .btn {
-  flex: 1;
+  margin-top: 28px;
+
+  width: 100%;
 
   padding: 16px;
 
@@ -722,7 +613,6 @@ select:disabled {
     inset 0 1px 0 rgba(255, 255, 255, 0.2);
 
   position: relative;
-
   overflow: hidden;
 }
 
@@ -731,7 +621,6 @@ select:disabled {
   content: "";
 
   position: absolute;
-
   top: 0;
   left: -100%;
 
@@ -763,6 +652,100 @@ select:disabled {
 
 .btn:active {
   transform: scale(0.98);
+}
+
+/* ANIMATION */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(25px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 📱 TABLET */
+@media (max-width: 900px) {
+  .card {
+    padding: 30px;
+  }
+
+  .grid {
+    gap: 16px;
+  }
+}
+
+/* 📱 MOBILE */
+@media (max-width: 640px) {
+  .page {
+    padding: 15px;
+  }
+
+  .card {
+    padding: 22px;
+    border-radius: 22px;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .full {
+    grid-column: span 1;
+  }
+
+  .image-upload {
+    width: 115px;
+    height: 115px;
+  }
+
+  h2 {
+    font-size: 24px;
+  }
+
+  .subtitle {
+    font-size: 13px;
+  }
+
+  input,
+  select {
+    padding: 15px 13px;
+    font-size: 13px;
+  }
+
+  .btn {
+    padding: 15px;
+    font-size: 14px;
+  }
+}
+
+/* 📱 SMALL DEVICES */
+@media (max-width: 400px) {
+  .card {
+    padding: 18px;
+  }
+
+  .image-upload {
+    width: 100px;
+    height: 100px;
+  }
+
+  .placeholder span {
+    font-size: 30px;
+  }
+
+  .placeholder p {
+    font-size: 11px;
+  }
+}
+/* ACTIONS */
+.actions {
+  display: flex;
+  gap: 14px;
+  margin-top: 28px;
 }
 
 /* BOTÓN CANCELAR */
@@ -811,86 +794,15 @@ select:disabled {
   transform: scale(0.98);
 }
 
-/* ANIMACIÓN */
-@keyframes fadeUp {
-  from {
-    opacity: 0;
-    transform: translateY(25px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* 📱 TABLET */
-@media (max-width: 900px) {
-  .card {
-    padding: 30px;
-  }
-
-  .grid {
-    gap: 16px;
-  }
-}
-
-/* 📱 MOBILE */
+/* RESPONSIVE */
 @media (max-width: 640px) {
-  .page {
-    padding: 15px;
-  }
-
-  .card {
-    padding: 22px;
-
-    border-radius: 22px;
-  }
-
-  .grid {
-    grid-template-columns: 1fr;
-  }
-
-  .full {
-    grid-column: span 1;
-  }
-
-  h2 {
-    font-size: 24px;
-  }
-
-  .subtitle {
-    font-size: 13px;
-  }
-
-  input,
-  select {
-    padding: 15px 13px;
-
-    font-size: 13px;
-  }
-
-  .btn,
-  .btn-cancel {
-    padding: 15px;
-
-    font-size: 14px;
-  }
-
   .actions {
     flex-direction: column;
   }
-}
 
-/* 📱 SMALL DEVICES */
-@media (max-width: 400px) {
-  .card {
-    padding: 18px;
-  }
-
-  .check-label {
+  .btn-cancel,
+  .btn {
     width: 100%;
-    justify-content: center;
   }
 }
 </style>
