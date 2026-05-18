@@ -598,8 +598,8 @@ select:focus {
   box-shadow: 0 0 0 4px rgba(129, 140, 248, 0.15);
 }
 
-/* LABELS */
-.form-group label {
+/* LABELS SOLO INPUTS NORMALES */
+.form-group label:not(.check-label) {
   position: absolute;
 
   top: 50%;
@@ -681,6 +681,16 @@ input::placeholder {
   box-shadow:
     0 10px 25px rgba(34, 197, 94, 0.18),
     0 0 18px rgba(34, 197, 94, 0.1);
+}
+
+.check-label:has(input:checked) {
+  border-color: rgba(34, 197, 94, 0.5);
+
+  background: rgba(34, 197, 94, 0.08);
+
+  box-shadow:
+    0 0 25px rgba(34, 197, 94, 0.18),
+    0 10px 25px rgba(0, 0, 0, 0.18);
 }
 
 /* INPUT REAL */
