@@ -14,24 +14,19 @@
       <form @submit.prevent="guardarUsuario">
         <div class="grid">
           <!-- FOTO -->
-          <div class="form-group full">
-            <label class="label-img">Foto de perfil</label>
+          <!-- CATEGORIA -->
+          <div class="form-group full" v-if="form.liga">
+            <select v-model="form.categoria">
+              <option disabled value="">Categoría</option>
 
-            <div class="image-upload" @click="triggerFile">
-              <img v-if="preview" :src="preview" class="preview" />
-              <div v-else class="placeholder">
-                <span>+</span>
-                <p>Subir foto</p>
-              </div>
-            </div>
-
-            <input
-              type="file"
-              ref="fileInput"
-              @change="handleFile"
-              accept="image/*"
-              hidden
-            />
+              <option
+                v-for="cat in categoriasFiltradas"
+                :key="cat.Id"
+                :value="cat.Id"
+              >
+                {{ cat.Nombre }}
+              </option>
+            </select>
           </div>
 
           <!-- NOMBRE -->
@@ -151,7 +146,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import axios from "axios";
 import { useRouter } from "vue-router";
 
@@ -164,6 +159,7 @@ const API =
 // 🔥 DATA DINÁMICA
 const ligas = ref([]);
 const categorias = ref([]);
+const categoriasFiltradas = ref([]);
 const router = useRouter();
 
 const cancelar = () => {
@@ -183,7 +179,23 @@ const fetchData = async () => {
   }
 };
 
+const filtrarCategorias = () => {
+  categoriasFiltradas.value = categorias.value.filter(
+    (cat) => cat.Id_Liga == form.value.liga,
+  );
+
+  // limpiar categoria seleccionada
+  form.value.categoria = "";
+};
+
 onMounted(fetchData);
+
+watch(
+  () => form.value.liga,
+  () => {
+    filtrarCategorias();
+  },
+);
 
 // 🔥 FORM
 const form = ref({
