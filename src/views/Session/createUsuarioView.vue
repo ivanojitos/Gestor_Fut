@@ -674,7 +674,10 @@ input::placeholder {
 
 /* HIDE DEFAULT */
 .check-label input[type="checkbox"] {
-  display: none;
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
 }
 
 /* CUSTOM CHECK */
