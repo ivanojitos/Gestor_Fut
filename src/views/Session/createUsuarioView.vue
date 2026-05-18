@@ -402,6 +402,7 @@ const handleFile = (e) => {
   font-family: "Inter", sans-serif;
 }
 
+/* EFECTOS */
 .page::before {
   content: "";
 
@@ -438,6 +439,7 @@ const handleFile = (e) => {
   right: -120px;
 }
 
+/* OVERLAY */
 .overlay {
   position: absolute;
   inset: 0;
@@ -463,6 +465,16 @@ const handleFile = (e) => {
   backdrop-filter: blur(6px);
 }
 
+.loading-overlay p {
+  margin-top: 18px;
+
+  color: white;
+
+  font-size: 16px;
+  font-weight: 700;
+}
+
+/* SPINNER */
 .loader {
   width: 70px;
   height: 70px;
@@ -473,15 +485,6 @@ const handleFile = (e) => {
   border-radius: 50%;
 
   animation: spin 1s linear infinite;
-}
-
-.loading-overlay p {
-  margin-top: 18px;
-
-  color: white;
-
-  font-size: 16px;
-  font-weight: 700;
 }
 
 @keyframes spin {
@@ -515,6 +518,7 @@ const handleFile = (e) => {
   animation: fadeUp 0.5s ease;
 }
 
+/* TITLES */
 h2 {
   text-align: center;
 
@@ -578,11 +582,13 @@ select {
   backdrop-filter: blur(10px);
 }
 
+/* SELECT */
 select option {
   background: #111827;
   color: white;
 }
 
+/* FOCUS */
 input:focus,
 select:focus {
   border-color: #818cf8;
@@ -592,6 +598,7 @@ select:focus {
   box-shadow: 0 0 0 4px rgba(129, 140, 248, 0.15);
 }
 
+/* LABELS */
 .form-group label {
   position: absolute;
 
@@ -611,6 +618,7 @@ select:focus {
   padding: 0 6px;
 }
 
+/* FLOATING LABEL */
 input:focus + label,
 input:not(:placeholder-shown) + label,
 select:focus + label,
@@ -628,6 +636,7 @@ select:valid + label {
   border-radius: 20px;
 }
 
+/* PLACEHOLDER */
 input::placeholder {
   color: transparent;
 }
@@ -638,6 +647,8 @@ input::placeholder {
 }
 
 .check-label {
+  position: relative;
+
   display: flex;
   align-items: center;
 
@@ -672,15 +683,17 @@ input::placeholder {
     0 0 18px rgba(34, 197, 94, 0.1);
 }
 
-/* HIDE DEFAULT */
+/* INPUT REAL */
 .check-label input[type="checkbox"] {
   position: absolute;
+
   opacity: 0;
+
   width: 0;
   height: 0;
 }
 
-/* CUSTOM CHECK */
+/* CHECK CUSTOM */
 .check-custom {
   width: 28px;
   height: 28px;
@@ -696,8 +709,11 @@ input::placeholder {
   transition: 0.3s ease;
 
   flex-shrink: 0;
+
+  cursor: pointer;
 }
 
+/* TEXTO */
 .check-text {
   display: flex;
   flex-direction: column;
@@ -705,16 +721,19 @@ input::placeholder {
 
 .check-text strong {
   color: white;
+
   font-size: 15px;
 }
 
 .check-text small {
   color: #94a3b8;
+
   font-size: 12px;
+
   margin-top: 3px;
 }
 
-/* ACTIVE */
+/* CHECKED */
 .check-label input[type="checkbox"]:checked + .check-custom {
   background: linear-gradient(135deg, #22c55e, #16a34a);
 
@@ -752,7 +771,7 @@ select:disabled {
   border-color: rgba(255, 255, 255, 0.08);
 }
 
-/* BUTTONS */
+/* ACTIONS */
 .actions {
   display: flex;
 
@@ -761,6 +780,7 @@ select:disabled {
   margin-top: 28px;
 }
 
+/* BUTTONS */
 .btn,
 .btn-cancel {
   flex: 1;
@@ -777,6 +797,7 @@ select:disabled {
   transition: all 0.3s ease;
 }
 
+/* BTN SAVE */
 .btn {
   border: none;
 
@@ -787,6 +808,36 @@ select:disabled {
   box-shadow:
     0 10px 25px rgba(34, 197, 94, 0.35),
     inset 0 1px 0 rgba(255, 255, 255, 0.2);
+
+  position: relative;
+
+  overflow: hidden;
+}
+
+/* SHINE */
+.btn::before {
+  content: "";
+
+  position: absolute;
+
+  top: 0;
+  left: -100%;
+
+  width: 100%;
+  height: 100%;
+
+  background: linear-gradient(
+    120deg,
+    transparent,
+    rgba(255, 255, 255, 0.25),
+    transparent
+  );
+
+  transition: 0.5s;
+}
+
+.btn:hover::before {
+  left: 100%;
 }
 
 .btn:hover {
@@ -797,6 +848,11 @@ select:disabled {
     0 0 20px rgba(34, 197, 94, 0.25);
 }
 
+.btn:active {
+  transform: scale(0.98);
+}
+
+/* BTN CANCEL */
 .btn-cancel {
   border: 1px solid rgba(255, 255, 255, 0.12);
 
@@ -805,6 +861,10 @@ select:disabled {
   color: #e2e8f0;
 
   backdrop-filter: blur(10px);
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 8px 20px rgba(0, 0, 0, 0.15);
 }
 
 .btn-cancel:hover {
@@ -815,6 +875,14 @@ select:disabled {
   border-color: rgba(239, 68, 68, 0.35);
 
   color: white;
+
+  box-shadow:
+    0 15px 30px rgba(239, 68, 68, 0.2),
+    0 0 15px rgba(239, 68, 68, 0.15);
+}
+
+.btn-cancel:active {
+  transform: scale(0.98);
 }
 
 /* ANIMATION */
@@ -830,6 +898,17 @@ select:disabled {
   }
 }
 
+/* TABLET */
+@media (max-width: 900px) {
+  .card {
+    padding: 30px;
+  }
+
+  .grid {
+    gap: 16px;
+  }
+}
+
 /* MOBILE */
 @media (max-width: 640px) {
   .page {
@@ -838,6 +917,7 @@ select:disabled {
 
   .card {
     padding: 22px;
+
     border-radius: 22px;
   }
 
@@ -864,18 +944,41 @@ select:disabled {
   input,
   select {
     padding: 15px 13px;
+
     font-size: 13px;
   }
 
   .btn,
   .btn-cancel {
     width: 100%;
+
     padding: 15px;
+
     font-size: 14px;
   }
 
   .check-label {
     padding: 16px;
+  }
+}
+
+/* SMALL DEVICES */
+@media (max-width: 400px) {
+  .card {
+    padding: 18px;
+  }
+
+  .check-text strong {
+    font-size: 14px;
+  }
+
+  .check-text small {
+    font-size: 11px;
+  }
+
+  .check-custom {
+    width: 24px;
+    height: 24px;
   }
 }
 </style>
