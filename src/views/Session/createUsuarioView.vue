@@ -1,6 +1,7 @@
 <template>
   <div class="page">
     <div class="overlay"></div>
+
     <!-- LOADING -->
     <div v-if="loading" class="loading-overlay">
       <div class="loader"></div>
@@ -13,37 +14,31 @@
 
       <form @submit.prevent="guardarUsuario">
         <div class="grid">
-          <!-- FOTO -->
-          <!-- CATEGORIA -->
-          <div class="form-group full" v-if="form.liga">
-            <select v-model="form.categoria">
-              <option disabled value="">Categoría</option>
-
-              <option
-                v-for="cat in categoriasFiltradas"
-                :key="cat.Id"
-                :value="cat.Id"
-              >
-                {{ cat.Nombre }}
-              </option>
-            </select>
-          </div>
-
           <!-- NOMBRE -->
           <div class="form-group">
-            <input v-model="form.nombre" type="text" required />
+            <input v-model="form.nombre" type="text" required placeholder=" " />
             <label>Nombre</label>
           </div>
 
           <!-- NUMERO -->
           <div class="form-group">
-            <input v-model="form.numero" type="number" required />
+            <input
+              v-model="form.numero"
+              type="number"
+              required
+              placeholder=" "
+            />
             <label>Número</label>
           </div>
 
           <!-- EDAD -->
           <div class="form-group">
-            <input v-model="form.edad" type="number" required placeholder=" " />
+            <input
+              v-model="form.edad"
+              type="number"
+              required
+              placeholder=" "
+            />
             <label>Edad</label>
           </div>
 
@@ -101,6 +96,7 @@
               v-model="form.correo"
               type="email"
               required
+              placeholder=" "
               pattern="^[^\s@]+@[^\s@]+\.[^\s@]+$"
             />
             <label>Correo</label>
@@ -108,15 +104,37 @@
 
           <!-- ESTATURA -->
           <div class="form-group">
-            <input v-model="form.estatura" type="number" />
+            <input
+              v-model="form.estatura"
+              type="number"
+              placeholder=" "
+            />
             <label>Estatura (cm)</label>
+          </div>
+
+          <!-- CHECK SIN LIGA -->
+          <div class="form-group full checkbox-group">
+            <label class="check-label">
+              <input type="checkbox" v-model="sinLiga" />
+              <span class="check-custom"></span>
+
+              <div class="check-text">
+                <strong>Jugador sin liga</strong>
+                <small>No participa en torneo actualmente</small>
+              </div>
+            </label>
           </div>
 
           <!-- LIGA -->
           <div class="form-group">
-            <select v-model="form.liga">
+            <select v-model="form.liga" :disabled="sinLiga">
               <option disabled value="">Liga</option>
-              <option v-for="liga in ligas" :key="liga.Id" :value="liga.Id">
+
+              <option
+                v-for="liga in ligas"
+                :key="liga.Id"
+                :value="liga.Id"
+              >
                 {{ liga.Nombre }}
               </option>
             </select>
@@ -124,9 +142,14 @@
 
           <!-- CATEGORIA -->
           <div class="form-group full">
-            <select v-model="form.categoria">
+            <select v-model="form.categoria" :disabled="sinLiga">
               <option disabled value="">Categoría</option>
-              <option v-for="cat in categorias" :key="cat.Id" :value="cat.Id">
+
+              <option
+                v-for="cat in categoriasFiltradas"
+                :key="cat.Id"
+                :value="cat.Id"
+              >
                 {{ cat.Nombre }}
               </option>
             </select>
@@ -134,9 +157,15 @@
         </div>
 
         <div class="actions">
-          <button type="submit" class="btn">Guardar Usuario</button>
+          <button type="submit" class="btn">
+            Guardar Usuario
+          </button>
 
-          <button type="button" class="btn-cancel" @click="cancelar">
+          <button
+            type="button"
+            class="btn-cancel"
+            @click="cancelar"
+          >
             ← Cancelar
           </button>
         </div>
@@ -146,27 +175,55 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import axios from "axios";
 import { useRouter } from "vue-router";
 
 const loading = ref(false);
+
 const API =
   "https://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net";
-// "http://192.168.11.28:8080";
-// "http://192.168.100.228:8080";
 
-// 🔥 DATA DINÁMICA
+const router = useRouter();
+
+/* =========================
+   DATA
+========================= */
 const ligas = ref([]);
 const categorias = ref([]);
 const categoriasFiltradas = ref([]);
-const router = useRouter();
 
+const sinLiga = ref(false);
+
+/* =========================
+   FORM
+========================= */
+const form = ref({
+  nombre: "",
+  numero: "",
+  edad: "",
+  posicion: "",
+  correo: "",
+  estatura: "",
+  liga: "",
+  categoria: "",
+  password: "",
+  Foto: null,
+});
+
+const fileInput = ref(null);
+const preview = ref(null);
+
+/* =========================
+   CANCELAR
+========================= */
 const cancelar = () => {
   router.back();
 };
 
-// 🔥 CARGAR DESDE BACKEND
+/* =========================
+   FETCH DATA
+========================= */
 const fetchData = async () => {
   try {
     const resLigas = await axios.get(`${API}/api/ligas`);
@@ -181,24 +238,48 @@ const fetchData = async () => {
 
 onMounted(fetchData);
 
-// 🔥 FORM
-const form = ref({
-  nombre: "",
-  numero: "",
-  edad: "",
-  posicion: "",
-  correo: "",
-  estatura: "",
-  liga: "",
-  categoria: "",
-  password: "",
-  Foto: null, // 🔥 IMPORTANTE
+/* =========================
+   FILTRAR CATEGORIAS
+========================= */
+const filtrarCategorias = () => {
+  categoriasFiltradas.value = categorias.value.filter(
+    (cat) => cat.Id_Liga == form.value.liga
+  );
+
+  form.value.categoria = "";
+};
+
+/* =========================
+   WATCH LIGA
+========================= */
+watch(
+  () => form.value.liga,
+  () => {
+    if (!sinLiga.value) {
+      filtrarCategorias();
+    }
+  }
+);
+
+/* =========================
+   WATCH CHECKBOX
+========================= */
+watch(sinLiga, (valor) => {
+  if (valor) {
+    // DESHABILITA Y MANDA 0
+    form.value.liga = 0;
+    form.value.categoria = 0;
+  } else {
+    // REACTIVA
+    form.value.liga = "";
+    form.value.categoria = "";
+    categoriasFiltradas.value = [];
+  }
 });
 
-const fileInput = ref(null);
-const preview = ref(null);
-
-// 🔥 GUARDAR
+/* =========================
+   GUARDAR
+========================= */
 const guardarUsuario = async () => {
   try {
     loading.value = true;
@@ -211,20 +292,29 @@ const guardarUsuario = async () => {
     data.append("posicion", form.value.posicion);
     data.append("correo", form.value.correo);
     data.append("estatura", form.value.estatura);
-    data.append("liga", form.value.liga);
-    data.append("Id_Categoria", form.value.categoria);
+
+    // 👇 LOGICA DEL CHECK
+    data.append("liga", sinLiga.value ? 0 : form.value.liga);
+
+    data.append(
+      "Id_Categoria",
+      sinLiga.value ? 0 : form.value.categoria
+    );
+
     data.append("password", form.value.password);
 
     if (form.value.Foto) {
       data.append("Foto", form.value.Foto);
     }
 
-    const response = await axios.post(`${API}/api/createJugador`, data);
+    const response = await axios.post(
+      `${API}/api/createJugador`,
+      data
+    );
 
     if (response.data.ok) {
       alert("Jugador creado correctamente");
 
-      // 🔥 LIMPIAR FORMULARIO
       limpiarFormulario();
     }
   } catch (error) {
@@ -235,6 +325,9 @@ const guardarUsuario = async () => {
   }
 };
 
+/* =========================
+   LIMPIAR
+========================= */
 const limpiarFormulario = () => {
   form.value = {
     nombre: "",
@@ -249,6 +342,10 @@ const limpiarFormulario = () => {
     Foto: null,
   };
 
+  sinLiga.value = false;
+
+  categoriasFiltradas.value = [];
+
   preview.value = null;
 
   if (fileInput.value) {
@@ -256,13 +353,16 @@ const limpiarFormulario = () => {
   }
 };
 
-// 🔥 FOTO
+/* =========================
+   FOTO
+========================= */
 const triggerFile = () => {
   fileInput.value.click();
 };
 
 const handleFile = (e) => {
   const file = e.target.files[0];
+
   form.value.Foto = file;
 
   if (file) {
@@ -281,9 +381,10 @@ const handleFile = (e) => {
   padding: 0;
 }
 
-/* 🌌 PAGE */
+/* PAGE */
 .page {
   min-height: 100vh;
+
   background:
     linear-gradient(rgba(15, 23, 42, 0.75), rgba(15, 23, 42, 0.88)),
     url("https://images.unsplash.com/photo-1518091043644-c1d4457512c6")
@@ -301,35 +402,46 @@ const handleFile = (e) => {
   font-family: "Inter", sans-serif;
 }
 
-/* 🔥 EFECTOS FONDO */
 .page::before {
   content: "";
+
   position: absolute;
+
   width: 450px;
   height: 450px;
+
   background: rgba(99, 102, 241, 0.35);
+
   filter: blur(120px);
+
   border-radius: 50%;
+
   top: -120px;
   left: -120px;
 }
 
 .page::after {
   content: "";
+
   position: absolute;
+
   width: 350px;
   height: 350px;
+
   background: rgba(34, 197, 94, 0.25);
+
   filter: blur(120px);
+
   border-radius: 50%;
+
   bottom: -120px;
   right: -120px;
 }
 
-/* OVERLAY */
 .overlay {
   position: absolute;
   inset: 0;
+
   backdrop-filter: blur(2px);
 }
 
@@ -342,6 +454,7 @@ const handleFile = (e) => {
 
   display: flex;
   flex-direction: column;
+
   justify-content: center;
   align-items: center;
 
@@ -350,16 +463,6 @@ const handleFile = (e) => {
   backdrop-filter: blur(6px);
 }
 
-.loading-overlay p {
-  margin-top: 18px;
-
-  color: white;
-
-  font-size: 16px;
-  font-weight: 700;
-}
-
-/* SPINNER */
 .loader {
   width: 70px;
   height: 70px;
@@ -372,13 +475,22 @@ const handleFile = (e) => {
   animation: spin 1s linear infinite;
 }
 
+.loading-overlay p {
+  margin-top: 18px;
+
+  color: white;
+
+  font-size: 16px;
+  font-weight: 700;
+}
+
 @keyframes spin {
   to {
     transform: rotate(360deg);
   }
 }
 
-/* 🧊 CARD */
+/* CARD */
 .card {
   position: relative;
   z-index: 10;
@@ -403,26 +515,33 @@ const handleFile = (e) => {
   animation: fadeUp 0.5s ease;
 }
 
-/* ✨ TITLES */
 h2 {
   text-align: center;
+
   font-size: clamp(26px, 4vw, 34px);
   font-weight: 800;
+
   color: #fff;
+
   margin-bottom: 8px;
 }
 
 .subtitle {
   text-align: center;
+
   color: #cbd5e1;
+
   margin-bottom: 32px;
+
   font-size: 14px;
 }
 
 /* GRID */
 .grid {
   display: grid;
+
   grid-template-columns: 1fr 1fr;
+
   gap: 20px;
 }
 
@@ -430,79 +549,12 @@ h2 {
   grid-column: span 2;
 }
 
-/* FOTO */
-.label-img {
-  display: block;
-  margin-bottom: 14px;
-  color: #cbd5e1;
-  font-size: 13px;
-  font-weight: 600;
-}
-
-/* UPLOAD */
-.image-upload {
-  width: 140px;
-  height: 140px;
-
-  margin: auto;
-
-  border-radius: 50%;
-
-  background: rgba(255, 255, 255, 0.08);
-
-  border: 2px dashed rgba(255, 255, 255, 0.25);
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  overflow: hidden;
-  cursor: pointer;
-
-  transition: all 0.3s ease;
-}
-
-.image-upload:hover {
-  transform: translateY(-4px) scale(1.03);
-
-  border-color: #818cf8;
-
-  box-shadow:
-    0 0 25px rgba(129, 140, 248, 0.4),
-    0 10px 25px rgba(0, 0, 0, 0.25);
-}
-
-/* PLACEHOLDER */
-.placeholder {
-  text-align: center;
-  color: #c7d2fe;
-}
-
-.placeholder span {
-  font-size: 38px;
-  font-weight: bold;
-  display: block;
-  line-height: 1;
-}
-
-.placeholder p {
-  font-size: 13px;
-  margin-top: 6px;
-}
-
-/* PREVIEW */
-.preview {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-/* INPUT GROUP */
+/* FORM */
 .form-group {
   position: relative;
 }
 
-/* INPUTS Y SELECTS */
+/* INPUTS */
 input,
 select {
   width: 100%;
@@ -526,13 +578,11 @@ select {
   backdrop-filter: blur(10px);
 }
 
-/* SELECT OPTIONS */
 select option {
   background: #111827;
   color: white;
 }
 
-/* FOCUS */
 input:focus,
 select:focus {
   border-color: #818cf8;
@@ -542,7 +592,6 @@ select:focus {
   box-shadow: 0 0 0 4px rgba(129, 140, 248, 0.15);
 }
 
-/* LABELS */
 .form-group label {
   position: absolute;
 
@@ -562,7 +611,6 @@ select:focus {
   padding: 0 6px;
 }
 
-/* FLOATING LABEL */
 input:focus + label,
 input:not(:placeholder-shown) + label,
 select:focus + label,
@@ -580,26 +628,143 @@ select:valid + label {
   border-radius: 20px;
 }
 
-/* PLACEHOLDER */
 input::placeholder {
   color: transparent;
 }
 
-/* BUTTON */
-.btn {
-  margin-top: 28px;
+/* CHECKBOX */
+.checkbox-group {
+  margin-top: 5px;
+}
 
-  width: 100%;
+.check-label {
+  display: flex;
+  align-items: center;
+
+  gap: 16px;
+
+  padding: 18px;
+
+  border-radius: 20px;
+
+  background: rgba(255, 255, 255, 0.06);
+
+  border: 1px solid rgba(255, 255, 255, 0.12);
+
+  cursor: pointer;
+
+  transition: 0.3s ease;
+
+  backdrop-filter: blur(10px);
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.check-label:hover {
+  transform: translateY(-2px);
+
+  border-color: rgba(34, 197, 94, 0.4);
+
+  box-shadow:
+    0 10px 25px rgba(34, 197, 94, 0.18),
+    0 0 18px rgba(34, 197, 94, 0.1);
+}
+
+/* HIDE DEFAULT */
+.check-label input[type="checkbox"] {
+  display: none;
+}
+
+/* CUSTOM CHECK */
+.check-custom {
+  width: 28px;
+  height: 28px;
+
+  border-radius: 10px;
+
+  border: 2px solid rgba(255, 255, 255, 0.25);
+
+  background: rgba(255, 255, 255, 0.08);
+
+  position: relative;
+
+  transition: 0.3s ease;
+
+  flex-shrink: 0;
+}
+
+.check-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.check-text strong {
+  color: white;
+  font-size: 15px;
+}
+
+.check-text small {
+  color: #94a3b8;
+  font-size: 12px;
+  margin-top: 3px;
+}
+
+/* ACTIVE */
+.check-label input[type="checkbox"]:checked + .check-custom {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+
+  border-color: #22c55e;
+
+  box-shadow:
+    0 0 18px rgba(34, 197, 94, 0.45),
+    0 0 30px rgba(34, 197, 94, 0.18);
+}
+
+.check-label input[type="checkbox"]:checked + .check-custom::before {
+  content: "✓";
+
+  position: absolute;
+
+  top: 50%;
+  left: 50%;
+
+  transform: translate(-50%, -50%);
+
+  color: white;
+
+  font-size: 15px;
+  font-weight: bold;
+}
+
+/* DISABLED */
+select:disabled {
+  opacity: 0.45;
+
+  cursor: not-allowed;
+
+  background: rgba(255, 255, 255, 0.03);
+
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+/* BUTTONS */
+.actions {
+  display: flex;
+
+  gap: 14px;
+
+  margin-top: 28px;
+}
+
+.btn,
+.btn-cancel {
+  flex: 1;
 
   padding: 16px;
 
-  border: none;
-
   border-radius: 16px;
-
-  background: linear-gradient(135deg, #22c55e, #16a34a);
-
-  color: white;
 
   font-size: 15px;
   font-weight: 700;
@@ -607,41 +772,20 @@ input::placeholder {
   cursor: pointer;
 
   transition: all 0.3s ease;
+}
+
+.btn {
+  border: none;
+
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+
+  color: white;
 
   box-shadow:
     0 10px 25px rgba(34, 197, 94, 0.35),
     inset 0 1px 0 rgba(255, 255, 255, 0.2);
-
-  position: relative;
-  overflow: hidden;
 }
 
-/* SHINE */
-.btn::before {
-  content: "";
-
-  position: absolute;
-  top: 0;
-  left: -100%;
-
-  width: 100%;
-  height: 100%;
-
-  background: linear-gradient(
-    120deg,
-    transparent,
-    rgba(255, 255, 255, 0.25),
-    transparent
-  );
-
-  transition: 0.5s;
-}
-
-.btn:hover::before {
-  left: 100%;
-}
-
-/* HOVER */
 .btn:hover {
   transform: translateY(-3px);
 
@@ -650,8 +794,24 @@ input::placeholder {
     0 0 20px rgba(34, 197, 94, 0.25);
 }
 
-.btn:active {
-  transform: scale(0.98);
+.btn-cancel {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+
+  background: rgba(255, 255, 255, 0.06);
+
+  color: #e2e8f0;
+
+  backdrop-filter: blur(10px);
+}
+
+.btn-cancel:hover {
+  transform: translateY(-3px);
+
+  background: rgba(239, 68, 68, 0.12);
+
+  border-color: rgba(239, 68, 68, 0.35);
+
+  color: white;
 }
 
 /* ANIMATION */
@@ -667,18 +827,7 @@ input::placeholder {
   }
 }
 
-/* 📱 TABLET */
-@media (max-width: 900px) {
-  .card {
-    padding: 30px;
-  }
-
-  .grid {
-    gap: 16px;
-  }
-}
-
-/* 📱 MOBILE */
+/* MOBILE */
 @media (max-width: 640px) {
   .page {
     padding: 15px;
@@ -697,9 +846,8 @@ input::placeholder {
     grid-column: span 1;
   }
 
-  .image-upload {
-    width: 115px;
-    height: 115px;
+  .actions {
+    flex-direction: column;
   }
 
   h2 {
@@ -716,93 +864,15 @@ input::placeholder {
     font-size: 13px;
   }
 
-  .btn {
+  .btn,
+  .btn-cancel {
+    width: 100%;
     padding: 15px;
     font-size: 14px;
   }
-}
 
-/* 📱 SMALL DEVICES */
-@media (max-width: 400px) {
-  .card {
-    padding: 18px;
-  }
-
-  .image-upload {
-    width: 100px;
-    height: 100px;
-  }
-
-  .placeholder span {
-    font-size: 30px;
-  }
-
-  .placeholder p {
-    font-size: 11px;
-  }
-}
-/* ACTIONS */
-.actions {
-  display: flex;
-  gap: 14px;
-  margin-top: 28px;
-}
-
-/* BOTÓN CANCELAR */
-.btn-cancel {
-  flex: 1;
-
-  padding: 16px;
-
-  border-radius: 16px;
-
-  border: 1px solid rgba(255, 255, 255, 0.12);
-
-  background: rgba(255, 255, 255, 0.06);
-
-  color: #e2e8f0;
-
-  font-size: 15px;
-  font-weight: 700;
-
-  cursor: pointer;
-
-  transition: all 0.3s ease;
-
-  backdrop-filter: blur(10px);
-
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.05),
-    0 8px 20px rgba(0, 0, 0, 0.15);
-}
-
-.btn-cancel:hover {
-  transform: translateY(-3px);
-
-  background: rgba(239, 68, 68, 0.12);
-
-  border-color: rgba(239, 68, 68, 0.35);
-
-  color: white;
-
-  box-shadow:
-    0 15px 30px rgba(239, 68, 68, 0.2),
-    0 0 15px rgba(239, 68, 68, 0.15);
-}
-
-.btn-cancel:active {
-  transform: scale(0.98);
-}
-
-/* RESPONSIVE */
-@media (max-width: 640px) {
-  .actions {
-    flex-direction: column;
-  }
-
-  .btn-cancel,
-  .btn {
-    width: 100%;
+  .check-label {
+    padding: 16px;
   }
 }
 </style>
