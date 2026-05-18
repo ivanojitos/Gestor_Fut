@@ -2,7 +2,7 @@
   <div class="layout">
     <!-- SIDEBAR -->
     <aside class="sidebar">
-      <div class="logo-wrapper">
+    <div class="logo-wrapper">
         <img src="/logos/logo completo.png" alt="PlayNexus Logo" class="logo" />
       </div>
 
@@ -96,109 +96,207 @@ onMounted(() => {
 .layout {
   display: flex;
   min-height: 100vh;
-  background: #f3f3f3;
+  background: #f4f7fb;
   font-family: "Segoe UI", sans-serif;
   color: #111827;
 }
 
 /* SIDEBAR */
 .sidebar {
-  width: 240px;
-  background: #ffffff;
-  padding: 20px;
+  width: 260px;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(14px);
+
+  padding: 24px 18px;
+
   display: flex;
   flex-direction: column;
-  gap: 30px;
-  border-right: 1px solid #e5e7eb;
+  gap: 35px;
+
+  border-right: 1px solid rgba(0, 0, 0, 0.06);
+
+  box-shadow: 4px 0 25px rgba(0, 0, 0, 0.04);
+
+  position: relative;
+  z-index: 10;
 }
 
 /* LOGO */
-.logo {
-  font-size: 22px;
-  font-weight: bold;
-  text-align: center;
-  color: #111827;
+.logo-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  padding: 10px 0 20px;
+
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
 }
 
-/* NAV */
+.logo {
+  width: 180px;
+  max-width: 100%;
+  object-fit: contain;
+
+  transition: all 0.3s ease;
+
+  filter:
+    drop-shadow(0 8px 18px rgba(0, 0, 0, 0.12))
+    drop-shadow(0 0 12px rgba(59, 130, 246, 0.15));
+}
+
+.logo:hover {
+  transform: scale(1.04);
+}
+
+/* NAVIGATION */
 nav {
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 
+/* LINKS */
 nav a {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 12px;
-  border-radius: 10px;
+  gap: 14px;
+
+  padding: 14px 16px;
+
+  border-radius: 16px;
+
   text-decoration: none;
-  color: #111827;
-  transition: 0.2s;
-}
 
-/* HOVER 🔵 */
-nav a:hover {
-  background: #e0f2fe;
-}
+  color: #334155;
 
-/* ACTIVE 🔵 */
-.router-link-exact-active {
-  background: #bae6fd;
-  color: #0284c7;
+  font-size: 14px;
   font-weight: 600;
+
+  transition: all 0.25s ease;
+
+  position: relative;
+  overflow: hidden;
+}
+
+/* ICONS */
+nav a svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* HOVER */
+nav a:hover {
+  background: linear-gradient(
+    135deg,
+    rgba(59, 130, 246, 0.12),
+    rgba(99, 102, 241, 0.12)
+  );
+
+  color: #2563eb;
+
+  transform: translateX(4px);
+}
+
+/* ACTIVE LINK */
+.router-link-exact-active {
+  background: linear-gradient(135deg, #3b82f6, #6366f1);
+
+  color: white;
+
+  box-shadow:
+    0 10px 20px rgba(59, 130, 246, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.router-link-exact-active svg {
+  color: white;
 }
 
 /* MAIN */
 .main {
   flex: 1;
+
   display: flex;
   flex-direction: column;
+
+  min-width: 0;
 }
 
 /* HEADER */
 .header {
+  height: 78px;
+
+  background: rgba(255, 255, 255, 0.9);
+
+  backdrop-filter: blur(10px);
+
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+
   display: flex;
   align-items: center;
-  background: #ffffff;
-  padding: 16px 24px;
-  border-bottom: 1px solid #e5e7eb;
+  justify-content: flex-end;
+
+  padding: 0 24px;
+
+  position: sticky;
+  top: 0;
+
+  z-index: 5;
 }
 
 /* LOGOUT BUTTON */
 .logout {
-  background: #0284c7;
-  color: white;
   border: none;
-  padding: 10px 14px;
-  border-radius: 10px;
+
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+
+  color: white;
+
+  padding: 12px 18px;
+
+  border-radius: 14px;
+
+  font-size: 14px;
+  font-weight: 700;
+
   cursor: pointer;
-  transition: 0.2s;
-  margin-left: auto;
+
+  transition: all 0.25s ease;
+
+  box-shadow:
+    0 10px 20px rgba(239, 68, 68, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
 }
 
+/* HOVER LOGOUT */
 .logout:hover {
-  background: #0369a1;
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 15px 25px rgba(239, 68, 68, 0.35),
+    0 0 18px rgba(239, 68, 68, 0.25);
 }
 
 /* CONTENT */
 .content {
-  padding: 20px;
+  flex: 1;
+
+  padding: 24px;
+
   overflow-y: auto;
 }
 
 /* SCROLL */
 .content::-webkit-scrollbar {
-  width: 6px;
+  width: 8px;
 }
 
 .content::-webkit-scrollbar-thumb {
-  background: #0284c7;
-  border-radius: 10px;
+  background: linear-gradient(135deg, #3b82f6, #6366f1);
+  border-radius: 20px;
 }
 
-/* RESPONSIVE */
+/* TABLET */
 @media (max-width: 900px) {
   .layout {
     flex-direction: column;
@@ -206,24 +304,34 @@ nav a:hover {
 
   .sidebar {
     width: 100%;
+
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    padding: 10px 15px;
+
+    padding: 12px 16px;
+
+    gap: 15px;
+  }
+
+  .logo-wrapper {
+    padding: 0;
+    border: none;
   }
 
   .logo {
-    font-size: 16px;
+    width: 135px;
   }
 
   nav {
     flex-direction: row;
-    gap: 5px;
+    align-items: center;
+    gap: 8px;
   }
 
   nav a {
-    padding: 8px;
-    font-size: 12px;
+    padding: 10px;
+    border-radius: 12px;
   }
 
   nav span {
@@ -231,67 +339,53 @@ nav a:hover {
   }
 
   .header {
-    padding: 12px 15px;
+    padding: 0 15px;
   }
 
   .logout {
-    padding: 8px 10px;
-    font-size: 12px;
+    padding: 10px 14px;
+    font-size: 13px;
+  }
+
+  .content {
+    padding: 18px;
+  }
+}
+
+/* MOBILE */
+@media (max-width: 600px) {
+  .sidebar {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .logo {
+    width: 115px;
+  }
+
+  nav {
+    width: 100%;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  nav a {
+    flex: 1;
+    justify-content: center;
+    min-width: 55px;
+  }
+
+  .header {
+    height: 70px;
+  }
+
+  .logout {
+    width: 100%;
   }
 
   .content {
     padding: 15px;
   }
-
-  /* LOGO */
-  .logo-wrapper {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 10px;
-  }
-
-  .logo {
-    width: 220px;
-    max-width: 100%;
-    object-fit: contain;
-
-    filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.35))
-      drop-shadow(0 0 20px rgba(99, 102, 241, 0.25));
-
-    transition: all 0.35s ease;
-  }
-
-  /* HOVER */
-  .logo:hover {
-    transform: scale(1.03) translateY(-2px);
-  }
-
-  /* SUBTITLE */
-  .subtitle {
-    margin-bottom: 28px;
-    font-size: 14px;
-    color: #cbd5f5;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-  }
-
-  /* 📱 TABLET */
-  @media (max-width: 768px) {
-    .logo {
-      width: 190px;
-    }
-  }
-
-  /* 📱 MOBILE */
-  @media (max-width: 500px) {
-    .logo {
-      width: 160px;
-    }
-
-    .subtitle {
-      font-size: 12px;
-    }
-  }
 }
+
 </style>
