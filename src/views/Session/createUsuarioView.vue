@@ -112,10 +112,19 @@
             <label>Estatura (cm)</label>
           </div>
 
+          <!-- CHECK SIN TORNEO -->
+          <div class="form-group full checkbox-group">
+            <label class="check-label">
+              <input type="checkbox" v-model="sinTorneo" />
+              Sin torneo
+            </label>
+          </div>
+
           <!-- LIGA -->
           <div class="form-group">
-            <select v-model="form.liga">
+            <select v-model="form.liga" :disabled="sinTorneo">
               <option disabled value="">Liga</option>
+
               <option v-for="liga in ligas" :key="liga.Id" :value="liga.Id">
                 {{ liga.Nombre }}
               </option>
@@ -123,10 +132,15 @@
           </div>
 
           <!-- CATEGORIA -->
-          <div class="form-group full">
-            <select v-model="form.categoria">
+          <div class="form-group full" v-if="form.liga && !sinTorneo">
+            <select v-model="form.categoria" :disabled="sinTorneo">
               <option disabled value="">Categoría</option>
-              <option v-for="cat in categorias" :key="cat.Id" :value="cat.Id">
+
+              <option
+                v-for="cat in categoriasFiltradas"
+                :key="cat.Id"
+                :value="cat.Id"
+              >
                 {{ cat.Nombre }}
               </option>
             </select>
@@ -161,6 +175,7 @@ const ligas = ref([]);
 const categorias = ref([]);
 const categoriasFiltradas = ref([]);
 const router = useRouter();
+const sinTorneo = ref(false);
 
 const cancelar = () => {
   router.back();
@@ -197,6 +212,16 @@ watch(
   },
 );
 
+watch(sinTorneo, (valor) => {
+  if (valor) {
+    form.value.liga = 0;
+    form.value.categoria = 0;
+  } else {
+    form.value.liga = "";
+    form.value.categoria = "";
+  }
+});
+
 // 🔥 FORM
 const form = ref({
   nombre: "",
@@ -227,8 +252,10 @@ const guardarUsuario = async () => {
     data.append("posicion", form.value.posicion);
     data.append("correo", form.value.correo);
     data.append("estatura", form.value.estatura);
-    data.append("liga", form.value.liga);
-    data.append("Id_Categoria", form.value.categoria);
+    data.append("liga", sinTorneo.value ? 0 : form.value.liga);
+    data.append("Id_Categoria", sinTorneo.value ? 0 : form.value.categoria);
+    // data.append("liga", form.value.liga);
+    // data.append("Id_Categoria", form.value.categoria);
     data.append("password", form.value.password);
 
     if (form.value.Foto) {
