@@ -15,19 +15,7 @@
         <div class="grid">
           <!-- FOTO -->
           <!-- CATEGORIA -->
-          <div class="form-group full" v-if="form.liga">
-            <select v-model="form.categoria">
-              <option disabled value="">Categoría</option>
-
-              <option
-                v-for="cat in categoriasFiltradas"
-                :key="cat.Id"
-                :value="cat.Id"
-              >
-                {{ cat.Nombre }}
-              </option>
-            </select>
-          </div>
+         
 
           <!-- NOMBRE -->
           <div class="form-group">
@@ -195,11 +183,15 @@ const fetchData = async () => {
 };
 
 const filtrarCategorias = () => {
+  if (sinTorneo.value) {
+    categoriasFiltradas.value = [];
+    return;
+  }
+
   categoriasFiltradas.value = categorias.value.filter(
     (cat) => cat.Id_Liga == form.value.liga,
   );
 
-  // limpiar categoria seleccionada
   form.value.categoria = "";
 };
 
@@ -207,9 +199,7 @@ onMounted(fetchData);
 
 watch(
   () => form.value.liga,
-  () => {
-    filtrarCategorias();
-  },
+  filtrarCategorias,
 );
 
 watch(sinTorneo, (valor) => {
