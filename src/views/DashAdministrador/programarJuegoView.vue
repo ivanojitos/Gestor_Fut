@@ -188,7 +188,8 @@ const router = useRouter();
 const API =
    "https://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net";
   // "http://192.168.11.28:8080";
-  // "http://192.168.100.228:8080";
+  // "http://192.168.11.201:8080";
+// "http://192.168.100.228:8080";
 
 /* =========================
    DATA
@@ -404,9 +405,7 @@ const generateRole = async () => {
       // ÁRBITRO
       const arbitro =
         referees.value.length > 0
-          ? referees.value[
-              arbitroIndex % referees.value.length
-            ]
+          ? referees.value[arbitroIndex % referees.value.length]
           : null;
 
       // CANCHA
@@ -437,8 +436,7 @@ const generateRole = async () => {
       });
 
       arbitroIndex++;
-      canchaIndex =
-        (canchaIndex + 1) % fields.value.length;
+      canchaIndex = (canchaIndex + 1) % fields.value.length;
 
       // SUMAR TIEMPO
       const [h, m] = horaActual.split(":");
@@ -448,13 +446,9 @@ const generateRole = async () => {
       date.setHours(h);
       date.setMinutes(m);
 
-      date.setMinutes(
-        date.getMinutes() + form.value.duracion,
-      );
+      date.setMinutes(date.getMinutes() + form.value.duracion);
 
-      horaActual = date
-        .toTimeString()
-        .slice(0, 5);
+      horaActual = date.toTimeString().slice(0, 5);
     }
 
     preview.value = partidos;
@@ -483,14 +477,14 @@ const toMinutes = (time) => {
 
 const confirmRole = async () => {
   try {
-    console.log('entro uno');
-    
+    console.log("entro uno");
+
     if (!preview.value.length) {
       alert("No hay partidos para guardar");
       return;
     }
 
-    console.log('entro dos');
+    console.log("entro dos");
     const exists = await checkExistingRole();
 
     if (exists) {
@@ -498,7 +492,7 @@ const confirmRole = async () => {
       return;
     }
 
-     console.log('entro tres');
+    console.log("entro tres");
     const payload = preview.value.map((p) => ({
       Id_Liga: Number(p.Id_Liga),
       Id_Categoria: Number(p.Id_Categoria),
@@ -515,36 +509,23 @@ const confirmRole = async () => {
       Responsable_Partido: "ADMIN",
     }));
 
-    console.log(
-      "🔥 PAYLOAD FINAL:",
-      JSON.stringify(payload, null, 2),
-    );
+    console.log("🔥 PAYLOAD FINAL:", JSON.stringify(payload, null, 2));
 
     for (const partido of payload) {
-      const res = await axios.post(
-        `${API}/api/partidos`,
-        partido,
-      );
+      const res = await axios.post(`${API}/api/partidos`, partido);
 
       console.log("✅ GUARDADO:", res.data);
     }
 
-    const lastMatch =
-      preview.value[preview.value.length - 1];
+    const lastMatch = preview.value[preview.value.length - 1];
 
-    const limitDate = new Date(
-      `${lastMatch.fecha}T${lastMatch.hora}`,
-    );
+    const limitDate = new Date(`${lastMatch.fecha}T${lastMatch.hora}`);
 
     limitDate.setDate(limitDate.getDate() + 3);
 
-    nextAvailableDate.value =
-      limitDate.toISOString();
+    nextAvailableDate.value = limitDate.toISOString();
 
-    localStorage.setItem(
-      "nextRoleDate",
-      limitDate.toISOString(),
-    );
+    localStorage.setItem("nextRoleDate", limitDate.toISOString());
 
     alert("✅ Rol guardado correctamente");
 
@@ -552,15 +533,9 @@ const confirmRole = async () => {
   } catch (error) {
     console.log(error);
 
-    console.log(
-      "❌ ERROR BACKEND:",
-      error.response?.data,
-    );
+    console.log("❌ ERROR BACKEND:", error.response?.data);
 
-    alert(
-      error.response?.data?.message ||
-        "Error guardando rol",
-    );
+    alert(error.response?.data?.message || "Error guardando rol");
   }
 };
 

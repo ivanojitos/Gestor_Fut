@@ -33,12 +33,7 @@
 
           <!-- EDAD -->
           <div class="form-group">
-            <input
-              v-model="form.edad"
-              type="number"
-              required
-              placeholder=" "
-            />
+            <input v-model="form.edad" type="number" required placeholder=" " />
             <label>Edad</label>
           </div>
 
@@ -104,11 +99,7 @@
 
           <!-- ESTATURA -->
           <div class="form-group">
-            <input
-              v-model="form.estatura"
-              type="number"
-              placeholder=" "
-            />
+            <input v-model="form.estatura" type="number" placeholder=" " />
             <label>Estatura (cm)</label>
           </div>
 
@@ -130,11 +121,7 @@
             <select v-model="form.liga" :disabled="sinLiga">
               <option disabled value="">Liga</option>
 
-              <option
-                v-for="liga in ligas"
-                :key="liga.Id"
-                :value="liga.Id"
-              >
+              <option v-for="liga in ligas" :key="liga.Id" :value="liga.Id">
                 {{ liga.Nombre }}
               </option>
             </select>
@@ -157,15 +144,9 @@
         </div>
 
         <div class="actions">
-          <button type="submit" class="btn">
-            Guardar Usuario
-          </button>
+          <button type="submit" class="btn">Guardar Usuario</button>
 
-          <button
-            type="button"
-            class="btn-cancel"
-            @click="cancelar"
-          >
+          <button type="button" class="btn-cancel" @click="cancelar">
             ← Cancelar
           </button>
         </div>
@@ -183,6 +164,7 @@ const loading = ref(false);
 
 const API =
   "https://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net";
+  // "http://192.168.11.201:8080";
 
 const router = useRouter();
 
@@ -243,7 +225,7 @@ onMounted(fetchData);
 ========================= */
 const filtrarCategorias = () => {
   categoriasFiltradas.value = categorias.value.filter(
-    (cat) => cat.Id_Liga == form.value.liga
+    (cat) => cat.Id_Liga == form.value.liga,
   );
 
   form.value.categoria = "";
@@ -258,7 +240,7 @@ watch(
     if (!sinLiga.value) {
       filtrarCategorias();
     }
-  }
+  },
 );
 
 /* =========================
@@ -296,10 +278,7 @@ const guardarUsuario = async () => {
     // 👇 LOGICA DEL CHECK
     data.append("liga", sinLiga.value ? 0 : form.value.liga);
 
-    data.append(
-      "Id_Categoria",
-      sinLiga.value ? 0 : form.value.categoria
-    );
+    data.append("Id_Categoria", sinLiga.value ? 0 : form.value.categoria);
 
     data.append("password", form.value.password);
 
@@ -307,10 +286,7 @@ const guardarUsuario = async () => {
       data.append("Foto", form.value.Foto);
     }
 
-    const response = await axios.post(
-      `${API}/api/createJugador`,
-      data
-    );
+    const response = await axios.post(`${API}/api/createJugador`, data);
 
     if (response.data.ok) {
       alert("Jugador creado correctamente");

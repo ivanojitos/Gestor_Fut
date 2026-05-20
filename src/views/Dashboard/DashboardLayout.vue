@@ -92,7 +92,10 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* BASE */
+/* =========================================
+   BASE LAYOUT
+========================================= */
+
 .layout {
   display: flex;
   min-height: 100vh;
@@ -101,27 +104,53 @@ onMounted(() => {
   color: #111827;
 }
 
-/* SIDEBAR */
+/* =========================================
+   SIDEBAR
+========================================= */
+
 .sidebar {
+  position: fixed;
+
+  top: 0;
+  left: 0;
+
   width: 260px;
+  height: 100vh;
+
+  overflow-y: auto;
+
   background: rgba(255, 255, 255, 0.92);
+
   backdrop-filter: blur(14px);
 
   padding: 24px 18px;
 
   display: flex;
   flex-direction: column;
+
   gap: 35px;
 
   border-right: 1px solid rgba(0, 0, 0, 0.06);
 
   box-shadow: 4px 0 25px rgba(0, 0, 0, 0.04);
 
-  position: relative;
-  z-index: 10;
+  z-index: 100;
 }
 
-/* LOGO */
+/* SCROLL SIDEBAR */
+.sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+  background: rgba(99, 102, 241, 0.4);
+  border-radius: 20px;
+}
+
+/* =========================================
+   LOGO
+========================================= */
+
 .logo-wrapper {
   display: flex;
   justify-content: center;
@@ -135,6 +164,7 @@ onMounted(() => {
 .logo {
   width: 180px;
   max-width: 100%;
+
   object-fit: contain;
 
   transition: all 0.3s ease;
@@ -148,7 +178,10 @@ onMounted(() => {
   transform: scale(1.04);
 }
 
-/* NAVIGATION */
+/* =========================================
+   NAVIGATION
+========================================= */
+
 nav {
   display: flex;
   flex-direction: column;
@@ -156,6 +189,7 @@ nav {
 }
 
 /* LINKS */
+
 nav a {
   display: flex;
   align-items: center;
@@ -175,16 +209,21 @@ nav a {
   transition: all 0.25s ease;
 
   position: relative;
+
   overflow: hidden;
 }
 
 /* ICONS */
+
 nav a svg {
   width: 20px;
   height: 20px;
+
+  flex-shrink: 0;
 }
 
 /* HOVER */
+
 nav a:hover {
   background: linear-gradient(
     135deg,
@@ -197,7 +236,8 @@ nav a:hover {
   transform: translateX(4px);
 }
 
-/* ACTIVE LINK */
+/* ACTIVE */
+
 .router-link-exact-active {
   background: linear-gradient(135deg, #3b82f6, #6366f1);
 
@@ -212,9 +252,14 @@ nav a:hover {
   color: white;
 }
 
-/* MAIN */
+/* =========================================
+   MAIN
+========================================= */
+
 .main {
   flex: 1;
+
+  margin-left: 260px;
 
   display: flex;
   flex-direction: column;
@@ -222,7 +267,10 @@ nav a:hover {
   min-width: 0;
 }
 
-/* HEADER */
+/* =========================================
+   HEADER
+========================================= */
+
 .header {
   height: 78px;
 
@@ -241,10 +289,13 @@ nav a:hover {
   position: sticky;
   top: 0;
 
-  z-index: 5;
+  z-index: 20;
 }
 
-/* LOGOUT BUTTON */
+/* =========================================
+   LOGOUT BUTTON
+========================================= */
+
 .logout {
   border: none;
 
@@ -268,7 +319,6 @@ nav a:hover {
     inset 0 1px 0 rgba(255, 255, 255, 0.15);
 }
 
-/* HOVER LOGOUT */
 .logout:hover {
   transform: translateY(-2px);
 
@@ -277,7 +327,10 @@ nav a:hover {
     0 0 18px rgba(239, 68, 68, 0.25);
 }
 
-/* CONTENT */
+/* =========================================
+   CONTENT
+========================================= */
+
 .content {
   flex: 1;
 
@@ -286,24 +339,34 @@ nav a:hover {
   overflow-y: auto;
 }
 
-/* SCROLL */
+/* CONTENT SCROLL */
+
 .content::-webkit-scrollbar {
   width: 8px;
 }
 
 .content::-webkit-scrollbar-thumb {
   background: linear-gradient(135deg, #3b82f6, #6366f1);
+
   border-radius: 20px;
 }
 
-/* TABLET */
+/* =========================================
+   TABLET
+========================================= */
+
 @media (max-width: 900px) {
   .layout {
     flex-direction: column;
   }
 
+  /* SIDEBAR */
+
   .sidebar {
+    position: relative;
+
     width: 100%;
+    height: auto;
 
     flex-direction: row;
     align-items: center;
@@ -314,8 +377,17 @@ nav a:hover {
     gap: 15px;
   }
 
+  /* MAIN */
+
+  .main {
+    margin-left: 0;
+  }
+
+  /* LOGO */
+
   .logo-wrapper {
     padding: 0;
+
     border: none;
   }
 
@@ -323,14 +395,18 @@ nav a:hover {
     width: 135px;
   }
 
+  /* NAV */
+
   nav {
     flex-direction: row;
     align-items: center;
+
     gap: 8px;
   }
 
   nav a {
-    padding: 10px;
+    padding: 10px 12px;
+
     border-radius: 12px;
   }
 
@@ -338,54 +414,113 @@ nav a:hover {
     display: none;
   }
 
+  /* HEADER */
+
   .header {
     padding: 0 15px;
   }
 
+  /* BUTTON */
+
   .logout {
     padding: 10px 14px;
+
     font-size: 13px;
   }
+
+  /* CONTENT */
 
   .content {
     padding: 18px;
   }
 }
 
-/* MOBILE */
+/* =========================================
+   MOBILE
+========================================= */
+
 @media (max-width: 600px) {
+  /* SIDEBAR */
+
   .sidebar {
     flex-wrap: wrap;
+
     justify-content: center;
+
+    gap: 14px;
   }
+
+  /* LOGO */
 
   .logo {
     width: 115px;
   }
 
+  /* NAV */
+
   nav {
     width: 100%;
+
     justify-content: center;
+
     flex-wrap: wrap;
+
+    gap: 10px;
   }
 
   nav a {
     flex: 1;
+
     justify-content: center;
-    min-width: 55px;
+
+    min-width: 60px;
+
+    padding: 12px;
   }
+
+  /* HEADER */
 
   .header {
     height: 70px;
+
+    padding: 0 12px;
   }
 
+  /* LOGOUT */
+
   .logout {
-    width: 100%;
+    width: 40%;
   }
+
+  /* CONTENT */
 
   .content {
     padding: 15px;
   }
 }
 
+/* =========================================
+   SMALL MOBILE
+========================================= */
+
+@media (max-width: 420px) {
+  .logo {
+    width: 95px;
+  }
+
+  nav a {
+    min-width: 52px;
+
+    padding: 10px;
+  }
+
+  nav a svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .content {
+    padding: 12px;
+  }
+}
 </style>

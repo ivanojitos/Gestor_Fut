@@ -81,6 +81,7 @@ import axios from "axios";
 const API =
    "https://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net";
   // "http://192.168.11.28:8080";
+  // "http://192.168.11.201:8080";
 // "http://192.168.100.228:8080";
 
 const email = ref("");
@@ -388,8 +389,7 @@ button:hover {
   max-width: 100%;
   object-fit: contain;
 
-  filter:
-    drop-shadow(0 8px 20px rgba(0, 0, 0, 0.35))
+  filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.35))
     drop-shadow(0 0 20px rgba(99, 102, 241, 0.25));
 
   transition: all 0.35s ease;

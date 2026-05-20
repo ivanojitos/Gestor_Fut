@@ -164,7 +164,8 @@ import axios from "axios";
 const API =
    "https://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net";
   // "http://192.168.11.28:8080";
-  // "http://192.168.100.228:8080";
+  // "http://192.168.11.201:8080";
+// "http://192.168.100.228:8080";
 
 const router = useRouter();
 const tabla = ref(null);

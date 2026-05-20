@@ -1,8 +1,8 @@
 <template>
   <div class="container">
-    <div class="card"> 
+    <div class="card">
       <!-- 🔙 BACK -->
-      <router-link :to="{name: dashboardMasterAdmin }" class="btn-back">
+      <router-link :to="{ name: dashboardMasterAdmin }" class="btn-back">
         ⬅ Volver a Administradores
       </router-link>
 
@@ -65,9 +65,10 @@ import { ref, onMounted } from "vue";
 import axios from "axios";
 
 const API =
-  //  "https://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net";
-  "http://192.168.11.28:8080";
-  // "http://192.168.100.228:8080";
+   "https://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net";
+  // "http://192.168.11.28:8080";
+  // "http://192.168.11.201:8080";
+// "http://192.168.100.228:8080";
 
 // 🔥 DATA LIMPIA (minúsculas)
 const admin = ref({
