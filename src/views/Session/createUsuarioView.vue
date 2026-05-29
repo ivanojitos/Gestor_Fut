@@ -536,12 +536,14 @@ h2 {
   width: 100%;
 }
 
-/* INPUTS + SELECTS */
+/* =========================
+   INPUTS + SELECTS
+========================= */
 input,
 select {
   width: 100%;
 
-  padding: 18px 15px;
+  padding: 24px 15px 10px;
 
   border-radius: 14px;
 
@@ -568,21 +570,13 @@ select option {
   color: white;
 }
 
-/* FOCUS */
-input:focus,
-select:focus {
-  border-color: #818cf8;
-
-  background: rgba(255, 255, 255, 0.12);
-
-  box-shadow: 0 0 0 4px rgba(129, 140, 248, 0.15);
-}
-
-/* LABELS */
+/* =========================
+   LABELS
+========================= */
 .form-group label:not(.check-label) {
   position: absolute;
 
-  left: 15px;
+  left: 14px;
   top: 18px;
 
   color: rgba(255, 255, 255, 0.7);
@@ -593,15 +587,21 @@ select:focus {
 
   transition: all 0.25s ease;
 
-  padding: 0 6px;
+  padding: 0 8px;
 
-  border-radius: 10px;
+  border-radius: 20px;
+
+  z-index: 2;
 }
 
-/* FLOATING LABEL INPUT */
-input:focus + label,
-input:not(:placeholder-shown) + label {
-  top: -10px;
+/* =========================
+   FLOATING LABEL
+========================= */
+.form-group input:focus + label,
+.form-group input:not(:placeholder-shown) + label,
+.form-group select:focus + label,
+.form-group select:valid + label {
+  top: -9px;
 
   left: 12px;
 
@@ -609,29 +609,33 @@ input:not(:placeholder-shown) + label {
 
   color: #818cf8;
 
-  background: #111827;
+  background: #0f172a;
+
+  box-shadow: 0 0 0 4px #0f172a;
 }
 
-/* FLOATING LABEL SELECT */
-select:focus + label,
-select:valid + label {
-  top: -10px;
-
-  left: 12px;
-
-  font-size: 11px;
-
-  color: #818cf8;
-
-  background: #111827;
-}
-
-/* PLACEHOLDER */
+/* =========================
+   PLACEHOLDER
+========================= */
 input::placeholder {
   color: transparent;
 }
 
-/* AUTOFILL CHROME */
+/* =========================
+   FOCUS
+========================= */
+input:focus,
+select:focus {
+  border-color: #818cf8;
+
+  background: rgba(255, 255, 255, 0.12);
+
+  box-shadow: 0 0 0 4px rgba(129, 140, 248, 0.15);
+}
+
+/* =========================
+   AUTOFILL FIX
+========================= */
 input:-webkit-autofill {
   -webkit-text-fill-color: white;
 
@@ -937,7 +941,7 @@ select:disabled {
 
   input,
   select {
-    padding: 16px 14px;
+    padding: 24px 14px 10px;
 
     font-size: 13px;
   }
