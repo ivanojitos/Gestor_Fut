@@ -28,7 +28,7 @@
               required
               placeholder=" "
             />
-            <label>Número</label>
+            <label>Número de Jugador</label>
           </div>
 
           <!-- EDAD -->
