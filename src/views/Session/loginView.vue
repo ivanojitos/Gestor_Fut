@@ -155,7 +155,7 @@ const arbitro = ref({
 const errorArbitro = ref("");
 
 const validarCodigo = () => {
-  if (codigo.value === "12345678") {
+  if (codigo.value === "administrador123*") {
     mostrarCodigo.value = false;
     mostrarFormulario.value = true;
     errorCodigo.value = "";
