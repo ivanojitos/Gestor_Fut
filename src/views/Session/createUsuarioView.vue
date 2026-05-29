@@ -347,6 +347,7 @@ const handleFile = (e) => {
 };
 </script>
 
+
 <style scoped>
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap");
 
@@ -532,18 +533,19 @@ h2 {
 /* FORM */
 .form-group {
   position: relative;
+  width: 100%;
 }
 
-/* INPUTS */
+/* INPUTS + SELECTS */
 input,
 select {
   width: 100%;
 
-  padding: 16px 14px;
+  padding: 18px 15px;
 
   border-radius: 14px;
 
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 2px solid rgba(255, 255, 255, 0.12);
 
   outline: none;
 
@@ -556,9 +558,11 @@ select {
   transition: all 0.25s ease;
 
   backdrop-filter: blur(10px);
+
+  appearance: none;
 }
 
-/* SELECT */
+/* SELECT OPTIONS */
 select option {
   background: #111827;
   color: white;
@@ -574,47 +578,64 @@ select:focus {
   box-shadow: 0 0 0 4px rgba(129, 140, 248, 0.15);
 }
 
-/* LABELS SOLO INPUTS NORMALES */
+/* LABELS */
 .form-group label:not(.check-label) {
   position: absolute;
 
-  top: 50%;
-  left: 14px;
+  left: 15px;
+  top: 18px;
 
-  transform: translateY(-50%);
+  color: rgba(255, 255, 255, 0.7);
 
-  font-size: 13px;
-
-  color: #c7d2fe;
+  font-size: 14px;
 
   pointer-events: none;
 
   transition: all 0.25s ease;
 
   padding: 0 6px;
+
+  border-radius: 10px;
 }
 
-/* FLOATING LABEL */
+/* FLOATING LABEL INPUT */
 input:focus + label,
-input:not(:placeholder-shown) + label,
-select:focus + label,
-select:valid + label {
-  top: 0;
+input:not(:placeholder-shown) + label {
+  top: -10px;
 
-  transform: translateY(-50%);
+  left: 12px;
 
   font-size: 11px;
 
   color: #818cf8;
 
-  background: #1e1b4b;
+  background: #111827;
+}
 
-  border-radius: 20px;
+/* FLOATING LABEL SELECT */
+select:focus + label,
+select:valid + label {
+  top: -10px;
+
+  left: 12px;
+
+  font-size: 11px;
+
+  color: #818cf8;
+
+  background: #111827;
 }
 
 /* PLACEHOLDER */
 input::placeholder {
   color: transparent;
+}
+
+/* AUTOFILL CHROME */
+input:-webkit-autofill {
+  -webkit-text-fill-color: white;
+
+  transition: background-color 9999s ease-in-out 0s;
 }
 
 /* CHECKBOX */
@@ -800,7 +821,6 @@ select:disabled {
   overflow: hidden;
 }
 
-/* SHINE */
 .btn::before {
   content: "";
 
@@ -847,10 +867,6 @@ select:disabled {
   color: #e2e8f0;
 
   backdrop-filter: blur(10px);
-
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.05),
-    0 8px 20px rgba(0, 0, 0, 0.15);
 }
 
 .btn-cancel:hover {
@@ -861,14 +877,6 @@ select:disabled {
   border-color: rgba(239, 68, 68, 0.35);
 
   color: white;
-
-  box-shadow:
-    0 15px 30px rgba(239, 68, 68, 0.2),
-    0 0 15px rgba(239, 68, 68, 0.15);
-}
-
-.btn-cancel:active {
-  transform: scale(0.98);
 }
 
 /* ANIMATION */
@@ -929,7 +937,7 @@ select:disabled {
 
   input,
   select {
-    padding: 15px 13px;
+    padding: 16px 14px;
 
     font-size: 13px;
   }
@@ -968,3 +976,4 @@ select:disabled {
   }
 }
 </style>
+
