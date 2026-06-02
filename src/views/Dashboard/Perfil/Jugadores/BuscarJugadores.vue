@@ -178,9 +178,9 @@ const loadEquipos = async () => {
     const res = await axios.get(`${API}/api/equipos`);
 
     const equipos = res.data?.data || res.data;
-
+    
     equipos.forEach((e) => {
-      equiposMap.value[e.Id] = e.NombreEquipo;
+      equiposMap.value[e.Id] = e.Nombre;
     });
   } catch (err) {
     console.error("Error cargando equipos:", err);
@@ -201,8 +201,6 @@ const getPlayers = async () => {
 
     const data = res.data?.data || res.data;
 
-    console.log("Respuesta API:", data);
-
     players.value = data.map((p) => ({
       id: p.Id,
       name: p.NombreCompleto?.trim(),
@@ -216,7 +214,7 @@ const getPlayers = async () => {
       team:
         p.Id_Equipo === 0
           ? "Agente Libre"
-          : equiposMap.value[p.Id_Equipo] || "Equipo desconocido",
+          : equiposMap.value[p.Id_Equipo] || "Sin equipo",
 
       rating: p.NumCampeonatos ?? 0,
       email: p.Correo?.trim(),
