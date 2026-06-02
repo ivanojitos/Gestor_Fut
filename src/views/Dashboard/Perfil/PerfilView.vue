@@ -96,6 +96,10 @@
             VER EQUIPO
           </button>
 
+          <button class="btn-main scout-btn" @click="goToPlayers">
+            🔎 BUSCAR JUGADORES
+          </button>
+
           <!-- 👇 botón separado -->
           <div v-if="equipo && !isOwner" class="danger-zone">
             <button
@@ -329,10 +333,10 @@ import axios from "axios";
 import { useRouter } from "vue-router";
 
 const API =
-   "https://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net";
+  "https://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net";
   // "http://192.168.11.28:8080";
-  // "http://192.168.11.201:8080";
-// "http://192.168.100.228:8080";
+  // "http://192.168.11.217:8080";
+// "http://192.168.11.196:8080";
 
 const router = useRouter();
 const storedUser = JSON.parse(localStorage.getItem("user"));
@@ -462,6 +466,7 @@ const fetchData = async () => {
     const res = await axios.get(`${API}/api/jugadores/${player.Id}`);
     const user = res.data.data;
 
+    
     player.name = user.NombreCompleto;
     player.age = user.Edad;
     player.number = user.Numero;
@@ -526,6 +531,7 @@ const rechazar = async (id) => {
   fetchData();
 };
 
+
 /* =======================
    NAVIGATION
 ======================= */
@@ -537,6 +543,9 @@ const goToTeam = () => {
   router.push("/equipoDetalle");
 };
 
+const goToPlayers = () => {
+  router.push({ name: "Jugadores" });
+};
 /* =======================
    EDIT PLAYER
 ======================= */

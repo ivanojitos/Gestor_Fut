@@ -40,5 +40,10 @@ export default {
       name: "Roles",
       component: () => import("@/views/Dashboard/RolesJuego/rolJuegoView.vue"),
     },
+     {
+      path: "jugadores",
+      name: "Jugadores",
+      component: () => import("@/views/Dashboard/Perfil/Jugadores/BuscarJugadores.vue"),
+    },
   ],
 };
