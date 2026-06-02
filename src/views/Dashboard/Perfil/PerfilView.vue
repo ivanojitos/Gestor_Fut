@@ -96,7 +96,7 @@
             VER EQUIPO
           </button>
 
-          <button class="btn-main scout-btn" @click="goToPlayers">
+          <button v-if="equipo"  class="btn-main scout-btn" @click="goToPlayers">
             🔎 BUSCAR JUGADORES
           </button>
 

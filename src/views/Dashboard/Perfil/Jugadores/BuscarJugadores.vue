@@ -4,19 +4,19 @@
     <section class="stats">
       <div class="stat-card">
         <div class="stat-icon">👤</div>
-        <h3>1,250+</h3>
+        <h3>{{ players.length }}</h3>
         <p>Jugadores Registrados</p>
       </div>
-
+ 
       <div class="stat-card">
         <div class="stat-icon">🏆</div>
-        <h3>120</h3>
+        <h3>?</h3>
         <p>Equipos Activos</p>
       </div>
 
       <div class="stat-card">
         <div class="stat-icon">⚽</div>
-        <h3>35</h3>
+        <h3>?</h3>
         <p>Ligas Disponibles</p>
       </div>
     </section>
