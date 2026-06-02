@@ -94,10 +94,6 @@
 
         <!-- BODY -->
         <div class="player-body">
-          <div class="status-row">
-            <span class="available"> Disponible </span>
-          </div>
-
           <h3>
             {{ player.name }}
           </h3>
