@@ -79,8 +79,9 @@
           <div class="avatar-ring">
             <img
               v-if="player.photo"
-              :src="API + player.photo"
+              :src="player.photo"
               class="player-avatar"
+              @error="(e) => console.log('Error imagen:', e.target.src)"
             />
 
             <img
@@ -159,7 +160,7 @@
 import { ref, onMounted } from "vue";
 import axios from "axios";
 
-const API = 
+const API =
   "https://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net";
 // "http://192.168.11.217:8080";
 
@@ -210,7 +211,7 @@ const getPlayers = async () => {
       height: p.Estatura
         ? `${(parseFloat(p.Estatura) / 100).toFixed(2)} m`
         : "N/A",
-      photo: p.Foto?.replace(/\s+/g, "").trim(),
+      photo: p.Foto ? `${API}${p.Foto.trim()}` : null,
 
       team:
         p.Id_Equipo === 0
@@ -222,7 +223,6 @@ const getPlayers = async () => {
       status: p.Estatus?.trim(),
       numero: p.Numero ?? "N/A",
     }));
-
   } catch (err) {
     error.value = "Error al cargar jugadores";
     console.error(err);
@@ -541,15 +541,12 @@ onMounted(() => {
   height: 150px;
 
   background:
-    radial-gradient(circle at top right,
-      rgba(255,255,255,.25),
-      transparent 35%),
-    linear-gradient(
-      135deg,
-      #2563eb 0%,
-      #3b82f6 50%,
-      #60a5fa 100%
-    );
+    radial-gradient(
+      circle at top right,
+      rgba(255, 255, 255, 0.25),
+      transparent 35%
+    ),
+    linear-gradient(135deg, #2563eb 0%, #3b82f6 50%, #60a5fa 100%);
 
   position: relative;
 }
@@ -565,7 +562,7 @@ onMounted(() => {
 
   border-radius: 50%;
 
-  background: rgba(255,255,255,.95);
+  background: rgba(255, 255, 255, 0.95);
 
   backdrop-filter: blur(10px);
 
@@ -578,8 +575,7 @@ onMounted(() => {
   font-size: 20px;
   font-weight: 900;
 
-  box-shadow:
-    0 10px 25px rgba(0,0,0,.15);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
 }
 
 .avatar-wrapper {
@@ -590,18 +586,7 @@ onMounted(() => {
   z-index: 20;
 }
 
-.player-avatar {
-  width: 115px;
-  height: 115px;
 
-  border-radius: 50%;
-
-  border: 5px solid white;
-
-  margin-top: -58px;
-
-  object-fit: cover;
-}
 
 .player-body {
   padding: 25px;
@@ -783,12 +768,7 @@ onMounted(() => {
 
   border-radius: 50%;
 
-  background: linear-gradient(
-    135deg,
-    #60a5fa,
-    #2563eb,
-    #1d4ed8
-  );
+  background: linear-gradient(135deg, #60a5fa, #2563eb, #1d4ed8);
 
   box-shadow:
     0 0 0 8px white,
@@ -799,5 +779,4 @@ onMounted(() => {
 
   transition: all 0.35s ease;
 }
-
 </style>
