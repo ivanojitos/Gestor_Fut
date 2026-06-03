@@ -17,4 +17,10 @@ export default [
     component: () => import("@/views/DashMaster/Ligas/createLiga.vue"),
     meta: { role: "master" },
   },
+  {
+    path: "dashboardMasterCreate",
+    name: "dashboardMasterCreate",
+    component: () => import("@/views/DashMaster/Administrador/createView.vue"),
+    meta: { role: "master" },
+  }
 ];
