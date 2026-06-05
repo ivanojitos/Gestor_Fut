@@ -171,7 +171,6 @@ const fetchPlayers = async () => {
       photo: p.Foto || `https://i.pravatar.cc/100?img=${i + 20}`,
     }));
 
-    console.log(players.value);
 
     buildTeam(); // 🔥 IMPORTANTE
   } catch (err) {
