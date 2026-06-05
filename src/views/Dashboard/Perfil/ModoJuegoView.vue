@@ -40,10 +40,7 @@
         :style="{ top: p.y + '%', left: p.x + '%' }"
         @click="selectPlayer(p)"
       >
-        <div class="avatar">
-          {{ p.name.charAt(0) }}
-        </div>
-        <div>
+        <div class="player-info">
           <b>#{{ p.number }}</b>
           <small>{{ p.name }}</small>
         </div>
@@ -79,9 +76,6 @@
           :class="{ benchSelected: selectedBench?.number === p.number }"
           @click="selectBench(p)"
         >
-          <div class="avatar">
-            {{ p.name.charAt(0) }}
-          </div>
           <div>
             <b>#{{ p.number }} {{ p.name }}</b>
             <small>{{ p.position }}</small>
@@ -99,7 +93,7 @@ import axios from "axios";
 const API =
    "https://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net";
   // "http://192.168.11.28:8080";
-  // "http://192.168.11.201:8080";
+  // "http://192.168.11.217:8080";
 // "http://192.168.100.228:8080";
 
 const storedUser = JSON.parse(localStorage.getItem("user"));
@@ -170,11 +164,13 @@ const fetchPlayers = async () => {
     );
 
     players.value = resJugadores.data.data.map((p, i) => ({
-      name: p.NombreCompleto,
+      name: p.NombreCompleto.trim(),
       number: p.Numero,
-      position: p.Posicion,
+      position: p.Posicion.trim(),
       photo: p.Foto || `https://i.pravatar.cc/100?img=${i + 20}`,
     }));
+
+    console.log(players.value);
 
     buildTeam(); // 🔥 IMPORTANTE
   } catch (err) {
@@ -194,16 +190,26 @@ function buildTeam() {
   const base = selectedFormacion.value.map;
 
   const orden = [
-    ...getPlayersByPosition("POR"),
-    ...getPlayersByPosition("DEF"),
-    ...getPlayersByPosition("MED"),
-    ...getPlayersByPosition("DEL"),
+    ...players.value.filter((p) => p.position === "POR"),
+
+    ...players.value.filter((p) =>
+      ["DFC", "LD", "LI", "CAD"].includes(p.position),
+    ),
+
+    ...players.value.filter((p) =>
+      ["MC", "MCD", "MCO", "MP"].includes(p.position),
+    ),
+
+    ...players.value.filter((p) =>
+      ["DC", "EI", "ED", "DEL"].includes(p.position),
+    ),
   ];
 
   const titularesTemp = orden.slice(0, base.length);
 
   titulares.value = titularesTemp.map((p, i) => {
-    const b = base[i] || { x: 50, y: 50 };
+    const b = base[i];
+
     const mod = selectedTactic.value.modifier(b, i);
 
     return {
@@ -270,6 +276,21 @@ const canSwap = computed(() => selectedPlayer.value && selectedBench.value);
 </script>
 
 <style scoped>
+.player-info {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+
+.player-info b {
+  font-size: 14px;
+  font-weight: 900;
+}
+
+.player-info small {
+  font-size: 11px;
+  opacity: 0.8;
+}
 .card small {
   margin-left: 6px; /* 🔥 separa la posición */
 }
