@@ -41,7 +41,6 @@
         @click="selectPlayer(p)"
       >
         <div class="player-info">
-          <img :src="p.photo" class="player-mini-photo" />
           <b>#{{ p.number }}</b>
           <small>{{ p.name }}</small>
         </div>
@@ -92,9 +91,9 @@ import { ref, computed, onMounted } from "vue";
 import axios from "axios";
 
 const API =
-  "https://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net";
-// "http://192.168.11.28:8080";
-// "http://192.168.11.217:8080";
+   "https://back-node-gestor-fut-hbggakfghgaqe3cs.westeurope-01.azurewebsites.net";
+  // "http://192.168.11.28:8080";
+  // "http://192.168.11.217:8080";
 // "http://192.168.100.228:8080";
 
 const storedUser = JSON.parse(localStorage.getItem("user"));
@@ -171,6 +170,7 @@ const fetchPlayers = async () => {
       photo: p.Foto || `https://i.pravatar.cc/100?img=${i + 20}`,
     }));
 
+    console.log(players.value);
 
     buildTeam(); // 🔥 IMPORTANTE
   } catch (err) {
@@ -276,14 +276,6 @@ const canSwap = computed(() => selectedPlayer.value && selectedBench.value);
 </script>
 
 <style scoped>
-.player-mini-photo {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid white;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
-}
 .player-info {
   display: flex;
   flex-direction: column;
